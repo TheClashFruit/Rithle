@@ -71,11 +71,4 @@ class MainActivity : AppCompatActivity() {
                 }
             }
     }
-
-    /*
-
-    val data = result.get()
-    Log.d("respii", data)
-
-     */
 }
