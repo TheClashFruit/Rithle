@@ -4,10 +4,11 @@ import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.widget.NestedScrollView
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.android.volley.toolbox.JsonObjectRequest
@@ -20,14 +21,16 @@ import me.theclashfruit.rithle.models.ModrinthSearchHitsModel
 import me.theclashfruit.rithle.models.ModrinthSearchModel
 
 class ModsFragment : Fragment() {
-    private var currentIndex = 20
+    private var currentIndex = 10
     private var lastIndex    = 0
 
     private var allData: ArrayList<ModrinthSearchHitsModel> = arrayListOf();
-    private var recyclerView: RecyclerView?                 = null;
 
     private var listAdapter: ModListAdapter?        = null
     private var layoutManager: LinearLayoutManager? = null
+
+    private var recyclerView: RecyclerView?         = null
+    private var nestedScrollView: NestedScrollView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,7 +45,8 @@ class ModsFragment : Fragment() {
     ): View? {
         val rootView = inflater.inflate(R.layout.fragment_mods, container, false)
 
-        recyclerView = rootView.findViewById(R.id.recyclerView)
+        recyclerView     = rootView.findViewById(R.id.recyclerView)
+        nestedScrollView = rootView.findViewById(R.id.nestedScrollView)
 
         listAdapter   = ModListAdapter(allData, requireContext())
         layoutManager = LinearLayoutManager(requireContext())
@@ -52,13 +56,9 @@ class ModsFragment : Fragment() {
 
         getItems(requireContext())
 
-        recyclerView!!.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                if(!recyclerView.canScrollVertically(1))
-                    getItems(requireContext())
-
-                super.onScrollStateChanged(recyclerView, newState)
-            }
+        nestedScrollView!!.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { v, scrollX, scrollY, oldScrollX, oldScrollY ->
+            if (scrollY == v.getChildAt(0).measuredHeight - v.measuredHeight)
+                getItems(requireContext())
         })
 
         return rootView
@@ -82,8 +82,8 @@ class ModsFragment : Fragment() {
         val jsonObjectRequest = object : JsonObjectRequest(
             Method.GET, "https://api.modrinth.com/v2/search?limit=${currentIndex}&offset=${lastIndex}&index=relevance&facets=%5B%5B%22categories%3A%27forge%27%22%2C%22categories%3A%27fabric%27%22%2C%22categories%3A%27quilt%27%22%2C%22categories%3A%27liteloader%27%22%2C%22categories%3A%27modloader%27%22%2C%22categories%3A%27rift%27%22%5D%2C%5B%22project_type%3Amod%22%5D%5D", null,
             { response ->
-                currentIndex += 20
-                lastIndex    += 20
+                currentIndex += 5
+                lastIndex    += 5
 
                 Log.d("webCall", "requestComplete")
 
@@ -93,6 +93,7 @@ class ModsFragment : Fragment() {
                     allData.add(hit)
 
                     listAdapter!!.notifyItemInserted(currentPos)
+                    recyclerView!!.adapter       = listAdapter
 
                     Log.d("webCall", "itemAdd ${hit.title}, ${hit.icon_url}")
 

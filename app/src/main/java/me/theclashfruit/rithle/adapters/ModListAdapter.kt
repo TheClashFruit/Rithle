@@ -1,5 +1,6 @@
 package me.theclashfruit.rithle.adapters
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.media.Image
 import android.util.Log
@@ -38,9 +39,11 @@ class ModListAdapter(private val modList: ArrayList<ModrinthSearchHitsModel>, pr
         return StreamHolder(view)
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: StreamHolder, position: Int) {
         holder.itemView.findViewById<TextView>(R.id.textView).text  = modList[position].title
-        holder.itemView.findViewById<TextView>(R.id.textView2).text = modList[position].description
+        holder.itemView.findViewById<TextView>(R.id.textView2).text = "by ${modList[position].author}"
+        holder.itemView.findViewById<TextView>(R.id.textView3).text = modList[position].description
 
         Log.d("iconUrl", modList[position].icon_url.toString())
 
