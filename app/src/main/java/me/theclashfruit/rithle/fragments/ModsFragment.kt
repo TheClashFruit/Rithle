@@ -24,7 +24,7 @@ class ModsFragment : Fragment() {
     private var lastIndex    = 0
 
     private var allData: ArrayList<ModrinthSearchHitsModel> = arrayListOf();
-    private var recyclerView: RecyclerView? = null;
+    private var recyclerView: RecyclerView?                 = null;
 
     private var listAdapter: ModListAdapter?        = null
     private var layoutManager: LinearLayoutManager? = null
