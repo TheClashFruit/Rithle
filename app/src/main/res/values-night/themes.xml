@@ -2,11 +2,11 @@
     <style name="Theme.Rithle" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryVariant">@color/colorPrimaryVariant</item>
-        <item name="colorOnPrimary">@color/colorWhite</item>
+        <item name="colorOnPrimary">@color/colorBlack</item>
 
         <item name="colorSecondary">@color/colorSecondary</item>
         <item name="colorSecondaryVariant">@color/colorSecondaryVariant</item>
-        <item name="colorOnSecondary">@color/colorBlack</item>
+        <item name="colorOnSecondary">@color/colorWhite</item>
 
         <item name="colorSurface">@color/colorSurfaceDark</item>
         <item name="android:colorBackground">?attr/colorSurface</item>
