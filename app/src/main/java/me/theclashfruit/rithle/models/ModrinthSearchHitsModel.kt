@@ -6,8 +6,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ModrinthSearchHitsModel(
-  @SerializedName("project_id"         ) var projectId         : String?           = null,
-  @SerializedName("project_type"       ) var projectType       : String?           = null,
+  @SerializedName("project_id"         ) var project_id         : String?           = null,
+  @SerializedName("project_type"       ) var project_type       : String?           = null,
   @SerializedName("slug"               ) var slug              : String?           = null,
   @SerializedName("author"             ) var author            : String?           = null,
   @SerializedName("title"              ) var title             : String?           = null,
@@ -17,7 +17,7 @@ data class ModrinthSearchHitsModel(
   @SerializedName("versions"           ) var versions          : ArrayList<String> = arrayListOf(),
   @SerializedName("downloads"          ) var downloads         : Int?              = null,
   @SerializedName("follows"            ) var follows           : Int?              = null,
-  @SerializedName("icon_url"           ) var iconUrl           : String?           = null,
+  @SerializedName("icon_url"           ) var icon_url           : String?           = null,
   @SerializedName("date_created"       ) var dateCreated       : String?           = null,
   @SerializedName("date_modified"      ) var dateModified      : String?           = null,
   @SerializedName("latest_version"     ) var latestVersion     : String?           = null,
