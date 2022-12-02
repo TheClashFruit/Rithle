@@ -9,14 +9,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.android.volley.VolleyError
 import com.android.volley.toolbox.ImageLoader
 import me.theclashfruit.rithle.R
 import me.theclashfruit.rithle.classes.RithleSingleton
+import me.theclashfruit.rithle.fragments.ModsFragment
+import me.theclashfruit.rithle.fragments.ProjectViewFragment
 import me.theclashfruit.rithle.models.ModrinthSearchHitsModel
 
-class ModListAdapter(private val modList: ArrayList<ModrinthSearchHitsModel>, private val appContext: Context) : RecyclerView.Adapter<ModListAdapter.StreamHolder?>() {
+class ModListAdapter(private val modList: ArrayList<ModrinthSearchHitsModel>, private val appContext: Context, private val fragmentManager: FragmentManager) : RecyclerView.Adapter<ModListAdapter.StreamHolder?>() {
 
     class StreamHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
         init {
@@ -58,6 +61,16 @@ class ModListAdapter(private val modList: ArrayList<ModrinthSearchHitsModel>, pr
                 Log.d("imageLoader", "wtf are you doing, you either don't have internet or the url is fucking wrong, btw the error is: ${error.toString()}")
             }
         })
+
+        holder.itemView.rootView.setOnClickListener {
+            val mainFragmentTransaction = fragmentManager.beginTransaction()
+            val projectViewFragment = ProjectViewFragment.newInstance(modList[position].project_id.toString())
+
+            mainFragmentTransaction
+                .addToBackStack("projectViewFragment")
+                .add(R.id.parentFragmentContainer, projectViewFragment)
+                .commit()
+        }
     }
 
     override fun getItemCount() = modList.size

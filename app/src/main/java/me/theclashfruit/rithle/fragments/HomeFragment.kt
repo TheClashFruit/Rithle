@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.FragmentTransaction
 import me.theclashfruit.rithle.R
 
 class HomeFragment : Fragment() {
@@ -21,10 +22,10 @@ class HomeFragment : Fragment() {
     ): View? {
         val rootView = inflater.inflate(R.layout.fragment_home, container, false)
 
-        val mainFragmentTransaction = parentFragmentManager.beginTransaction()
+        val fragmentTransaction = parentFragmentManager.beginTransaction()
         val modsFragment = ModsFragment.newInstance()
 
-        mainFragmentTransaction
+        fragmentTransaction
             .replace(R.id.fragmentContainer, modsFragment)
             .commit()
 

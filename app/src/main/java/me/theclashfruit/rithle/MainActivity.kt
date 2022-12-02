@@ -11,10 +11,11 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         val mainFragmentTransaction = supportFragmentManager.beginTransaction()
-        val homeFragment = HomeFragment.newInstance()
+        val homeFragment            = HomeFragment.newInstance()
 
         mainFragmentTransaction
-            .replace(R.id.parentFragmentContainer, homeFragment)
+            .addToBackStack("homeFragment")
+            .add(R.id.parentFragmentContainer, homeFragment)
             .commit()
     }
 }
