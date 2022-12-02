@@ -5,7 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.FragmentTransaction
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import me.theclashfruit.rithle.R
 
 class HomeFragment : Fragment() {
@@ -22,12 +22,58 @@ class HomeFragment : Fragment() {
     ): View? {
         val rootView = inflater.inflate(R.layout.fragment_home, container, false)
 
+        val bottomNav = rootView.findViewById<BottomNavigationView>(R.id.bottomNavigation)
+
         val fragmentTransaction = parentFragmentManager.beginTransaction()
-        val modsFragment = ModsFragment.newInstance()
+        var listFragment = ListFragment.newInstance("%5B%5B%22categories%3A%27forge%27%22%2C%22categories%3A%27fabric%27%22%2C%22categories%3A%27quilt%27%22%2C%22categories%3A%27liteloader%27%22%2C%22categories%3A%27modloader%27%22%2C%22categories%3A%27rift%27%22%5D%2C%5B%22project_type%3Amod%22%5D%5D")
 
         fragmentTransaction
-            .replace(R.id.fragmentContainer, modsFragment)
+            .replace(R.id.fragmentContainer, listFragment)
             .commit()
+
+        bottomNav.setOnNavigationItemSelectedListener { item ->
+            val bottomNavFragmentTransaction = parentFragmentManager.beginTransaction()
+
+            when(item.itemId) {
+                R.id.itemMods -> {
+                    listFragment = ListFragment.newInstance("%5B%5B%22categories%3A%27forge%27%22%2C%22categories%3A%27fabric%27%22%2C%22categories%3A%27quilt%27%22%2C%22categories%3A%27liteloader%27%22%2C%22categories%3A%27modloader%27%22%2C%22categories%3A%27rift%27%22%5D%2C%5B%22project_type%3Amod%22%5D%5D")
+
+                    bottomNavFragmentTransaction
+                        .replace(R.id.fragmentContainer, listFragment)
+                        .commit()
+
+                    return@setOnNavigationItemSelectedListener true
+                }
+                R.id.itemPlugins -> {
+                    listFragment = ListFragment.newInstance("%5B%5B%22categories%3A%27bukkit%27%22%2C%22categories%3A%27spigot%27%22%2C%22categories%3A%27paper%27%22%2C%22categories%3A%27purpur%27%22%2C%22categories%3A%27sponge%27%22%2C%22categories%3A%27bungeecord%27%22%2C%22categories%3A%27waterfall%27%22%2C%22categories%3A%27velocity%27%22%5D%2C%5B%22project_type%3Amod%22%5D%5D")
+
+                    bottomNavFragmentTransaction
+                        .replace(R.id.fragmentContainer, listFragment)
+                        .commit()
+
+                    return@setOnNavigationItemSelectedListener true
+                }
+                R.id.itemResourcePacks -> {
+                    listFragment = ListFragment.newInstance("%5B%5B%22project_type%3Aresourcepack%22%5D%5D")
+
+                    bottomNavFragmentTransaction
+                        .replace(R.id.fragmentContainer, listFragment)
+                        .commit()
+
+                    return@setOnNavigationItemSelectedListener true
+                }
+                R.id.itemModpacks -> {
+                    listFragment = ListFragment.newInstance("%5B%5B%22project_type%3Amodpack%22%5D%5D")
+
+                    bottomNavFragmentTransaction
+                        .replace(R.id.fragmentContainer, listFragment)
+                        .commit()
+
+                    return@setOnNavigationItemSelectedListener true
+                }
+                else -> false
+            }
+        }
 
         return rootView
     }

@@ -14,6 +14,7 @@
         android:icon="@drawable/ic_texture"
         android:title="Resource Packs" />
     <item
+        android:id="@+id/itemModpacks"
         android:icon="@drawable/ic_inventory_2"
         android:title="Modpacks" />
 </menu>

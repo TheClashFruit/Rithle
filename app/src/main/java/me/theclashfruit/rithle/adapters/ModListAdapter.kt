@@ -2,7 +2,6 @@ package me.theclashfruit.rithle.adapters
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.media.Image
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -15,7 +14,6 @@ import com.android.volley.VolleyError
 import com.android.volley.toolbox.ImageLoader
 import me.theclashfruit.rithle.R
 import me.theclashfruit.rithle.classes.RithleSingleton
-import me.theclashfruit.rithle.fragments.ModsFragment
 import me.theclashfruit.rithle.fragments.ProjectViewFragment
 import me.theclashfruit.rithle.models.ModrinthSearchHitsModel
 
