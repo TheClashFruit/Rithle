@@ -8,7 +8,10 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
+import com.android.volley.VolleyError
+import com.android.volley.toolbox.ImageLoader
 import com.android.volley.toolbox.JsonObjectRequest
 import io.noties.markwon.Markwon
 import kotlinx.serialization.decodeFromString
@@ -37,20 +40,37 @@ class ProjectViewFragment : Fragment() {
         val rootView = inflater.inflate(R.layout.fragment_project_view, container, false)
 
         val textViewTitle: TextView       = rootView.findViewById(R.id.textViewTitle)
+        val textViewAuthor: TextView      = rootView.findViewById(R.id.textViewBy)
         val textViewDescription: TextView = rootView.findViewById(R.id.textViewDescription)
+
+        val imageViewIcon: ImageView      = rootView.findViewById(R.id.projectIcon)
 
         val format = Json { ignoreUnknownKeys = true }
 
         val markwon = Markwon.create(requireContext());
 
-        val jsonObjectRequest = object : JsonObjectRequest(
+        val jsonObjectRequest = @SuppressLint("SetTextI18n")
+        object : JsonObjectRequest(
             Method.GET, "https://api.modrinth.com/v2/project/${modId}", null,
             { response ->
                 val data = format.decodeFromString<ModrinthProjectModel>(response.toString())
 
-                textViewTitle.text = data.title
+                textViewTitle.text  = data.title
+                textViewAuthor.text = "By ${data.team}"
 
                 markwon.setMarkdown(textViewDescription, data.body.toString())
+
+                RithleSingleton.getInstance(requireContext()).imageLoader.get(data.icon_url, object : ImageLoader.ImageListener {
+                    override fun onResponse(response: ImageLoader.ImageContainer?, isImmediate: Boolean) {
+                        if (response != null) {
+                            imageViewIcon.setImageBitmap(response.bitmap)
+                        }
+                    }
+
+                    override fun onErrorResponse(error: VolleyError?) {
+                        Log.d("imageLoader", "wtf are you doing, you either don't have internet or the url is fucking wrong, btw the error is: ${error.toString()}")
+                    }
+                })
             },
             { error ->
                 // TODO: Handle error
