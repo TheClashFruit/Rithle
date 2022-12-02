@@ -5,6 +5,7 @@ Android app for Modrinht.
 ## Screenshots
 
 <img alt="Mods" src="https://cdn.theclashfruit.me/apps/me.theclashfruit.rithle/screenshots/mods.jpg" width="20%"/>
+<img alt="Mods" src="https://cdn.theclashfruit.me/apps/me.theclashfruit.rithle/screenshots/project_view.jpg" width="20%"/>
 
 ## Note
 
