@@ -82,10 +82,12 @@ class ModsFragment : Fragment() {
         val jsonObjectRequest = object : JsonObjectRequest(
             Method.GET, "https://api.modrinth.com/v2/search?limit=${currentIndex}&offset=${lastIndex}&index=relevance&facets=%5B%5B%22categories%3A%27forge%27%22%2C%22categories%3A%27fabric%27%22%2C%22categories%3A%27quilt%27%22%2C%22categories%3A%27liteloader%27%22%2C%22categories%3A%27modloader%27%22%2C%22categories%3A%27rift%27%22%5D%2C%5B%22project_type%3Amod%22%5D%5D", null,
             { response ->
-                currentIndex += 5
+                currentIndex  = 5
                 lastIndex    += 5
 
                 Log.d("webCall", "requestComplete")
+                Log.d("webCall", "pageIndexes cI: $currentIndex : lI: $lastIndex")
+                Log.d("webCall", "webUrl https://api.modrinth.com/v2/search?limit=${currentIndex}&offset=${lastIndex}&index=relevance&facets=%5B%5B%22categories%3A%27forge%27%22%2C%22categories%3A%27fabric%27%22%2C%22categories%3A%27quilt%27%22%2C%22categories%3A%27liteloader%27%22%2C%22categories%3A%27modloader%27%22%2C%22categories%3A%27rift%27%22%5D%2C%5B%22project_type%3Amod%22%5D%5D")
 
                 val data = format.decodeFromString<ModrinthSearchModel>(response.toString())
 
@@ -93,9 +95,11 @@ class ModsFragment : Fragment() {
                     allData.add(hit)
 
                     listAdapter!!.notifyItemInserted(currentPos)
-                    recyclerView!!.adapter       = listAdapter
+
+                    recyclerView!!.adapter = listAdapter
 
                     Log.d("webCall", "itemAdd ${hit.title}, ${hit.icon_url}")
+                    Log.d("webCall", "allData $allData")
 
                 }
             },
