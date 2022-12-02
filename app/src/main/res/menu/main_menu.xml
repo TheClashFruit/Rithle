@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/itemMods"
+        android:icon="@drawable/ic_build"
+        android:title="Mods" />
+    <item
+        android:id="@+id/itemPlugins"
+        android:icon="@drawable/ic_extension"
+        android:title="Plugins" />
+    <item
+        android:id="@+id/itemResourcePacks"
+        android:icon="@drawable/ic_texture"
+        android:title="Resource Packs" />
+    <item
+        android:icon="@drawable/ic_inventory_2"
+        android:title="Modpacks" />
+</menu>

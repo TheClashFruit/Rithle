@@ -16,7 +16,7 @@
 
         <item name="elevationOverlayEnabled">true</item>
 
-        <item name="android:statusBarColor">?attr/colorSurface</item>
+        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <item name="android:windowLightStatusBar">true</item>
     </style>
 
@@ -36,5 +36,9 @@
         <item name="android:paddingTop">0dp</item>
         <item name="android:paddingLeft">0dp</item>
         <item name="android:paddingRight">0dp</item>
+    </style>
+
+    <style name="ToolBar" parent="ThemeOverlay.MaterialComponents.Toolbar.Primary">
+        <item name="colorControlNormal">?attr/colorOnPrimary</item>
     </style>
 </resources>

@@ -16,6 +16,7 @@
 
         <item name="elevationOverlayEnabled">false</item>
 
-        <item name="android:statusBarColor">?attr/colorSurface</item>
+        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+        <item name="android:windowLightStatusBar">true</item>
     </style>
 </resources>
