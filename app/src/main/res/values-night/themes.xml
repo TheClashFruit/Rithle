@@ -9,6 +9,7 @@
         <item name="colorOnSecondary">@color/colorWhite</item>
 
         <item name="colorSurface">@color/colorSurfaceDark</item>
+        <item name="colorSurfaceVariant">@color/colorSurfaceRaisedDark</item>
         <item name="android:colorBackground">?attr/colorSurface</item>
         <item name="background">?attr/colorSurface</item>
 
@@ -18,5 +19,18 @@
 
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <item name="android:windowLightStatusBar">true</item>
+
+        <item name="android:navigationBarColor">?attr/colorSurfaceVariant</item>
+        <item name="android:windowLightNavigationBar">false</item>
+
+        <item name="bottomNavigationStyle">@style/BottomNavigationView</item>
+    </style>
+
+    <style name="BottomNavigationView" parent="Widget.MaterialComponents.BottomNavigationView">
+        <item name="materialThemeOverlay">@style/ThemeOverlay.App.BottomNavigationView</item>
+    </style>
+
+    <style name="ThemeOverlay.App.BottomNavigationView" parent="">
+        <item name="colorSurface">@color/colorSurfaceRaisedDark</item>
     </style>
 </resources>
