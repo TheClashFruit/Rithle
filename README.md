@@ -21,8 +21,10 @@
 </h2>
 
 <p>
-  <img alt="Mods" src="https://cdn.theclashfruit.me/apps/me.theclashfruit.rithle/screenshots/mods.jpg" width="20%">
-  <img alt="Mod Preview" src="https://cdn.theclashfruit.me/apps/me.theclashfruit.rithle/screenshots/project_view.jpg" width="20%">
+  <img alt="Mods" src="https://cdn.theclashfruit.me/apps/me.theclashfruit.rithle/screenshots/mods.dark.jpg#gh-dark-mode-only" width="20%">
+  <img alt="Mod Preview" src="https://cdn.theclashfruit.me/apps/me.theclashfruit.rithle/screenshots/project_view.dark.jpg#gh-dark-mode-only" width="20%">
+    <img alt="Mods" src="https://cdn.theclashfruit.me/apps/me.theclashfruit.rithle/screenshots/mods.light.jpg#gh-light-mode-only" width="20%">
+  <img alt="Mod Preview" src="https://cdn.theclashfruit.me/apps/me.theclashfruit.rithle/screenshots/project_view.light.jpg#gh-light-mode-only" width="20%">
 </p>
 
 <h2>
