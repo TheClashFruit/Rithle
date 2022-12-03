@@ -95,7 +95,7 @@ class ListFragment : Fragment() {
 
                 val data = format.decodeFromString<ModrinthSearchModel>(response.toString())
 
-                for ((currentPos, hit) in data.hits.withIndex()) {
+                for (hit in data.hits) {
                     allData.add(hit)
 
                     val oldAllData = allData
