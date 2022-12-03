@@ -16,7 +16,9 @@
   Android app for Modrinth written in Kotlin.
 </p>
 
-## Screenshots
+<h2>
+  Screenshots
+</h2>
 
 <p>
   <img alt="Mods" src="https://cdn.theclashfruit.me/apps/me.theclashfruit.rithle/screenshots/mods.jpg" width="20%">
@@ -35,15 +37,11 @@
 -->
 
 <p>
-  Building it:
-  
   <ol>
     <li>Clone the repo with <code>git clone https://github.com/TheClashFruit/Rithle.git</code></li>
     <li>Go into the folder with <code>cd Rithle</code></li>
     <li>Build Splum with <code>./gradlew build</code></li>
   </ol>
-  
-  That's it!
 </p>
 
 <h2>
@@ -51,7 +49,7 @@
 </h2>
 
 <p>
-  TBA!
+  Can be found in <a href="CONTRIBUTING.md">CONTRIBUTING.md</a>.
 </p>
 
 <h2>
