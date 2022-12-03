@@ -14,6 +14,11 @@ import com.android.volley.VolleyError
 import com.android.volley.toolbox.ImageLoader
 import com.android.volley.toolbox.JsonObjectRequest
 import io.noties.markwon.Markwon
+import io.noties.markwon.ext.strikethrough.StrikethroughPlugin
+import io.noties.markwon.ext.tables.TablePlugin
+import io.noties.markwon.html.HtmlPlugin
+import io.noties.markwon.image.ImagesPlugin
+import io.noties.markwon.linkify.LinkifyPlugin
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import me.theclashfruit.rithle.R
@@ -47,7 +52,13 @@ class ProjectViewFragment : Fragment() {
 
         val format = Json { ignoreUnknownKeys = true }
 
-        val markwon = Markwon.create(requireContext());
+        val markwon = Markwon.builder(requireContext())
+            .usePlugin(HtmlPlugin.create())
+            .usePlugin(TablePlugin.create(requireContext()))
+            .usePlugin(StrikethroughPlugin.create())
+            .usePlugin(ImagesPlugin.create())
+            .usePlugin(LinkifyPlugin.create())
+            .build();
 
         val jsonObjectRequest = @SuppressLint("SetTextI18n")
         object : JsonObjectRequest(
