@@ -5,8 +5,7 @@ import android.app.Application
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.os.Process.killProcess
-import android.os.Process.myPid
+import android.os.Process
 import android.util.Log
 import kotlin.system.exitProcess
 
@@ -36,7 +35,8 @@ class RithleApplication : Application()  {
             val am = getSystemService(Context.ALARM_SERVICE) as AlarmManager
             am[AlarmManager.ELAPSED_REALTIME_WAKEUP, 1000] = pendingIntent
 
-            killProcess(myPid())
+            Process.killProcess(Process.myPid())
+            exitProcess(1)
         }
     }
 }
