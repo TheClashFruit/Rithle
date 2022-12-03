@@ -2,18 +2,21 @@
 <menu xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <item
+        android:id="@+id/toolBarSearch"
         android:icon="@drawable/ic_search"
         android:iconTint="?attr/colorOnPrimary"
         android:iconTintMode="src_in"
         android:title="Search"
         app:showAsAction="always" />
     <item
+        android:id="@+id/toolBarAccount"
         android:icon="@drawable/ic_person"
         android:iconTint="?attr/colorOnPrimary"
         android:iconTintMode="src_in"
         android:title="Account"
         app:showAsAction="always" />
     <item
+        android:id="@+id/toolBarSettings"
         android:icon="@drawable/ic_settings"
         android:iconTint="?attr/colorOnPrimary"
         android:iconTintMode="src_in"

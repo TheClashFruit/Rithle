@@ -35,7 +35,7 @@ class ModListAdapter(private val modList: ArrayList<ModrinthSearchHitsModel>, pr
     ): StreamHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
 
-        val view: View = layoutInflater.inflate(R.layout.mod_item, parent, false)
+        val view: View = layoutInflater.inflate(R.layout.list_item, parent, false)
 
         return StreamHolder(view)
     }

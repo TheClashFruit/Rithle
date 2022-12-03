@@ -2,6 +2,7 @@ package me.theclashfruit.rithle
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import me.theclashfruit.rithle.fragments.HomeFragment
 
 class MainActivity : AppCompatActivity() {
@@ -17,5 +18,13 @@ class MainActivity : AppCompatActivity() {
             .addToBackStack("homeFragment")
             .add(R.id.parentFragmentContainer, homeFragment)
             .commit()
+
+        MaterialAlertDialogBuilder(this)
+            .setTitle("⚠ Warning!")
+            .setMessage("This is an alpha build, it is not intended for regular use, report bugs on GitHub.")
+            .setPositiveButton("Ok") { dialog, which ->
+
+            }
+            .show()
     }
 }

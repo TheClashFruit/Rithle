@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import me.theclashfruit.rithle.R
 
@@ -23,6 +24,7 @@ class HomeFragment : Fragment() {
         val rootView = inflater.inflate(R.layout.fragment_home, container, false)
 
         val bottomNav = rootView.findViewById<BottomNavigationView>(R.id.bottomNavigation)
+        val toolBar   = rootView.findViewById<MaterialToolbar>(R.id.toolbar)
 
         val fragmentTransaction = parentFragmentManager.beginTransaction()
         var listFragment = ListFragment.newInstance("%5B%5B%22categories%3A%27forge%27%22%2C%22categories%3A%27fabric%27%22%2C%22categories%3A%27quilt%27%22%2C%22categories%3A%27liteloader%27%22%2C%22categories%3A%27modloader%27%22%2C%22categories%3A%27rift%27%22%5D%2C%5B%22project_type%3Amod%22%5D%5D")
@@ -30,6 +32,29 @@ class HomeFragment : Fragment() {
         fragmentTransaction
             .replace(R.id.fragmentContainer, listFragment)
             .commit()
+
+        toolBar.setOnMenuItemClickListener { item ->
+            val toolBarFragmentTransaction = parentFragmentManager.beginTransaction()
+
+            when(item.itemId) {
+                R.id.toolBarSearch -> {
+                    return@setOnMenuItemClickListener true
+                }
+                R.id.toolBarAccount -> {
+                    return@setOnMenuItemClickListener true
+                }
+                R.id.toolBarSettings -> {
+                    val settingsFragment = SettingsFragment.newInstance()
+
+                    toolBarFragmentTransaction
+                        .addToBackStack("settingsFragment")
+                        .add(R.id.parentFragmentContainer, settingsFragment)
+
+                    return@setOnMenuItemClickListener true
+                }
+                else -> false
+            }
+        }
 
         bottomNav.setOnNavigationItemSelectedListener { item ->
             val bottomNavFragmentTransaction = parentFragmentManager.beginTransaction()
