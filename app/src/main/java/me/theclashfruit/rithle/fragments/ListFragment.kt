@@ -24,7 +24,7 @@ class ListFragment : Fragment() {
     private var currentIndex = 10
     private var lastIndex    = 0
 
-    private var allData: ArrayList<ModrinthSearchHitsModel> = arrayListOf();
+    private var allData: ArrayList<ModrinthSearchHitsModel> = arrayListOf()
 
     private var listAdapter: ModListAdapter?        = null
     private var layoutManager: LinearLayoutManager? = null

@@ -4,15 +4,16 @@ import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.fragment.app.Fragment
 import com.android.volley.VolleyError
 import com.android.volley.toolbox.ImageLoader
 import com.android.volley.toolbox.JsonObjectRequest
+import com.google.android.material.appbar.MaterialToolbar
 import io.noties.markwon.Markwon
 import io.noties.markwon.ext.strikethrough.StrikethroughPlugin
 import io.noties.markwon.ext.tables.TablePlugin
@@ -24,8 +25,6 @@ import kotlinx.serialization.json.Json
 import me.theclashfruit.rithle.R
 import me.theclashfruit.rithle.classes.RithleSingleton
 import me.theclashfruit.rithle.models.ModrinthProjectModel
-import me.theclashfruit.rithle.models.ModrinthSearchHitsModel
-import me.theclashfruit.rithle.models.ModrinthSearchModel
 
 class ProjectViewFragment : Fragment() {
     private var modId: String? = null
@@ -50,6 +49,12 @@ class ProjectViewFragment : Fragment() {
 
         val imageViewIcon: ImageView      = rootView.findViewById(R.id.projectIcon)
 
+        val toolBar: MaterialToolbar = rootView.findViewById(R.id.toolbar)
+
+        toolBar.setNavigationOnClickListener {
+            parentFragmentManager.popBackStack()
+        }
+
         val format = Json { ignoreUnknownKeys = true }
 
         val markwon = Markwon.builder(requireContext())
@@ -58,7 +63,7 @@ class ProjectViewFragment : Fragment() {
             .usePlugin(StrikethroughPlugin.create())
             .usePlugin(ImagesPlugin.create())
             .usePlugin(LinkifyPlugin.create())
-            .build();
+            .build()
 
         val jsonObjectRequest = @SuppressLint("SetTextI18n")
         object : JsonObjectRequest(
@@ -83,7 +88,7 @@ class ProjectViewFragment : Fragment() {
                     }
                 })
             },
-            { error ->
+            {
                 // TODO: Handle error
             }
         ) {
