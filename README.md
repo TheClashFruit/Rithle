@@ -3,7 +3,7 @@
 </h1>
 
 <p align="center">
-  <!--<img alt="GitHub Workflow Status" src="https://github.com/TheClashFruit/Rithle/actions/workflows/android.yml/badge.svg">-->
+  <img alt="GitHub Workflow Status" src="https://github.com/TheClashFruit/Rithle/actions/workflows/android.yml/badge.svg">
   <img alt="GitHub issues" src="https://img.shields.io/github/issues-raw/TheClashFruit/Rithle?label=issues">
   <img alt="GitHub pull requests" src="https://img.shields.io/github/issues-pr-raw/TheClashFruit/Rithle?label=pull+requests">
   <img alt="GitHub all releases" src="https://img.shields.io/github/downloads/TheClashFruit/Rithle/total">
