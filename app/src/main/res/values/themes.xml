@@ -24,6 +24,7 @@
         <item name="android:windowLightNavigationBar">true</item>
 
         <item name="bottomNavigationStyle">@style/BottomNavigationView</item>
+        <item name="tabStyle">@style/TabLayout</item>
     </style>
 
     <style name="IconOnlyButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
@@ -44,12 +45,22 @@
         <item name="android:paddingRight">0dp</item>
     </style>
 
+    <style name="TabLayout" parent="Widget.MaterialComponents.TabLayout">
+        <item name="colorControlNormal">?attr/colorOnPrimary</item>
+    </style>
+
     <style name="ToolBar" parent="ThemeOverlay.MaterialComponents.Toolbar.Primary">
         <item name="colorControlNormal">?attr/colorOnPrimary</item>
     </style>
 
     <style name="BottomNavigationView" parent="Widget.MaterialComponents.BottomNavigationView">
         <item name="materialThemeOverlay">@style/ThemeOverlay.App.BottomNavigationView</item>
+    </style>
+
+    <style name="ThemeOverlay.App.TabLayout" parent="">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorSurface">@color/colorPrimary</item>
+        <item name="colorOnSurface">@color/colorBlack</item>
     </style>
 
     <style name="ThemeOverlay.App.BottomNavigationView" parent="">
