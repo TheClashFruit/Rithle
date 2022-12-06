@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
@@ -43,13 +44,7 @@ class ProjectViewFragment : Fragment() {
     ): View? {
         val rootView = inflater.inflate(R.layout.fragment_project_view, container, false)
 
-        val textViewTitle: TextView       = rootView.findViewById(R.id.textViewTitle)
-        val textViewAuthor: TextView      = rootView.findViewById(R.id.textViewBy)
-        val textViewDescription: TextView = rootView.findViewById(R.id.textViewDescription)
-
-        val imageViewIcon: ImageView      = rootView.findViewById(R.id.projectIcon)
-
-        val toolBar: MaterialToolbar = rootView.findViewById(R.id.toolbar)
+        val toolBar: MaterialToolbar              = rootView.findViewById(R.id.toolbar)
 
         toolBar.setNavigationOnClickListener {
             parentFragmentManager.popBackStack()
@@ -69,24 +64,16 @@ class ProjectViewFragment : Fragment() {
         object : JsonObjectRequest(
             Method.GET, "https://api.modrinth.com/v2/project/${modId}", null,
             { response ->
-                val data = format.decodeFromString<ModrinthProjectModel>(response.toString())
+                val dataRaw  = response.toString()
+                val dataJson = format.decodeFromString<ModrinthProjectModel>(response.toString())
 
-                textViewTitle.text  = data.title
-                textViewAuthor.text = "By ${data.team}"
+                toolBar.subtitle = dataJson.title
 
-                markwon.setMarkdown(textViewDescription, data.body.toString())
+                val infoFragment = ProjectInfoFragment.newInstance(dataRaw)
 
-                RithleSingleton.getInstance(requireContext()).imageLoader.get(data.icon_url, object : ImageLoader.ImageListener {
-                    override fun onResponse(response: ImageLoader.ImageContainer?, isImmediate: Boolean) {
-                        if (response != null) {
-                            imageViewIcon.setImageBitmap(response.bitmap)
-                        }
-                    }
-
-                    override fun onErrorResponse(error: VolleyError?) {
-                        Log.d("imageLoader", "wtf are you doing, you either don't have internet or the url is fucking wrong, btw the error is: ${error.toString()}")
-                    }
-                })
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.projectFragmentContainer, infoFragment)
+                    .commit()
             },
             {
                 // TODO: Handle error
