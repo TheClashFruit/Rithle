@@ -15,12 +15,11 @@ class MainActivity : AppCompatActivity() {
         val homeFragment            = HomeFragment.newInstance()
 
         mainFragmentTransaction
-            .addToBackStack("homeFragment")
-            .add(R.id.parentFragmentContainer, homeFragment)
+            .replace(R.id.parentFragmentContainer, homeFragment)
             .commit()
 
         MaterialAlertDialogBuilder(this)
-            .setTitle("⚠ Warning!")
+            .setTitle("⚠️ Warning!")
             .setMessage("This is an alpha build, it is not intended for regular use, report bugs on GitHub.")
             .setPositiveButton("Ok") { dialog, which ->
 

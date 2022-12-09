@@ -3,7 +3,7 @@
 </h1>
 
 <p align="center">
-  <!--<img alt="GitHub Workflow Status" src="https://github.com/TheClashFruit/Rithle/actions/workflows/android.yml/badge.svg">-->
+  <img alt="GitHub Workflow Status" src="https://github.com/TheClashFruit/Rithle/actions/workflows/android.yml/badge.svg">
   <img alt="GitHub issues" src="https://img.shields.io/github/issues-raw/TheClashFruit/Rithle?label=issues">
   <img alt="GitHub pull requests" src="https://img.shields.io/github/issues-pr-raw/TheClashFruit/Rithle?label=pull+requests">
   <img alt="GitHub all releases" src="https://img.shields.io/github/downloads/TheClashFruit/Rithle/total">
@@ -16,11 +16,15 @@
   Android app for Modrinth written in Kotlin.
 </p>
 
-## Screenshots
+<h2>
+  Screenshots
+</h2>
 
 <p>
-  <img alt="Mods" src="https://cdn.theclashfruit.me/apps/me.theclashfruit.rithle/screenshots/mods.jpg" width="20%">
-  <img alt="Mod Preview" src="https://cdn.theclashfruit.me/apps/me.theclashfruit.rithle/screenshots/project_view.jpg" width="20%">
+  <img alt="Mods" src="https://cdn.theclashfruit.me/apps/me.theclashfruit.rithle/screenshots/mods.dark.jpg#gh-dark-mode-only" width="20%">
+  <img alt="Mod Preview" src="https://cdn.theclashfruit.me/apps/me.theclashfruit.rithle/screenshots/project_view.dark.jpg#gh-dark-mode-only" width="20%">
+  <img alt="Mods" src="https://cdn.theclashfruit.me/apps/me.theclashfruit.rithle/screenshots/mods.light.jpg#gh-light-mode-only" width="20%">
+  <img alt="Mod Preview" src="https://cdn.theclashfruit.me/apps/me.theclashfruit.rithle/screenshots/project_view.light.jpg#gh-light-mode-only" width="20%">
 </p>
 
 <h2>
@@ -35,15 +39,11 @@
 -->
 
 <p>
-  Building it:
-  
   <ol>
     <li>Clone the repo with <code>git clone https://github.com/TheClashFruit/Rithle.git</code></li>
     <li>Go into the folder with <code>cd Rithle</code></li>
     <li>Build Splum with <code>./gradlew build</code></li>
   </ol>
-  
-  That's it!
 </p>
 
 <h2>
@@ -51,7 +51,7 @@
 </h2>
 
 <p>
-  TBA!
+  Can be found in <a href="CONTRIBUTING.md">CONTRIBUTING.md</a>.
 </p>
 
 <h2>

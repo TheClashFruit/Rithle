@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.android.volley.toolbox.JsonObjectRequest
@@ -16,6 +17,7 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import me.theclashfruit.rithle.R
 import me.theclashfruit.rithle.adapters.ModListAdapter
+import me.theclashfruit.rithle.classes.ListDiffCallback
 import me.theclashfruit.rithle.classes.RithleSingleton
 import me.theclashfruit.rithle.models.ModrinthSearchHitsModel
 import me.theclashfruit.rithle.models.ModrinthSearchModel
@@ -93,10 +95,13 @@ class ListFragment : Fragment() {
 
                 val data = format.decodeFromString<ModrinthSearchModel>(response.toString())
 
-                for ((currentPos, hit) in data.hits.withIndex()) {
+                for (hit in data.hits) {
                     allData.add(hit)
 
-                    listAdapter!!.notifyItemInserted(currentPos)
+                    val oldAllData = allData
+
+                    DiffUtil.calculateDiff(ListDiffCallback(oldAllData, allData))
+                        .dispatchUpdatesTo(listAdapter!!)
 
                     recyclerView!!.adapter = listAdapter
 

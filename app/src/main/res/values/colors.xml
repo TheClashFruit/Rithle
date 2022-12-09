@@ -3,11 +3,17 @@
     <color name="colorPrimary">#1bd96a</color>
     <color name="colorPrimaryVariant">#1bd96a</color>
 
+    <color name="colorPrimaryLight">#00af5c</color>
+    <color name="colorPrimaryVariantLight">#00af5c</color>
+
     <color name="colorSecondary">#4f9cff</color>
     <color name="colorSecondaryVariant">#4f9cff</color>
 
-    <color name="colorSurfaceLight">#FFFFFF</color>
+    <color name="colorSurfaceLight">#e5e7eb</color>
     <color name="colorSurfaceDark">#16181C</color>
+
+    <color name="colorSurfaceRaisedLight">#ffffff</color>
+    <color name="colorSurfaceRaisedDark">#26292f</color>
 
     <color name="colorBlack">#FF000000</color>
     <color name="colorWhite">#FFFFFFFF</color>

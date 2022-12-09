@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId "me.theclashfruit.rithle"
-        minSdk 26
+        minSdk 27
         targetSdk 33
         versionCode 1
         versionName "0.1.0-alpha"
