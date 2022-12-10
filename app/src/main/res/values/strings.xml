@@ -1,5 +1,27 @@
 <resources>
     <string name="app_name">Rithle</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="login">Login</string>
+    <string name="logout">Logout</string>
+    <string name="profile">Profile</string>
+    <string name="search">Search</string>
+    <string name="mods">Mods</string>
+    <string name="plugins">Plugins</string>
+    <string name="resource_packs">Resource Packs</string>
+    <string name="modpacks">Modpacks</string>
+    <string name="shaders">Shaders</string> <!-- unused as of now, added for a future update -->
+    <string name="info">Info</string>
+    <string name="description">Description</string>
+    <string name="downloads">Downloads</string>
+    <string name="settings">Settings</string>
+    <string name="report">Report</string>
+
+    <plurals name="project_downloads">
+        <item quantity="one">%d Download</item>
+        <item quantity="other">%d Downloads</item>
+    </plurals>
+    <plurals name="project_followers">
+        <item quantity="one">%d Follower</item>
+        <item quantity="other">%d Followers</item>
+    </plurals>
 </resources>
