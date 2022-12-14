@@ -46,8 +46,6 @@ class ModListAdapter(private val modList: ArrayList<ModrinthSearchHitsModel>, pr
         holder.itemView.findViewById<TextView>(R.id.textView2).text = "by ${modList[position].author}"
         holder.itemView.findViewById<TextView>(R.id.textView3).text = modList[position].description
 
-        Log.d("iconUrl", modList[position].icon_url.toString())
-
         RithleSingleton.getInstance(appContext).imageLoader.get(modList[position].icon_url.toString(), object : ImageLoader.ImageListener {
             override fun onResponse(response: ImageLoader.ImageContainer?, isImmediate: Boolean) {
                 if (response != null) {
@@ -56,7 +54,7 @@ class ModListAdapter(private val modList: ArrayList<ModrinthSearchHitsModel>, pr
             }
 
             override fun onErrorResponse(error: VolleyError?) {
-                Log.d("imageLoader", "wtf are you doing, you either don't have internet or the url is fucking wrong, btw the error is: ${error.toString()}")
+                Log.e("imageLoader", error!!.stackTraceToString())
             }
         })
 

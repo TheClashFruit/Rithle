@@ -1,21 +1,28 @@
 package me.theclashfruit.rithle.fragments
 
-import android.media.Image
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.fragment.app.Fragment
 import com.android.volley.VolleyError
 import com.android.volley.toolbox.ImageLoader
+import io.noties.markwon.Markwon
+import io.noties.markwon.ext.strikethrough.StrikethroughPlugin
+import io.noties.markwon.ext.tables.TablePlugin
+import io.noties.markwon.html.HtmlPlugin
+import io.noties.markwon.image.ImagesPlugin
+import io.noties.markwon.linkify.LinkifyPlugin
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import me.theclashfruit.rithle.R
 import me.theclashfruit.rithle.classes.RithleSingleton
 import me.theclashfruit.rithle.models.ModrinthProjectModel
+import java.text.NumberFormat
+import java.util.*
 
 class ProjectInfoFragment : Fragment() {
     private var projectData: ModrinthProjectModel? = null
@@ -38,13 +45,25 @@ class ProjectInfoFragment : Fragment() {
 
         val projectIcon = rootView.findViewById<ImageView>(R.id.imageView)
 
+        val nf = NumberFormat.getInstance(Locale.UK)
+
         val textViewTitle     = rootView.findViewById<TextView>(R.id.textViewTitle)
         val textViewDownloads = rootView.findViewById<TextView>(R.id.textViewDownloads)
         val textViewFollowers = rootView.findViewById<TextView>(R.id.textViewFollowers)
 
         textViewTitle.text     = projectData!!.title
-        textViewDownloads.text = "${projectData!!.downloads} Downloads"
-        textViewFollowers.text = "${projectData!!.followers} Followers"
+        textViewDownloads.text = resources.getQuantityString(R.plurals.project_downloads, projectData!!.downloads!!.toInt(), nf.format(projectData!!.downloads!!.toLong()).toString())
+        textViewFollowers.text = resources.getQuantityString(R.plurals.project_followers, projectData!!.followers!!.toInt(), nf.format(projectData!!.followers!!.toLong()).toString())
+
+        val markwon = Markwon.builder(requireContext())
+            .usePlugin(HtmlPlugin.create())
+            .usePlugin(TablePlugin.create(requireContext()))
+            .usePlugin(StrikethroughPlugin.create())
+            .usePlugin(ImagesPlugin.create())
+            .usePlugin(LinkifyPlugin.create())
+            .build()
+
+        markwon.setParsedMarkdown(rootView.findViewById(R.id.textViewDescription), markwon.render(markwon.parse(projectData!!.body!!)))
 
         RithleSingleton.getInstance(requireContext()).imageLoader.get(projectData!!.icon_url.toString(), object : ImageLoader.ImageListener {
             override fun onResponse(response: ImageLoader.ImageContainer?, isImmediate: Boolean) {

@@ -4,17 +4,17 @@
     <item
         android:id="@+id/itemMods"
         android:icon="@drawable/ic_build"
-        android:title="Mods" />
+        android:title="@string/mods" />
     <item
         android:id="@+id/itemPlugins"
         android:icon="@drawable/ic_extension"
-        android:title="Plugins" />
+        android:title="@string/plugins" />
     <item
         android:id="@+id/itemResourcePacks"
         android:icon="@drawable/ic_texture"
-        android:title="Resource Packs" />
+        android:title="@string/resource_packs" />
     <item
         android:id="@+id/itemModpacks"
         android:icon="@drawable/ic_inventory_2"
-        android:title="Modpacks" />
+        android:title="@string/modpacks" />
 </menu>

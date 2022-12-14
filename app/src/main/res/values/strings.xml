@@ -17,11 +17,11 @@
     <string name="report">Report</string>
 
     <plurals name="project_downloads">
-        <item quantity="one">%d Download</item>
-        <item quantity="other">%d Downloads</item>
+        <item quantity="one">%s Download</item>
+        <item quantity="other">%s Downloads</item>
     </plurals>
     <plurals name="project_followers">
-        <item quantity="one">%d Follower</item>
-        <item quantity="other">%d Followers</item>
+        <item quantity="one">%s Follower</item>
+        <item quantity="other">%s Followers</item>
     </plurals>
 </resources>

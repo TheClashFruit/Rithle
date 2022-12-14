@@ -15,6 +15,7 @@ import com.android.volley.VolleyError
 import com.android.volley.toolbox.ImageLoader
 import com.android.volley.toolbox.JsonObjectRequest
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import io.noties.markwon.Markwon
 import io.noties.markwon.ext.strikethrough.StrikethroughPlugin
 import io.noties.markwon.ext.tables.TablePlugin
@@ -44,21 +45,27 @@ class ProjectViewFragment : Fragment() {
     ): View? {
         val rootView = inflater.inflate(R.layout.fragment_project_view, container, false)
 
-        val toolBar: MaterialToolbar              = rootView.findViewById(R.id.toolbar)
+        val toolBar: MaterialToolbar           = rootView.findViewById(R.id.toolbar)
+        val bottomNavBar: BottomNavigationView = rootView.findViewById(R.id.bottomNavigation)
 
         toolBar.setNavigationOnClickListener {
             parentFragmentManager.popBackStack()
         }
 
-        val format = Json { ignoreUnknownKeys = true }
+        bottomNavBar.setOnNavigationItemSelectedListener { item ->
+            val bottomNavFragmentTransaction = parentFragmentManager.beginTransaction()
 
-        val markwon = Markwon.builder(requireContext())
-            .usePlugin(HtmlPlugin.create())
-            .usePlugin(TablePlugin.create(requireContext()))
-            .usePlugin(StrikethroughPlugin.create())
-            .usePlugin(ImagesPlugin.create())
-            .usePlugin(LinkifyPlugin.create())
-            .build()
+            when(item.itemId) {
+                R.id.itemInfo -> {
+
+
+                    return@setOnNavigationItemSelectedListener true
+                }
+                else -> false
+            }
+        }
+
+        val format = Json { ignoreUnknownKeys = true }
 
         val jsonObjectRequest = @SuppressLint("SetTextI18n")
         object : JsonObjectRequest(
@@ -75,8 +82,8 @@ class ProjectViewFragment : Fragment() {
                     .replace(R.id.projectFragmentContainer, infoFragment)
                     .commit()
             },
-            {
-                // TODO: Handle error
+            { error ->
+                Log.e("webCall", error.toString())
             }
         ) {
             override fun getHeaders(): MutableMap<String, String> {
