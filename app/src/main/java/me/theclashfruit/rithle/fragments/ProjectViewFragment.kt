@@ -30,6 +30,7 @@ import me.theclashfruit.rithle.models.ModrinthProjectModel
 
 class ProjectViewFragment : Fragment() {
     private var modId: String? = null
+    private var dataRaw: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,7 +58,33 @@ class ProjectViewFragment : Fragment() {
 
             when(item.itemId) {
                 R.id.itemInfo -> {
+                    val infoFragment = ProjectInfoFragment.newInstance(dataRaw!!)
 
+                    bottomNavFragmentTransaction
+                        .replace(R.id.projectFragmentContainer, infoFragment)
+                        .commit()
+
+                    return@setOnNavigationItemSelectedListener true
+                }
+                R.id.itemDescription -> {
+                    val descriptionFragment = ProjectDescriptionFragment.newInstance(dataRaw!!)
+
+                    bottomNavFragmentTransaction
+                        .replace(R.id.projectFragmentContainer, descriptionFragment)
+                        .commit()
+
+                    return@setOnNavigationItemSelectedListener true
+                }
+                R.id.itemDownloads -> {
+                    val downloadsFragment = ProjectDownloadsFragment.newInstance()
+
+                    bottomNavFragmentTransaction
+                        .replace(R.id.projectFragmentContainer, downloadsFragment)
+                        .commit()
+
+                    return@setOnNavigationItemSelectedListener true
+                }
+                R.id.itemSettings -> {
 
                     return@setOnNavigationItemSelectedListener true
                 }
@@ -71,12 +98,12 @@ class ProjectViewFragment : Fragment() {
         object : JsonObjectRequest(
             Method.GET, "https://api.modrinth.com/v2/project/${modId}", null,
             { response ->
-                val dataRaw  = response.toString()
+                    dataRaw  = response.toString()
                 val dataJson = format.decodeFromString<ModrinthProjectModel>(response.toString())
 
                 toolBar.subtitle = dataJson.title
 
-                val infoFragment = ProjectInfoFragment.newInstance(dataRaw)
+                val infoFragment = ProjectInfoFragment.newInstance(dataRaw!!)
 
                 parentFragmentManager.beginTransaction()
                     .replace(R.id.projectFragmentContainer, infoFragment)
