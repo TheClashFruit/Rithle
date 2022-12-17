@@ -30,17 +30,17 @@ class FilterBuilder {
         filterData.forEach {
             fLick.add(
                 it.joinToString(
-                    separator = "\",\"",
-                    prefix = "[\"",
-                    postfix = "\"]"
+                    separator = "%22%2C%22",
+                    prefix = "%5B%22",
+                    postfix = "%22%5D"
                 )
             )
         }
 
         return fLick.joinToString(
-            separator = ",",
-            prefix = "[",
-            postfix = "]"
+            separator = "%2C",
+            prefix = "%5B",
+            postfix = "%5D"
         )
     }
 }
