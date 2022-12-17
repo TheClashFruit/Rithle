@@ -1,10 +1,14 @@
 package me.theclashfruit.mrapi
 
 class FilterBuilder {
-    private val filterData: ArrayList<ArrayList<String>> = arrayListOf()
+    private val filterData: ArrayList<ArrayList<String>> = arrayListOf(arrayListOf())
 
     fun addFilterItem(filter: String): FilterBuilder {
-        filterData.add(arrayListOf(filter))
+        filterData[0].add(
+            filter
+                .replace("'", "%27")
+                .replace(":", "%3A")
+        )
 
         return this
     }
@@ -20,7 +24,23 @@ class FilterBuilder {
         return this
     }
 
-    fun build(): ArrayList<ArrayList<String>> {
-        return filterData
+    fun build(): String {
+        val fLick: ArrayList<String> = arrayListOf()
+
+        filterData.forEach {
+            fLick.add(
+                it.joinToString(
+                    separator = "\",\"",
+                    prefix = "[\"",
+                    postfix = "\"]"
+                )
+            )
+        }
+
+        return fLick.joinToString(
+            separator = ",",
+            prefix = "[",
+            postfix = "]"
+        )
     }
 }

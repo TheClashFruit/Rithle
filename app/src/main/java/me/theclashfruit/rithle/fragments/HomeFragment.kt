@@ -1,12 +1,17 @@
 package me.theclashfruit.rithle.fragments
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.Json.Default.decodeFromJsonElement
+import kotlinx.serialization.json.decodeFromJsonElement
+import me.theclashfruit.mrapi.FilterBuilder
 import me.theclashfruit.rithle.R
 
 class HomeFragment : Fragment() {
@@ -26,12 +31,24 @@ class HomeFragment : Fragment() {
         val bottomNav = rootView.findViewById<BottomNavigationView>(R.id.bottomNavigation)
         val toolBar   = rootView.findViewById<MaterialToolbar>(R.id.toolbar)
 
+        val filter = FilterBuilder()
+            .setProjectType("mod")
+            .addFilterItem("categories:'forge'")
+            .addFilterItem("categories:'fabric'")
+            .addFilterItem("categories:'quilt'")
+            .addFilterItem("categories:'liteloader'")
+            .addFilterItem("categories:'modloader'")
+            .addFilterItem("categories:'rift'")
+            .build()
+
         val fragmentTransaction = parentFragmentManager.beginTransaction()
-        var listFragment = ListFragment.newInstance("%5B%5B%22categories%3A%27forge%27%22%2C%22categories%3A%27fabric%27%22%2C%22categories%3A%27quilt%27%22%2C%22categories%3A%27liteloader%27%22%2C%22categories%3A%27modloader%27%22%2C%22categories%3A%27rift%27%22%5D%2C%5B%22project_type%3Amod%22%5D%5D")
+        var listFragment = ListFragment.newInstance(filter)
 
         fragmentTransaction
             .replace(R.id.fragmentContainer, listFragment)
             .commit()
+
+        Log.w("YesFilter", filter)
 
         toolBar.setOnMenuItemClickListener { item ->
             val toolBarFragmentTransaction = parentFragmentManager.beginTransaction()

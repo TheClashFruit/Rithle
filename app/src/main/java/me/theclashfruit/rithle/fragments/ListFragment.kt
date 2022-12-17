@@ -81,6 +81,8 @@ class ListFragment : Fragment() {
     private fun getItems(context: Context) {
         val format = Json { ignoreUnknownKeys = true }
 
+        Log.d("YesFilter", "https://api.modrinth.com/v2/search?limit=${currentIndex}&offset=${lastIndex}&index=relevance&facets=${filter}")
+
         val jsonObjectRequest = object : JsonObjectRequest(
             Method.GET, "https://api.modrinth.com/v2/search?limit=${currentIndex}&offset=${lastIndex}&index=relevance&facets=${filter}", null,
             { response ->
