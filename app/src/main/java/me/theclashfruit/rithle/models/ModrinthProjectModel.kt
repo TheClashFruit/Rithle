@@ -16,7 +16,7 @@ data class ModrinthProjectModel (
   var updated               : String?                              = null,
   var approved              : String?                              = null,
   var status                : String?                              = null,
-  var moderator_message     : String?                              = null,
+  var moderator_message     : ModrinthModMessageModel?             = ModrinthModMessageModel(),
   var license               : ModrinthLicenseModel?                = ModrinthLicenseModel(),
   var client_side           : String?                              = null,
   var server_side           : String?                              = null,
