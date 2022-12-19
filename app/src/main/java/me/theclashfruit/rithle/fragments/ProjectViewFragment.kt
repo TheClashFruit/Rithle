@@ -24,7 +24,6 @@ import io.noties.markwon.image.ImagesPlugin
 import io.noties.markwon.linkify.LinkifyPlugin
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
-import me.theclashfruit.mrapi.ApiWrapper
 import me.theclashfruit.rithle.R
 import me.theclashfruit.rithle.classes.RithleSingleton
 import me.theclashfruit.rithle.models.ModrinthProjectModel
@@ -93,16 +92,35 @@ class ProjectViewFragment : Fragment() {
             }
         }
 
-        val projectData    = ApiWrapper.getInstance(requireContext()).getProject(modId.toString(), requireContext())
-        val projectDataRaw = ApiWrapper.getInstance(requireContext()).getProjectRaw(modId.toString(), requireContext())
+        val format = Json { ignoreUnknownKeys = true }
 
-        toolBar.subtitle = projectData.title
+        val jsonObjectRequest = @SuppressLint("SetTextI18n")
+        object : JsonObjectRequest(
+            Method.GET, "https://api.modrinth.com/v2/project/${modId}", null,
+            { response ->
+                    dataRaw  = response.toString()
+                val dataJson = format.decodeFromString<ModrinthProjectModel>(response.toString())
 
-        val infoFragment = ProjectInfoFragment.newInstance(projectDataRaw)
+                toolBar.subtitle = dataJson.title
 
-        parentFragmentManager.beginTransaction()
-            .replace(R.id.projectFragmentContainer, infoFragment)
-            .commit()
+                val infoFragment = ProjectInfoFragment.newInstance(dataRaw!!)
+
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.projectFragmentContainer, infoFragment)
+                    .commit()
+            },
+            { error ->
+                Log.e("webCall", error.toString())
+            }
+        ) {
+            override fun getHeaders(): MutableMap<String, String> {
+                val headers = HashMap<String, String>()
+                headers["User-Agent"] = "Mozilla/5.0 (Linux; Android ${Build.VERSION.RELEASE}) Rithle/0.0.1 (github.com/TheClashFruit/Rithle; admin@theclashfruit.me) Fuel/2.3.1"
+                return headers
+            }
+        }
+
+        RithleSingleton.getInstance(requireContext()).addToRequestQueue(jsonObjectRequest)
 
         return rootView
     }
