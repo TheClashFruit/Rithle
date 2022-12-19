@@ -63,6 +63,7 @@ class HomeFragment : Fragment() {
                     toolBarFragmentTransaction
                         .addToBackStack("settingsFragment")
                         .add(R.id.parentFragmentContainer, settingsFragment)
+                        .commit()
 
                     return@setOnMenuItemClickListener true
                 }
