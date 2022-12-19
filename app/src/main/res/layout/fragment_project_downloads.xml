@@ -5,10 +5,11 @@
     android:layout_height="match_parent"
     tools:context=".fragments.ProjectDownloadsFragment">
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="amoguzi" />
+        android:gravity="center_horizontal|center_vertical"
+        android:text="tba"
+        android:textAlignment="gravity" />
 
 </FrameLayout>
