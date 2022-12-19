@@ -58,7 +58,7 @@ class HomeFragment : Fragment() {
                     return@setOnMenuItemClickListener true
                 }
                 R.id.toolBarSettings -> {
-                    val settingsFragment = SettingsFragment.newInstance()
+                    val settingsFragment = SettingsContainerFragment.newInstance()
 
                     toolBarFragmentTransaction
                         .addToBackStack("settingsFragment")
