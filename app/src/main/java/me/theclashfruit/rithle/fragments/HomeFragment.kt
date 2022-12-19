@@ -8,10 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.Json.Default.decodeFromJsonElement
-import kotlinx.serialization.json.decodeFromJsonElement
-import me.theclashfruit.mrapi.FilterBuilder
+import me.theclashfruit.rithle.classes.FilterBuilder
 import me.theclashfruit.rithle.R
 
 class HomeFragment : Fragment() {

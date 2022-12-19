@@ -1,4 +1,4 @@
-package me.theclashfruit.mrapi
+package me.theclashfruit.rithle.classes
 
 class FilterBuilder {
     private val filterData: ArrayList<ArrayList<String>> = arrayListOf(arrayListOf())

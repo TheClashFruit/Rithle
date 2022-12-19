@@ -14,4 +14,3 @@ dependencyResolutionManagement {
 }
 rootProject.name = "Rithle"
 include ':app'
-include ':ModrinthApiWrapper'
