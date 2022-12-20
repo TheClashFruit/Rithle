@@ -2,28 +2,28 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <PreferenceCategory android:title="@string/settings_theme">
         <Preference
-            android:key="check_box_preference_1"
             android:title="@string/thm_colors" />
         <CheckBoxPreference
             android:defaultValue="false"
-            android:key="check_box_preference_1"
+            android:key="darkMode"
             android:title="@string/dark_mode" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/settings_advanced">
 
         <CheckBoxPreference
             android:defaultValue="false"
-            android:key="check_box_preference_1"
+            android:key="debugMode"
             android:title="@string/debug_mode"
             app:summary="@string/debug_mode_summary" />
         <CheckBoxPreference
             android:defaultValue="false"
-            android:key="check_box_preference_1"
+            android:key="imageProxy"
             android:title="@string/proxy_images"
             app:summary="@string/proxy_images_summary" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/settings_about">
         <Preference
+            android:key="licensesItem"
             android:title="@string/licenses" />
         <Preference
             android:title="@string/copyright"
