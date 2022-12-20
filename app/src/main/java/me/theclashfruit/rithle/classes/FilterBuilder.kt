@@ -27,6 +27,9 @@ class FilterBuilder {
     fun build(): String {
         val fLick: ArrayList<String> = arrayListOf()
 
+        if(filterData[0].isEmpty())
+            filterData.removeAt(0)
+
         filterData.forEach {
             fLick.add(
                 it.joinToString(

@@ -25,5 +25,7 @@ class MainActivity : AppCompatActivity() {
 
             }
             .show()
+
+        // https://github.com/login/oauth/authorize?client_id=2f7fbf1e6e196b0d2069
     }
 }
