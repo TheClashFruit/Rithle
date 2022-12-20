@@ -23,5 +23,5 @@
     <string name="debug_mode_summary">Adds additional info to the logs.</string>
     <string name="debug_mode">Debug Mode</string>
     <string name="dark_mode">Dark Mode</string>
-    <string name="thm_colors">Theme Colours</string>
+    <string name="material_you">Material You</string>
 </resources>

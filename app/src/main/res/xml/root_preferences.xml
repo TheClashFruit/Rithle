@@ -1,8 +1,11 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <PreferenceCategory android:title="@string/settings_theme">
-        <Preference
-            android:title="@string/thm_colors" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="materialYouMode"
+            android:title="@string/material_you"
+            android:summary="TBA - Will be implemented after the M3 redesign." />
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="darkMode"
@@ -14,12 +17,12 @@
             android:defaultValue="false"
             android:key="debugMode"
             android:title="@string/debug_mode"
-            app:summary="@string/debug_mode_summary" />
+            android:summary="@string/debug_mode_summary" />
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="imageProxy"
             android:title="@string/proxy_images"
-            app:summary="@string/proxy_images_summary" />
+            android:summary="@string/proxy_images_summary" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/settings_about">
         <Preference
