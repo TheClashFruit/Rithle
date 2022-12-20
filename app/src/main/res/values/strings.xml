@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Rithle</string>
+    <string name="app_name" translatable="false">Rithle</string>
 
     <string name="login">Login</string>
     <string name="logout">Logout</string>
@@ -19,7 +19,7 @@
     <string name="settings_advanced">Advanced &amp; Experimental Features</string>
     <string name="settings_about">About</string>
 
-    <string name="thm_colors">Theme Color</string>
+    <string name="thm_colors">Theme Colors</string>
     <string name="dark_mode">Dark Mode</string>
     <string name="debug_mode">Debug Mode</string>
     <string name="debug_mode_summary">Adds additional info to the logs.</string>
