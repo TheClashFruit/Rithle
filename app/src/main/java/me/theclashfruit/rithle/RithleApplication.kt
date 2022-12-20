@@ -33,30 +33,12 @@ class RithleApplication : Application()  {
         Thread.setDefaultUncaughtExceptionHandler { _, ex ->
             Log.e("RithleApplication", ex.stackTraceToString())
 
-            Runtime.getRuntime().exec(arrayOf("logcat", "-f", applicationContext.dataDir.toString() + "/files/latest.log", "*:V"))
+            val newLogFile = File(applicationContext.dataDir.toString() + "/files/latest.log")
+
+            newLogFile.writeText("------ BEGINNING OF CRASH\n" + ex.stackTraceToString() + "\n------------------")
 
             Process.killProcess(Process.myPid())
             exitProcess(1)
-        }
-    }
-
-    private fun appendLog(text: String?) {
-        val logFile = File(applicationContext.dataDir.toString() + "/files/latest.log")
-        if (!logFile.exists()) {
-            try {
-                logFile.createNewFile()
-            } catch (e: IOException) {
-                e.printStackTrace()
-            }
-        }
-        try {
-            //BufferedWriter for performance, true to set append to file flag
-            val buf = BufferedWriter(FileWriter(logFile, true))
-            buf.append(text)
-            buf.newLine()
-            buf.close()
-        } catch (e: IOException) {
-            e.printStackTrace()
         }
     }
 }
