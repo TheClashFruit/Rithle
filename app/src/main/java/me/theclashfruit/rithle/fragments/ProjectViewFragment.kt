@@ -115,7 +115,7 @@ class ProjectViewFragment : Fragment() {
         ) {
             override fun getHeaders(): MutableMap<String, String> {
                 val headers = HashMap<String, String>()
-                headers["User-Agent"] = "Mozilla/5.0 (Linux; Android ${Build.VERSION.RELEASE}) Rithle/0.0.1 (github.com/TheClashFruit/Rithle; admin@theclashfruit.me) Fuel/2.3.1"
+                headers["User-Agent"] = "Mozilla/5.0 (Linux; Android ${Build.VERSION.RELEASE}) Rithle/0.2.0 (github.com/TheClashFruit/Rithle; admin@theclashfruit.me) Volley/1.2.1"
                 return headers
             }
         }
