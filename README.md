@@ -41,8 +41,8 @@
 <p>
   <ol>
     <li>Clone the repo with <code>git clone https://github.com/TheClashFruit/Rithle.git</code></li>
-    <li>Add your github ouath secret and client id to <code>local.properties</code> as <code>ghclient</code> and <code>ghsecret</code></li>
     <li>Go into the folder with <code>cd Rithle</code></li>
+    <li>Add your github ouath secret and client id to <code>local.properties</code> as <code>ghclient</code> and <code>ghsecret</code></li>
     <li>Build Splum with <code>./gradlew build</code></li>
   </ol>
 </p>
