@@ -79,19 +79,15 @@ class ListFragment : Fragment() {
     }
 
     private fun getItems(context: Context) {
-        Log.d("webCall", "funCalled")
-
         val format = Json { ignoreUnknownKeys = true }
+
+        Log.d("YesFilter", "https://api.modrinth.com/v2/search?limit=${currentIndex}&offset=${lastIndex}&index=relevance&facets=${filter}")
 
         val jsonObjectRequest = object : JsonObjectRequest(
             Method.GET, "https://api.modrinth.com/v2/search?limit=${currentIndex}&offset=${lastIndex}&index=relevance&facets=${filter}", null,
             { response ->
-                currentIndex  = 5
-                lastIndex    += 5
-
-                Log.d("webCall", "requestComplete")
-                Log.d("webCall", "pageIndexes cI: $currentIndex : lI: $lastIndex")
-                Log.d("webCall", "webUrl https://api.modrinth.com/v2/search?limit=${currentIndex}&offset=${lastIndex}&index=relevance&facets=%5B%5B%22categories%3A%27forge%27%22%2C%22categories%3A%27fabric%27%22%2C%22categories%3A%27quilt%27%22%2C%22categories%3A%27liteloader%27%22%2C%22categories%3A%27modloader%27%22%2C%22categories%3A%27rift%27%22%5D%2C%5B%22project_type%3Amod%22%5D%5D")
+                currentIndex  = 10
+                lastIndex    += 10
 
                 val data = format.decodeFromString<ModrinthSearchModel>(response.toString())
 
@@ -104,19 +100,15 @@ class ListFragment : Fragment() {
                         .dispatchUpdatesTo(listAdapter!!)
 
                     recyclerView!!.adapter = listAdapter
-
-                    Log.d("webCall", "itemAdd ${hit.title}, ${hit.icon_url}")
-                    Log.d("webCall", "allData $allData")
-
                 }
             },
             { error ->
-                // TODO: Handle error
+                Log.e("webCall", error.toString())
             }
         ) {
             override fun getHeaders(): MutableMap<String, String> {
                 val headers = HashMap<String, String>()
-                headers["User-Agent"] = "Mozilla/5.0 (Linux; Android ${Build.VERSION.RELEASE}) Rithle/0.0.1 (github.com/TheClashFruit/Rithle; admin@theclashfruit.me) Fuel/2.3.1"
+                headers["User-Agent"] = "Mozilla/5.0 (Linux; Android ${Build.VERSION.RELEASE}) Rithle/0.2.0 (github.com/TheClashFruit/Rithle; admin@theclashfruit.me) Volley/1.2.1"
                 return headers
             }
         }

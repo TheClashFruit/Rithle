@@ -15,6 +15,7 @@ import com.android.volley.VolleyError
 import com.android.volley.toolbox.ImageLoader
 import com.android.volley.toolbox.JsonObjectRequest
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import io.noties.markwon.Markwon
 import io.noties.markwon.ext.strikethrough.StrikethroughPlugin
 import io.noties.markwon.ext.tables.TablePlugin
@@ -29,6 +30,7 @@ import me.theclashfruit.rithle.models.ModrinthProjectModel
 
 class ProjectViewFragment : Fragment() {
     private var modId: String? = null
+    private var dataRaw: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,44 +46,76 @@ class ProjectViewFragment : Fragment() {
     ): View? {
         val rootView = inflater.inflate(R.layout.fragment_project_view, container, false)
 
-        val toolBar: MaterialToolbar              = rootView.findViewById(R.id.toolbar)
+        val toolBar: MaterialToolbar           = rootView.findViewById(R.id.toolbar)
+        val bottomNavBar: BottomNavigationView = rootView.findViewById(R.id.bottomNavigation)
 
         toolBar.setNavigationOnClickListener {
             parentFragmentManager.popBackStack()
         }
 
-        val format = Json { ignoreUnknownKeys = true }
+        bottomNavBar.setOnNavigationItemSelectedListener { item ->
+            val bottomNavFragmentTransaction = parentFragmentManager.beginTransaction()
 
-        val markwon = Markwon.builder(requireContext())
-            .usePlugin(HtmlPlugin.create())
-            .usePlugin(TablePlugin.create(requireContext()))
-            .usePlugin(StrikethroughPlugin.create())
-            .usePlugin(ImagesPlugin.create())
-            .usePlugin(LinkifyPlugin.create())
-            .build()
+            when(item.itemId) {
+                R.id.itemInfo -> {
+                    val infoFragment = ProjectInfoFragment.newInstance(dataRaw!!)
+
+                    bottomNavFragmentTransaction
+                        .replace(R.id.projectFragmentContainer, infoFragment)
+                        .commit()
+
+                    return@setOnNavigationItemSelectedListener true
+                }
+                R.id.itemDescription -> {
+                    val descriptionFragment = ProjectDescriptionFragment.newInstance(dataRaw!!)
+
+                    bottomNavFragmentTransaction
+                        .replace(R.id.projectFragmentContainer, descriptionFragment)
+                        .commit()
+
+                    return@setOnNavigationItemSelectedListener true
+                }
+                R.id.itemDownloads -> {
+                    val downloadsFragment = ProjectDownloadsFragment.newInstance()
+
+                    bottomNavFragmentTransaction
+                        .replace(R.id.projectFragmentContainer, downloadsFragment)
+                        .commit()
+
+                    return@setOnNavigationItemSelectedListener true
+                }
+                R.id.itemSettings -> {
+
+                    return@setOnNavigationItemSelectedListener true
+                }
+                else -> false
+            }
+        }
+
+        val format = Json { ignoreUnknownKeys = true }
 
         val jsonObjectRequest = @SuppressLint("SetTextI18n")
         object : JsonObjectRequest(
             Method.GET, "https://api.modrinth.com/v2/project/${modId}", null,
             { response ->
-                val dataRaw  = response.toString()
+                    dataRaw  = response.toString()
                 val dataJson = format.decodeFromString<ModrinthProjectModel>(response.toString())
 
                 toolBar.subtitle = dataJson.title
 
-                val infoFragment = ProjectInfoFragment.newInstance(dataRaw)
+                val infoFragment = ProjectInfoFragment.newInstance(dataRaw!!)
 
                 parentFragmentManager.beginTransaction()
                     .replace(R.id.projectFragmentContainer, infoFragment)
                     .commit()
             },
-            {
-                // TODO: Handle error
+            { error ->
+                Log.e("webCall", error.toString())
             }
         ) {
             override fun getHeaders(): MutableMap<String, String> {
                 val headers = HashMap<String, String>()
-                headers["User-Agent"] = "Mozilla/5.0 (Linux; Android ${Build.VERSION.RELEASE}) Rithle/0.0.1 (github.com/TheClashFruit/Rithle; admin@theclashfruit.me) Fuel/2.3.1"
+                headers["User-Agent"] = "Mozilla/5.0 (Linux; Android ${Build.VERSION.RELEASE}) Rithle/0.2.0 (github.com/TheClashFruit/Rithle; admin@theclashfruit.me) Volley/1.2.1"
                 return headers
             }
         }

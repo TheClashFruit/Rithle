@@ -1,0 +1,37 @@
+<resources>
+    <string name="login">Bejelentkezés</string>
+    <string name="logout">Kijelentkezés</string>
+    <string name="profile">Profil</string>
+    <string name="search">Keresés</string>
+    <string name="mods">Mods</string>
+    <string name="plugins">Plugins</string>
+    <string name="resource_packs">Resource Packs</string>
+    <string name="modpacks">Modpacks</string>
+    <string name="info">Info</string>
+    <string name="description">Leírás</string>
+    <string name="downloads">Letöltések</string>
+    <string name="settings">Beállitások</string>
+    <string name="report">Jelentés</string>
+
+    <string name="settings_theme">Téma</string>
+    <string name="settings_advanced">Speciális és Kísérleti Funkciók</string>
+    <string name="settings_about">Rólunk</string>
+
+    <string name="material_you">Material You</string>
+    <string name="dark_mode">Sötét Mód</string>
+    <string name="debug_mode">Fejlesztői Mód</string>
+    <string name="debug_mode_summary">Plusz informácíokat mutat a logokban.</string>
+    <string name="proxy_images">Proxy Images</string>
+    <string name="proxy_images_summary">Proxy-a a képeket a projekt leírásokban.</string>
+    <string name="licenses">Liszencek</string>
+    <string name="copyright">Copyright</string>
+
+    <plurals name="project_downloads">
+        <item quantity="one">%s Letöltés</item>
+        <item quantity="other">%s Letöltések</item>
+    </plurals>
+    <plurals name="project_followers">
+        <item quantity="one">%s Követő</item>
+        <item quantity="other">%s Követők</item>
+    </plurals>
+</resources>

@@ -1,0 +1,35 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <PreferenceCategory android:title="@string/settings_theme">
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="materialYouMode"
+            android:title="@string/material_you"
+            android:summary="TBA - Will be implemented after the M3 redesign." />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="darkMode"
+            android:title="@string/dark_mode" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/settings_advanced">
+
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="debugMode"
+            android:title="@string/debug_mode"
+            android:summary="@string/debug_mode_summary" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="imageProxy"
+            android:title="@string/proxy_images"
+            android:summary="@string/proxy_images_summary" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/settings_about">
+        <Preference
+            android:key="licensesItem"
+            android:title="@string/licenses" />
+        <Preference
+            android:title="@string/copyright"
+            android:summary="@string/copyright_summary" />
+    </PreferenceCategory>
+</PreferenceScreen>

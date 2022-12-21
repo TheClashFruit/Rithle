@@ -1,34 +1,41 @@
 package me.theclashfruit.rithle.fragments
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.util.Log
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.preference.CheckBoxPreference
+import androidx.preference.Preference
+import androidx.preference.PreferenceFragmentCompat
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import me.theclashfruit.rithle.R
 
-class SettingsFragment : Fragment() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
+class SettingsFragment : PreferenceFragmentCompat() {
 
+    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+        setPreferencesFromResource(R.xml.root_preferences, rootKey)
+
+        val licensePref = findPreference<Preference>("licensesItem")
+        val darkModePRef = findPreference<CheckBoxPreference>("darkMode")
+
+        licensePref!!.onPreferenceClickListener = Preference.OnPreferenceClickListener {
+            R.raw.licenses.toString()
+
+            MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Licenses")
+                .setMessage(requireContext().resources.openRawResource(R.raw.licenses).readBytes().decodeToString())
+                .setPositiveButton("Ok") { _, _ -> }
+                .show()
+
+            return@OnPreferenceClickListener true
         }
-    }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_settings, container, false)
-    }
+        darkModePRef!!.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { p, v ->
+            AppCompatDelegate.setDefaultNightMode(
+                if(v as Boolean) AppCompatDelegate.MODE_NIGHT_YES
+                else AppCompatDelegate.MODE_NIGHT_NO
+            )
 
-    companion object {
-        @JvmStatic
-        fun newInstance() =
-            SettingsFragment().apply {
-                arguments = Bundle().apply {
-
-                }
-            }
+            return@OnPreferenceChangeListener true
+        }
     }
 }

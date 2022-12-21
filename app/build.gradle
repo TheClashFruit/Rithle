@@ -11,8 +11,8 @@ android {
         applicationId "me.theclashfruit.rithle"
         minSdk 27
         targetSdk 33
-        versionCode 1
-        versionName "0.1.0-alpha"
+        versionCode 2
+        versionName "0.2.0-beta"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -42,9 +42,12 @@ configurations {
 dependencies {
     implementation 'androidx.core:core-ktx:1.9.0'
     implementation 'androidx.appcompat:appcompat:1.5.1'
-    implementation 'com.google.android.material:material:1.7.0'
-
+    implementation 'androidx.lifecycle:lifecycle-viewmodel:2.5.1'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'androidx.preference:preference:1.2.0'
+
+    implementation 'com.google.android.material:material:1.7.0'
 
     implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1'
 

@@ -3,17 +3,23 @@
     <item
         android:id="@+id/itemInfo"
         android:icon="@drawable/ic_info"
-        android:title="Info" />
+        android:title="@string/info" />
     <item
         android:id="@+id/itemDescription"
         android:icon="@drawable/ic_description"
-        android:title="Description" />
+        android:title="@string/description" />
     <item
         android:id="@+id/itemDownloads"
         android:icon="@drawable/ic_download"
-        android:title="Downloads" />
+        android:title="@string/downloads" />
     <item
         android:id="@+id/itemSettings"
         android:icon="@drawable/ic_settings"
-        android:title="Settings" />
+        android:title="@string/settings" />
+    <item
+        android:id="@+id/itemReport"
+        android:enabled="false"
+        android:icon="@drawable/ic_settings"
+        android:title="@string/report"
+        android:visible="false" />
 </menu>
