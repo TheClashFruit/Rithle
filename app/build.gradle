@@ -15,6 +15,12 @@ android {
         versionName "0.2.0-beta"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        Properties properties = new Properties()
+        properties.load(project.rootProject.file("local.properties").newDataInputStream())
+
+        buildConfigField "String", "GH_SECRET", "\"${properties.getProperty("ghsecret")}\""
+        buildConfigField "String", "GH_CLIENT", "\"${properties.getProperty("ghclient")}\""
     }
 
     buildTypes {

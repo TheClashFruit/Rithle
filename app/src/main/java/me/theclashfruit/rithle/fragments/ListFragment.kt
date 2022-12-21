@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.android.volley.toolbox.JsonObjectRequest
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
+import me.theclashfruit.rithle.BuildConfig
 import me.theclashfruit.rithle.R
 import me.theclashfruit.rithle.adapters.ModListAdapter
 import me.theclashfruit.rithle.classes.ListDiffCallback
@@ -108,7 +109,7 @@ class ListFragment : Fragment() {
         ) {
             override fun getHeaders(): MutableMap<String, String> {
                 val headers = HashMap<String, String>()
-                headers["User-Agent"] = "Mozilla/5.0 (Linux; Android ${Build.VERSION.RELEASE}) Rithle/0.2.0 (github.com/TheClashFruit/Rithle; admin@theclashfruit.me) Volley/1.2.1"
+                headers["User-Agent"] = "Mozilla/5.0 (Linux; Android ${Build.VERSION.RELEASE}) Rithle/${BuildConfig.VERSION_NAME} (github.com/TheClashFruit/Rithle; admin@theclashfruit.me) Volley/1.2.1"
                 return headers
             }
         }

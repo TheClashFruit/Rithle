@@ -24,6 +24,7 @@ import io.noties.markwon.image.ImagesPlugin
 import io.noties.markwon.linkify.LinkifyPlugin
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
+import me.theclashfruit.rithle.BuildConfig
 import me.theclashfruit.rithle.R
 import me.theclashfruit.rithle.classes.RithleSingleton
 import me.theclashfruit.rithle.models.ModrinthProjectModel
@@ -115,7 +116,7 @@ class ProjectViewFragment : Fragment() {
         ) {
             override fun getHeaders(): MutableMap<String, String> {
                 val headers = HashMap<String, String>()
-                headers["User-Agent"] = "Mozilla/5.0 (Linux; Android ${Build.VERSION.RELEASE}) Rithle/0.2.0 (github.com/TheClashFruit/Rithle; admin@theclashfruit.me) Volley/1.2.1"
+                headers["User-Agent"] = "Mozilla/5.0 (Linux; Android ${Build.VERSION.RELEASE}) Rithle/${BuildConfig.VERSION_NAME} (github.com/TheClashFruit/Rithle; admin@theclashfruit.me) Volley/1.2.1"
                 return headers
             }
         }
