@@ -19,8 +19,8 @@ android {
         Properties properties = new Properties()
         properties.load(project.rootProject.file("local.properties").newDataInputStream())
 
-        buildConfigField "String", "GH_SECRET", "\"${properties.getProperty("ghsecret")}\""
-        buildConfigField "String", "GH_CLIENT", "\"${properties.getProperty("ghclient")}\""
+        buildConfigField "String", "GH_SECRET", "${properties.getProperty("ghsecret")}"
+        buildConfigField "String", "GH_CLIENT", "${properties.getProperty("ghclient")}"
     }
 
     buildTypes {
@@ -52,6 +52,7 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.preference:preference:1.2.0'
+    implementation 'androidx.browser:browser:1.4.0'
 
     implementation 'com.google.android.material:material:1.7.0'
 

@@ -1,5 +1,6 @@
 package me.theclashfruit.rithle.fragments
 
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -7,10 +8,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.browser.customtabs.CustomTabsIntent
 import androidx.fragment.app.Fragment
 import com.android.volley.VolleyError
 import com.android.volley.toolbox.ImageLoader
+import io.noties.markwon.AbstractMarkwonPlugin
 import io.noties.markwon.Markwon
+import io.noties.markwon.MarkwonConfiguration
 import io.noties.markwon.ext.strikethrough.StrikethroughPlugin
 import io.noties.markwon.ext.tables.TablePlugin
 import io.noties.markwon.html.HtmlPlugin
@@ -23,6 +27,7 @@ import me.theclashfruit.rithle.classes.RithleSingleton
 import me.theclashfruit.rithle.models.ModrinthProjectModel
 import java.text.NumberFormat
 import java.util.*
+
 
 class ProjectInfoFragment : Fragment() {
     private var projectData: ModrinthProjectModel? = null
@@ -61,7 +66,28 @@ class ProjectInfoFragment : Fragment() {
             .usePlugin(StrikethroughPlugin.create())
             .usePlugin(ImagesPlugin.create())
             .usePlugin(LinkifyPlugin.create())
+            .usePlugin(object : AbstractMarkwonPlugin() {
+                override fun configureConfiguration(builder: MarkwonConfiguration.Builder) {
+                    builder.linkResolver { view, link ->
+                        view.callOnClick()
+
+                        Log.w("UriLog", view.paddingTop.toString())
+                        Log.w("UriLog", link)
+
+                        val customTabsIntent = CustomTabsIntent.Builder().build()
+                        customTabsIntent.launchUrl(requireContext(), Uri.parse(link))
+                    }
+                }
+            })
             .build()
+
+
+        /*
+        String url = "https://google.com/";
+CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+CustomTabsIntent customTabsIntent = builder.build();
+customTabsIntent.launchUrl(this, Uri.parse(url));
+         */
 
         markwon.setParsedMarkdown(rootView.findViewById(R.id.textViewDescription), markwon.render(markwon.parse(projectData!!.body!!)))
 
