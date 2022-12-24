@@ -55,6 +55,13 @@ class HomeFragment : Fragment() {
                     return@setOnMenuItemClickListener true
                 }
                 R.id.toolBarAccount -> {
+                    val userFragment = UserFragment.newInstance()
+
+                    toolBarFragmentTransaction
+                        .addToBackStack("userFragment")
+                        .add(R.id.parentFragmentContainer, userFragment)
+                        .commit()
+
                     return@setOnMenuItemClickListener true
                 }
                 R.id.toolBarSettings -> {
