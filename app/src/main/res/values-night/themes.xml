@@ -15,6 +15,8 @@
 
         <item name="colorOnBackground">@color/colorWhite</item>
 
+        <item name="android:textColorSecondary">@color/colorBlackTransparent</item>
+
         <item name="elevationOverlayEnabled">false</item>
 
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
