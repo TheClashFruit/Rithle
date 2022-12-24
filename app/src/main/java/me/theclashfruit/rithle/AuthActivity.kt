@@ -36,10 +36,10 @@ class AuthActivity : AppCompatActivity() {
 
         // https://api.modrinth.com/v2/user
 
-        val jsonObjectRequest = object : JsonObjectRequest(
-            Method.POST, "https://github.com/login/oauth/access_token", null,
+        val jsonObjectRequest = object : StringRequest(
+            Method.POST, "https://github.com/login/oauth/access_token",
             { response ->
-                val responseJson = format.decodeFromString<GitHubAccessTokenModel>(response.toString())
+                val responseJson = format.decodeFromString<GitHubAccessTokenModel>(response)
 
                 sharedPref.edit()
                     .putString("authToken", responseJson.access_token!!)
@@ -53,14 +53,21 @@ class AuthActivity : AppCompatActivity() {
             },
             { error ->
                 progressTextView!!.text = resources.getString(R.string.auth_error_ghstep)
-                Log.e("webCall", error.stackTraceToString())
+
+                error.networkResponse.allHeaders?.forEach {
+                    Log.e("webCall", it.name + ": " + it.value)
+                }
+
+                Log.e("webCall", "Code: " + error.networkResponse.statusCode.toString())
+                Log.e("webCall", "Data: " + error.networkResponse.data.decodeToString())
+                Log.e("webCall", "Time: " + error.networkResponse.networkTimeMs.toString())
             }
         ) {
             override fun getParams(): Map<String, String> {
                 val params: MutableMap<String, String> = HashMap()
                 params["client_id"] = BuildConfig.GH_CLIENT
                 params["client_secret"] = BuildConfig.GH_SECRET
-                params["code"] = data!!.getQueryParameter("code")!!
+                params["code"] = data!!.getQueryParameter("code")!!.trim()
                 return params
             }
 
@@ -68,6 +75,7 @@ class AuthActivity : AppCompatActivity() {
                 val headers = HashMap<String, String>()
                 headers["User-Agent"] = "Mozilla/5.0 (Linux; Android ${Build.VERSION.RELEASE}) Rithle/${BuildConfig.VERSION_NAME} (github.com/TheClashFruit/Rithle; admin@theclashfruit.me) Volley/1.2.1"
                 headers["Accept"] = "application/json"
+                headers["Content-Type"] = "application/x-www-form-urlencoded; charset=utf-8"
                 return headers
             }
         }
