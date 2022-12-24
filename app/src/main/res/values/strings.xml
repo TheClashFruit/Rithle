@@ -16,15 +16,21 @@
     <string name="report">Report</string>
 
     <string name="settings_theme">Theme</string>
-    <string name="settings_advanced">Advanced &amp; Experimental Features</string>
+    <string name="settings_advanced">Advanced</string>
+    <string name="settings_experimental">Experimental</string>
     <string name="settings_about">About</string>
 
     <string name="material_you">Material You</string>
     <string name="dark_mode">Dark Mode</string>
+    <string name="dark_mode_summary">Force the app to use dark mode even if the device is in light mode.</string>
+    <string name="github_token">GitHub Token</string>
+    <string name="github_token_summary">Your GitHub token used to authenticate requests to Modrinth.</string>
     <string name="debug_mode">Debug Mode</string>
     <string name="debug_mode_summary">Adds additional info to the logs.</string>
     <string name="proxy_images">Proxy Images</string>
     <string name="proxy_images_summary">Proxies images in project descriptions.</string>
+    <string name="modpack_creator">Modpack Creator</string>
+    <string name="modpack_creator_summary">Create modpacks with packwiz via a gui.</string>
     <string name="licenses">Licenses</string>
     <string name="copyright">Copyright</string>
     <string name="copyright_summary" translatable="false">Copyright © 2022 TheClashFruit</string>
@@ -40,6 +46,4 @@
         <item quantity="one">%s Follower</item>
         <item quantity="other">%s Followers</item>
     </plurals>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
