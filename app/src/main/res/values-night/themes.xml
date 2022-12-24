@@ -15,8 +15,6 @@
 
         <item name="colorOnBackground">@color/colorWhite</item>
 
-        <item name="android:textColorSecondary">@color/colorBlackTransparent</item>
-
         <item name="elevationOverlayEnabled">false</item>
 
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
@@ -34,5 +32,11 @@
 
     <style name="ThemeOverlay.App.BottomNavigationView" parent="">
         <item name="colorSurface">@color/colorSurfaceRaisedDark</item>
+    </style>
+
+    <style name="ToolBar" parent="ThemeOverlay.MaterialComponents.Toolbar.Primary">
+        <item name="colorControlNormal">?attr/colorOnPrimary</item>
+
+        <item name="android:textColorSecondary">@color/colorBlackTransparent</item>
     </style>
 </resources>
