@@ -13,6 +13,12 @@
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/settings_advanced">
 
+        <EditTextPreference
+            android:key="authToken"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="GitHub Token"
+            android:summary="Your GitHub token used to authenticate requests to Modrinth." />
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="debugMode"

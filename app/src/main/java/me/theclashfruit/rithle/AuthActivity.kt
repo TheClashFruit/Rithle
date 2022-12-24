@@ -30,7 +30,7 @@ class AuthActivity : AppCompatActivity() {
 
         progressTextView = findViewById(R.id.progressTextView)
 
-        val sharedPref = this.getPreferences(Context.MODE_PRIVATE)
+        val sharedPref = getSharedPreferences("me.theclashfruit.rithle_preferences", Context.MODE_PRIVATE)
 
         val format = Json { ignoreUnknownKeys = true }
 
@@ -87,7 +87,9 @@ class AuthActivity : AppCompatActivity() {
         val jsonObjectRequest = object : JsonObjectRequest(
             Method.GET, "https://api.modrinth.com/v2/user", null,
             { response ->
-                progressTextView!!.text = response.toString()
+                progressTextView!!.text = "Welcome ${response.getString("username")}!"
+
+                finish()
             },
             { error ->
                 progressTextView!!.text = resources.getString(R.string.auth_error_mrstep, accessToken)
