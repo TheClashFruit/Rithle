@@ -19,9 +19,11 @@
         android:background="?attr/colorPrimary"
         android:minHeight="?attr/actionBarSize"
         android:theme="@style/ToolBar"
+        app:menu="@menu/toolbar_menu_user"
         app:title="@string/app_name"
         app:subtitle="User Account"
-        app:titleTextColor="?attr/colorOnPrimary" />
+        app:titleTextColor="?attr/colorOnPrimary"
+        app:navigationIcon="@drawable/ic_arrow_back" />
 
 </com.google.android.material.appbar.AppBarLayout>
 

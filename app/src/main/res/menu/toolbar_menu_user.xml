@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/toolbarEdit"
+        android:icon="@drawable/ic_edit"
+        android:iconTint="?attr/colorOnPrimary"
+        android:iconTintMode="src_in"
+        android:title="Edit"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/toolbarShare"
+        android:icon="@drawable/ic_share"
+        android:iconTint="?attr/colorOnPrimary"
+        android:iconTintMode="src_in"
+        android:title="Share"
+        app:showAsAction="ifRoom" />
+</menu>

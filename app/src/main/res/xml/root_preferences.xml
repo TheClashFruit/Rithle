@@ -38,6 +38,18 @@
             android:key="mpCreator"
             android:title="@string/modpack_creator"
             android:summary="@string/modpack_creator_summary"/>
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="convertCurrency"
+            android:title="Convert Currencies"
+            app:summary="Converts currencies to your native currency." />
+        <ListPreference
+            android:defaultValue="1"
+            android:entries="@array/currencyRatesItems"
+            android:entryValues="@array/currencyRates"
+            android:key="convertToCurrency"
+            android:title="Currency"
+            app:summary="The currency to convert to." />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/settings_about">
         <Preference

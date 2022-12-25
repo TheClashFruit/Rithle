@@ -1,22 +1,29 @@
 package me.theclashfruit.rithle.fragments
 
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.browser.customtabs.CustomTabsIntent
+import androidx.fragment.app.Fragment
 import com.android.volley.toolbox.JsonObjectRequest
+import com.google.android.material.appbar.MaterialToolbar
 import me.theclashfruit.rithle.BuildConfig
 import me.theclashfruit.rithle.R
 import me.theclashfruit.rithle.classes.RithleSingleton
+import java.text.NumberFormat
+import java.util.*
+import kotlin.collections.HashMap
 
 class UserFragment : Fragment() {
+    private var userId: String? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -39,18 +46,22 @@ class UserFragment : Fragment() {
                 .build()
                 .launchUrl(requireContext(), Uri.parse("https://github.com/login/oauth/authorize?client_id=2f7fbf1e6e196b0d2069"))
 
-            requireActivity()
-                .supportFragmentManager
-                .beginTransaction()
-                .remove(this)
-                .commit()
+            parentFragmentManager.popBackStack()
         }
 
         val jsonObjectRequest = object : JsonObjectRequest(
             Method.GET, "https://api.modrinth.com/v2/user", null,
             { response ->
+                val format: NumberFormat = NumberFormat.getCurrencyInstance()
+                format.maximumFractionDigits = 0
+                format.currency = Currency.getInstance("USD")
+                format.maximumFractionDigits = 2
+
                 rootView.findViewById<TextView>(R.id.textView7).text =  "${response.getString("username")} [${response.getString("role").capitalize()}]"
-                rootView.findViewById<TextView>(R.id.textView8).text =  "\$${response.getJSONObject("payout_data").getString("balance")} earned so far.."
+                rootView.findViewById<TextView>(R.id.textView8).text =  "${format.format(response.getJSONObject("payout_data").getString("balance").toFloat())} earned so far.."
+
+                userId = response.getString("username")
+
                 Log.e("webCall", response.toString())
             },
             { error ->
@@ -66,6 +77,33 @@ class UserFragment : Fragment() {
         }
 
         RithleSingleton.getInstance(requireContext()).addToRequestQueue(jsonObjectRequest)
+
+        val toolBar: MaterialToolbar = rootView.findViewById(R.id.toolbar)
+
+        toolBar.setNavigationOnClickListener {
+            parentFragmentManager.popBackStack()
+        }
+
+        toolBar.setOnMenuItemClickListener { item ->
+            when(item.itemId) {
+                R.id.toolbarEdit -> {
+                    return@setOnMenuItemClickListener true
+                }
+                R.id.toolbarShare -> {
+                    val sendIntent: Intent = Intent().apply {
+                        action = Intent.ACTION_SEND
+                        putExtra(Intent.EXTRA_TEXT, "https://modrinth.com/user/$userId")
+                        type = "text/plain"
+                    }
+
+                    val shareIntent = Intent.createChooser(sendIntent, null)
+                    startActivity(shareIntent)
+
+                    return@setOnMenuItemClickListener true
+                }
+                else -> false
+            }
+        }
 
         return rootView
     }

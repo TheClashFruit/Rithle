@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import com.google.android.material.appbar.MaterialToolbar
 import me.theclashfruit.rithle.R
 
 class SettingsContainerFragment : Fragment() {
@@ -20,6 +21,12 @@ class SettingsContainerFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val rootView = inflater.inflate(R.layout.fragment_settings_container, container, false)
+
+        val toolBar: MaterialToolbar = rootView.findViewById(R.id.toolbar)
+
+        toolBar.setNavigationOnClickListener {
+            parentFragmentManager.popBackStack()
+        }
 
         val fragmentTransaction = parentFragmentManager.beginTransaction()
         val settingsFragment    = SettingsFragment()

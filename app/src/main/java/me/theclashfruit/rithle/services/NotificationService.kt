@@ -30,6 +30,7 @@ class NotificationService : Service() {
                 val authToken = sharedPref!!.getString("authToken", "")
                 val userName  = sharedPref.getString("userName", "TheClashFruit")
 
+                /*
                 val jsonObjectRequest = object : JsonArrayRequest(
                     Method.GET, "https://api.modrinth.com/v2/user/${userName}/notifications", null,
                     { response ->
@@ -61,7 +62,7 @@ class NotificationService : Service() {
                 }
 
                 RithleSingleton.getInstance(applicationContext).addToRequestQueue(jsonObjectRequest)
-
+*/
                 theHandler.postDelayed(this, 300000)
             }
         }
