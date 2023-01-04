@@ -91,17 +91,19 @@ customTabsIntent.launchUrl(this, Uri.parse(url));
 
         markwon.setParsedMarkdown(rootView.findViewById(R.id.textViewDescription), markwon.render(markwon.parse(projectData!!.body!!)))
 
-        RithleSingleton.getInstance(requireContext()).imageLoader.get(projectData!!.icon_url.toString(), object : ImageLoader.ImageListener {
-            override fun onResponse(response: ImageLoader.ImageContainer?, isImmediate: Boolean) {
-                if (response != null) {
-                    projectIcon.setImageBitmap(response.bitmap)
+        if(projectData!!.icon_url!!.isNotEmpty()) {
+            RithleSingleton.getInstance(requireContext()).imageLoader.get(projectData!!.icon_url.toString(), object : ImageLoader.ImageListener {
+                override fun onResponse(response: ImageLoader.ImageContainer?, isImmediate: Boolean) {
+                    if (response != null) {
+                        projectIcon.setImageBitmap(response.bitmap)
+                    }
                 }
-            }
 
-            override fun onErrorResponse(error: VolleyError?) {
-                Log.d("imageLoader", "wtf are you doing, you either don't have internet or the url is fucking wrong, btw the error is: ${error.toString()}")
-            }
-        })
+                override fun onErrorResponse(error: VolleyError?) {
+                    Log.d("imageLoader", "wtf are you doing, you either don't have internet or the url is fucking wrong, btw the error is: ${error.toString()}")
+                }
+            })
+        }
 
         return rootView
     }
