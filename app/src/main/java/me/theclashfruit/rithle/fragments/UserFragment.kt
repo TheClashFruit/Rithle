@@ -16,6 +16,7 @@ import com.android.volley.toolbox.JsonObjectRequest
 import com.google.android.material.appbar.MaterialToolbar
 import me.theclashfruit.rithle.BuildConfig
 import me.theclashfruit.rithle.R
+import me.theclashfruit.rithle.classes.MrApiUrlUtil
 import me.theclashfruit.rithle.classes.RithleSingleton
 import java.text.NumberFormat
 import java.util.*
@@ -50,7 +51,7 @@ class UserFragment : Fragment() {
         }
 
         val jsonObjectRequest = object : JsonObjectRequest(
-            Method.GET, "https://api.modrinth.com/v2/user", null,
+            Method.GET, MrApiUrlUtil().getApiUrl() + "/v2/user", null,
             { response ->
                 val format: NumberFormat = NumberFormat.getCurrencyInstance()
                 format.maximumFractionDigits = 0

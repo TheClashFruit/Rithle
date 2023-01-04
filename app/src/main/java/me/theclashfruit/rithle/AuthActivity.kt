@@ -14,6 +14,7 @@ import com.android.volley.toolbox.StringRequest
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import me.theclashfruit.rithle.classes.ListDiffCallback
+import me.theclashfruit.rithle.classes.MrApiUrlUtil
 import me.theclashfruit.rithle.classes.RithleSingleton
 import me.theclashfruit.rithle.models.GitHubAccessTokenModel
 import me.theclashfruit.rithle.models.ModrinthSearchModel
@@ -85,7 +86,7 @@ class AuthActivity : AppCompatActivity() {
 
     fun getMrUser(accessToken: String) {
         val jsonObjectRequest = object : JsonObjectRequest(
-            Method.GET, "https://api.modrinth.com/v2/user", null,
+            Method.GET, MrApiUrlUtil().getApiUrl() + "/v2/user", null,
             { response ->
                 progressTextView!!.text = "Welcome ${response.getString("username")}!"
 

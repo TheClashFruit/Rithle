@@ -19,6 +19,7 @@ import me.theclashfruit.rithle.BuildConfig
 import me.theclashfruit.rithle.R
 import me.theclashfruit.rithle.adapters.ModListAdapter
 import me.theclashfruit.rithle.classes.ListDiffCallback
+import me.theclashfruit.rithle.classes.MrApiUrlUtil
 import me.theclashfruit.rithle.classes.RithleSingleton
 import me.theclashfruit.rithle.models.ModrinthSearchHitsModel
 import me.theclashfruit.rithle.models.ModrinthSearchModel
@@ -82,10 +83,10 @@ class ListFragment : Fragment() {
     private fun getItems(context: Context) {
         val format = Json { ignoreUnknownKeys = true }
 
-        Log.d("YesFilter", "https://api.modrinth.com/v2/search?limit=${currentIndex}&offset=${lastIndex}&index=relevance&facets=${filter}")
+        Log.d("YesFilter", MrApiUrlUtil().getApiUrl() + "/v2/search?limit=${currentIndex}&offset=${lastIndex}&index=relevance&facets=${filter}")
 
         val jsonObjectRequest = object : JsonObjectRequest(
-            Method.GET, "https://api.modrinth.com/v2/search?limit=${currentIndex}&offset=${lastIndex}&index=relevance&facets=${filter}", null,
+            Method.GET, MrApiUrlUtil().getApiUrl() + "/v2/search?limit=${currentIndex}&offset=${lastIndex}&index=relevance&facets=${filter}", null,
             { response ->
                 currentIndex  = 10
                 lastIndex    += 10
