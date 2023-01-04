@@ -91,7 +91,7 @@ customTabsIntent.launchUrl(this, Uri.parse(url));
 
         markwon.setParsedMarkdown(rootView.findViewById(R.id.textViewDescription), markwon.render(markwon.parse(projectData!!.body!!)))
 
-        if(projectData!!.icon_url!!.isNotEmpty()) {
+        if(projectData!!.icon_url != null) {
             RithleSingleton.getInstance(requireContext()).imageLoader.get(projectData!!.icon_url.toString(), object : ImageLoader.ImageListener {
                 override fun onResponse(response: ImageLoader.ImageContainer?, isImmediate: Boolean) {
                     if (response != null) {
