@@ -8,7 +8,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.browser.customtabs.CustomTabColorSchemeParams
 import androidx.browser.customtabs.CustomTabsIntent
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.android.volley.VolleyError
 import com.android.volley.toolbox.ImageLoader
@@ -74,8 +76,21 @@ class ProjectInfoFragment : Fragment() {
                         Log.w("UriLog", view.paddingTop.toString())
                         Log.w("UriLog", link)
 
-                        val customTabsIntent = CustomTabsIntent.Builder().build()
-                        customTabsIntent.launchUrl(requireContext(), Uri.parse(link))
+                        CustomTabsIntent.Builder()
+                            .setColorScheme(CustomTabsIntent.COLOR_SCHEME_SYSTEM)
+                            .setColorSchemeParams(
+                                CustomTabsIntent.COLOR_SCHEME_DARK,
+                                CustomTabColorSchemeParams.Builder()
+                                    .setToolbarColor(ContextCompat.getColor(requireContext(), R.color.colorPrimary))
+                                    .build()
+                            )
+                            .setDefaultColorSchemeParams(
+                                CustomTabColorSchemeParams.Builder()
+                                    .setToolbarColor(ContextCompat.getColor(requireContext(), R.color.colorPrimaryLight))
+                                    .build()
+                            )
+                            .build()
+                            .launchUrl(requireContext(), Uri.parse(link))
                     }
                 }
             })
