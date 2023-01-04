@@ -23,8 +23,10 @@ class MainActivity : AppCompatActivity() {
         val sharedPref = getSharedPreferences("me.theclashfruit.rithle_preferences", Context.MODE_PRIVATE)
         val authToken  = sharedPref!!.getString("authToken", "")
 
+        /*
         if(authToken != "")
             ContextCompat.startForegroundService(this, Intent(this, NotificationService::class.java))
+        */
 
         mainFragmentTransaction
             .replace(R.id.parentFragmentContainer, homeFragment)
