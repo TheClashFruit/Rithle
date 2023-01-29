@@ -33,7 +33,7 @@
     <string name="modpack_creator_summary">Create modpacks with packwiz via a gui.</string>
     <string name="licenses">Licenses</string>
     <string name="copyright">Copyright</string>
-    <string name="copyright_summary" translatable="false">Copyright © 2022 TheClashFruit</string>
+    <string name="copyright_summary" translatable="false">Copyright © 2022-2023 TheClashFruit</string>
 
     <string name="auth_error_ghstep">There was an unexpected error while trying to process the authentication with GitHub, please enter a GitHub token in the settings.</string>
     <string name="auth_error_mrstep">There was an error while trying to complete the authentication with Modrinth, please enter a GitHub token in the settings:\n%s</string>
