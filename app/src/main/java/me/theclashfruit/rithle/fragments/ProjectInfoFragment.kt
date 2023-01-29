@@ -1,5 +1,8 @@
 package me.theclashfruit.rithle.fragments
 
+import android.content.Context
+import android.graphics.BitmapFactory
+import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -20,13 +23,16 @@ import io.noties.markwon.MarkwonConfiguration
 import io.noties.markwon.ext.strikethrough.StrikethroughPlugin
 import io.noties.markwon.ext.tables.TablePlugin
 import io.noties.markwon.html.HtmlPlugin
+import io.noties.markwon.image.ImageItem
 import io.noties.markwon.image.ImagesPlugin
 import io.noties.markwon.linkify.LinkifyPlugin
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import me.theclashfruit.rithle.R
+import me.theclashfruit.rithle.classes.ProxySchemeHandler
 import me.theclashfruit.rithle.classes.RithleSingleton
 import me.theclashfruit.rithle.models.ModrinthProjectModel
+import java.net.URL
 import java.text.NumberFormat
 import java.util.*
 
@@ -66,8 +72,32 @@ class ProjectInfoFragment : Fragment() {
             .usePlugin(HtmlPlugin.create())
             .usePlugin(TablePlugin.create(requireContext()))
             .usePlugin(StrikethroughPlugin.create())
-            .usePlugin(ImagesPlugin.create())
             .usePlugin(LinkifyPlugin.create())
+            .usePlugin(ImagesPlugin.create { plugin ->
+                // for example to return a drawable resource
+                plugin.addSchemeHandler(object : ProxySchemeHandler() {
+                    override fun handle(raw: String, uri: Uri): ImageItem {
+                        val sharedPref = activity!!.getSharedPreferences("me.theclashfruit.rithle_preferences", Context.MODE_PRIVATE)
+                        val doProxy    = sharedPref!!.getBoolean("imageProxy", false)
+
+                        val url: URL =
+                            if(doProxy)
+                                URL("https://rthl.theclashfruit.me/img.php?url=$uri")
+                            else
+                                URL(uri.toString())
+
+                        Log.d("ThatUrl", url.toString())
+
+                        val image = BitmapFactory.decodeStream(url.openConnection().getInputStream());
+
+                        return ImageItem.withResult(BitmapDrawable(resources, image))
+                    }
+
+                    override fun supportedSchemes(): Collection<String?> {
+                        return listOf("http", "https")
+                    }
+                })
+            })
             .usePlugin(object : AbstractMarkwonPlugin() {
                 override fun configureConfiguration(builder: MarkwonConfiguration.Builder) {
                     builder.linkResolver { view, link ->
@@ -96,13 +126,6 @@ class ProjectInfoFragment : Fragment() {
             })
             .build()
 
-
-        /*
-        String url = "https://google.com/";
-CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
-CustomTabsIntent customTabsIntent = builder.build();
-customTabsIntent.launchUrl(this, Uri.parse(url));
-         */
 
         markwon.setParsedMarkdown(rootView.findViewById(R.id.textViewDescription), markwon.render(markwon.parse(projectData!!.body!!)))
 
