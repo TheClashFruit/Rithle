@@ -85,10 +85,16 @@ class AuthActivity : AppCompatActivity() {
     }
 
     fun getMrUser(accessToken: String) {
+        val sharedPref = getSharedPreferences("me.theclashfruit.rithle_preferences", Context.MODE_PRIVATE)
+
         val jsonObjectRequest = object : JsonObjectRequest(
             Method.GET, MrApiUrlUtil().getApiUrl() + "/v2/user", null,
             { response ->
                 progressTextView!!.text = "Welcome ${response.getString("username")}!"
+
+                sharedPref.edit()
+                    .putString("userName", response.getString("username"))
+                    .apply()
 
                 finish()
             },

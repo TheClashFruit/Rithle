@@ -23,15 +23,14 @@ class MainActivity : AppCompatActivity() {
         val sharedPref = getSharedPreferences("me.theclashfruit.rithle_preferences", Context.MODE_PRIVATE)
         val authToken  = sharedPref!!.getString("authToken", "")
 
-        /*
         if(authToken != "")
             ContextCompat.startForegroundService(this, Intent(this, NotificationService::class.java))
-        */
 
         mainFragmentTransaction
             .replace(R.id.parentFragmentContainer, homeFragment)
             .commit()
 
+        /*
         MaterialAlertDialogBuilder(this)
             .setTitle("⚠️ Warning!")
             .setMessage("This is an alpha build, it is not intended for regular use, report bugs on GitHub.")
@@ -39,6 +38,7 @@ class MainActivity : AppCompatActivity() {
 
             }
             .show()
+        */
 
         // https://github.com/login/oauth/authorize?client_id=2f7fbf1e6e196b0d2069
     }

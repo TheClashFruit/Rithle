@@ -30,7 +30,7 @@
     <string name="proxy_images">Proxy Images</string>
     <string name="proxy_images_summary">Proxies images in project descriptions.</string>
     <string name="modpack_creator">Modpack Creator</string>
-    <string name="modpack_creator_summary">Create modpacks with packwiz via a gui.</string>
+    <string name="modpack_creator_summary">Create modpacks with a packwiz compatible gui based editor.</string>
     <string name="licenses">Licenses</string>
     <string name="copyright">Copyright</string>
     <string name="copyright_summary" translatable="false">Copyright © 2022-2023 TheClashFruit</string>
