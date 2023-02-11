@@ -12,6 +12,7 @@ import androidx.core.app.NotificationManagerCompat
 import com.android.volley.toolbox.JsonArrayRequest
 import me.theclashfruit.rithle.BuildConfig
 import me.theclashfruit.rithle.R
+import me.theclashfruit.rithle.classes.MrApiUrlUtil
 import me.theclashfruit.rithle.classes.RithleSingleton
 import java.time.Instant
 import java.time.format.DateTimeFormatter
@@ -30,6 +31,9 @@ class NotificationService : Service() {
                 val authToken = sharedPref!!.getString("authToken", "")
                 val userName  = sharedPref.getString("userName", "@me")
 
+                if(MrApiUrlUtil().getIsDebugMode())
+                    return
+
                 val jsonObjectRequest = object : JsonArrayRequest(
                     Method.GET, "https://api.modrinth.com/v2/user/${userName}/notifications", null,
                     { response ->
@@ -42,6 +46,7 @@ class NotificationService : Service() {
                                 .setContentTitle(cNotif.getString("title"))
                                 .setContentText(cNotif.getString("text"))
                                 .setSmallIcon(R.drawable.ic_update)
+                                .setColor(0x1bd96b)
                                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                                 .build()
 
@@ -85,7 +90,8 @@ class NotificationService : Service() {
         val notification: Notification = NotificationCompat.Builder(this, "rthl")
             .setContentTitle("Subscribed to the Notifications")
             .setContentText("Service is running...")
-            .setSmallIcon(R.drawable.ic_build)
+            .setSmallIcon(R.drawable.ic_info)
+            .setColor(0x1bd96b)
             .build()
 
         startForeground(1, notification)

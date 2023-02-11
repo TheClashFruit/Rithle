@@ -13,4 +13,8 @@ class MrApiUrlUtil {
             stableUrl
         }
     }
+
+    fun getIsDebugMode(): Boolean {
+        return BuildConfig.DEBUG
+    }
 }
