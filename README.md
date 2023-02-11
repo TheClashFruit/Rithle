@@ -44,7 +44,8 @@
   <ol>
     <li>Clone the repo with <code>git clone https://github.com/TheClashFruit/Rithle.git</code></li>
     <li>Go into the folder with <code>cd Rithle</code></li>
-    <li>Build Splum with <code>./gradlew build</code></li>
+    <li>Add your github oauth secret and client id to <code>local.properties</code> as <code>ghclient</code> and <code>ghsecret</code></li>
+    <li>Build the app with <code>./gradlew build</code></li>
   </ol>
 </p>
 
@@ -74,7 +75,7 @@
 
 <pre>
   Rithle, Android app for Modrinth written in Kotlin.
-  Copyright (C) 2022 TheClashFruit
+  Copyright (C) 2022-2023 TheClashFruit
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by

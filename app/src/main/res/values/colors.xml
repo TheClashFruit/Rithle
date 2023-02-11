@@ -16,7 +16,9 @@
     <color name="colorSurfaceRaisedDark">#26292f</color>
 
     <color name="colorBlack">#FF000000</color>
+    <color name="colorBlackTransparent">#99000000</color>
     <color name="colorWhite">#FFFFFFFF</color>
+    <color name="colorWhiteTransparent">#99FFFFFF</color>
 
     <color name="ic_launcher_background">#16181C</color>
 </resources>

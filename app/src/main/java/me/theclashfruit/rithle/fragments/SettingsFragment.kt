@@ -30,11 +30,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
 
         darkModePRef!!.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { p, v ->
-            AppCompatDelegate.setDefaultNightMode(
-                if(v as Boolean) AppCompatDelegate.MODE_NIGHT_YES
-                else AppCompatDelegate.MODE_NIGHT_NO
-            )
-
             return@OnPreferenceChangeListener true
         }
     }

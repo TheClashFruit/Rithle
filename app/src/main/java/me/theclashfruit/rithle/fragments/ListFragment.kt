@@ -15,9 +15,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.android.volley.toolbox.JsonObjectRequest
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
+import me.theclashfruit.rithle.BuildConfig
 import me.theclashfruit.rithle.R
 import me.theclashfruit.rithle.adapters.ModListAdapter
 import me.theclashfruit.rithle.classes.ListDiffCallback
+import me.theclashfruit.rithle.classes.MrApiUrlUtil
 import me.theclashfruit.rithle.classes.RithleSingleton
 import me.theclashfruit.rithle.models.ModrinthSearchHitsModel
 import me.theclashfruit.rithle.models.ModrinthSearchModel
@@ -81,10 +83,10 @@ class ListFragment : Fragment() {
     private fun getItems(context: Context) {
         val format = Json { ignoreUnknownKeys = true }
 
-        Log.d("YesFilter", "https://api.modrinth.com/v2/search?limit=${currentIndex}&offset=${lastIndex}&index=relevance&facets=${filter}")
+        Log.d("YesFilter", MrApiUrlUtil().getApiUrl() + "/v2/search?limit=${currentIndex}&offset=${lastIndex}&index=relevance&facets=${filter}")
 
         val jsonObjectRequest = object : JsonObjectRequest(
-            Method.GET, "https://api.modrinth.com/v2/search?limit=${currentIndex}&offset=${lastIndex}&index=relevance&facets=${filter}", null,
+            Method.GET, MrApiUrlUtil().getApiUrl() + "/v2/search?limit=${currentIndex}&offset=${lastIndex}&index=relevance&facets=${filter}", null,
             { response ->
                 currentIndex  = 10
                 lastIndex    += 10
@@ -108,7 +110,7 @@ class ListFragment : Fragment() {
         ) {
             override fun getHeaders(): MutableMap<String, String> {
                 val headers = HashMap<String, String>()
-                headers["User-Agent"] = "Mozilla/5.0 (Linux; Android ${Build.VERSION.RELEASE}) Rithle/0.2.0 (github.com/TheClashFruit/Rithle; admin@theclashfruit.me) Volley/1.2.1"
+                headers["User-Agent"] = "Mozilla/5.0 (Linux; Android ${Build.VERSION.RELEASE}) Rithle/${BuildConfig.VERSION_NAME} (github.com/TheClashFruit/Rithle; admin@theclashfruit.me) Volley/1.2.1"
                 return headers
             }
         }

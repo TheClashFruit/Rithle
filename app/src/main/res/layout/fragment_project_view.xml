@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?attr/colorSurface"
+    android:clickable="true"
     tools:context=".fragments.ProjectViewFragment">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -18,7 +19,7 @@
             android:background="?attr/colorPrimary"
             android:minHeight="?attr/actionBarSize"
             android:theme="@style/ToolBar"
-            app:menu="@menu/toolbar_menu"
+            app:menu="@menu/toolbar_menu_user"
             app:title="@string/app_name"
             app:titleTextColor="?attr/colorOnPrimary"
             app:navigationIcon="@drawable/ic_arrow_back" />

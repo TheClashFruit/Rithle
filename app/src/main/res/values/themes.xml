@@ -51,6 +51,8 @@
 
     <style name="ToolBar" parent="ThemeOverlay.MaterialComponents.Toolbar.Primary">
         <item name="colorControlNormal">?attr/colorOnPrimary</item>
+
+        <item name="android:textColorSecondary">@color/colorWhiteTransparent</item>
     </style>
 
     <style name="BottomNavigationView" parent="Widget.MaterialComponents.BottomNavigationView">

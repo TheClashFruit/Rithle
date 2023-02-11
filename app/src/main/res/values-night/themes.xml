@@ -33,4 +33,10 @@
     <style name="ThemeOverlay.App.BottomNavigationView" parent="">
         <item name="colorSurface">@color/colorSurfaceRaisedDark</item>
     </style>
+
+    <style name="ToolBar" parent="ThemeOverlay.MaterialComponents.Toolbar.Primary">
+        <item name="colorControlNormal">?attr/colorOnPrimary</item>
+
+        <item name="android:textColorSecondary">@color/colorBlackTransparent</item>
+    </style>
 </resources>

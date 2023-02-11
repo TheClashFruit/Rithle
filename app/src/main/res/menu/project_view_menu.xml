@@ -5,9 +5,9 @@
         android:icon="@drawable/ic_info"
         android:title="@string/info" />
     <item
-        android:id="@+id/itemDescription"
+        android:id="@+id/itemChangelog"
         android:icon="@drawable/ic_description"
-        android:title="@string/description" />
+        android:title="@string/changelog" />
     <item
         android:id="@+id/itemDownloads"
         android:icon="@drawable/ic_download"
