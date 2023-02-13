@@ -20,16 +20,15 @@ jobs:
         java-version: '11'
         distribution: 'temurin'
         cache: gradle
-      env:
-        GHO_SECRET: ${{ secrets.GHO_SECRET }}
-        GHO_CLIENT: ${{ secrets.GHO_CLIENT }}
-
     - name: Grant execute permission for Gradlew
       run: chmod +x gradlew
     - name: Add Oauth tokens to local.properties
       run: |
         echo ghclient=$GHO_CLIENT >> local.properties
         echo ghsecret=$GHO_SECRET >> local.properties
+      env:
+        GHO_SECRET: ${{ secrets.GHO_SECRET }}
+        GHO_CLIENT: ${{ secrets.GHO_CLIENT }}
     - name: Build with Gradle
       run: ./gradlew assembleRelease
     - name: Upload APK artifacts
