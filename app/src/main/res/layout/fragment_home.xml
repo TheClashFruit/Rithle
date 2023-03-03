@@ -16,7 +16,7 @@
             android:layout_height="wrap_content"
             android:background="?attr/colorPrimary"
             android:minHeight="?attr/actionBarSize"
-            android:theme="@style/ToolBar"
+            android:theme="@style/Widget.Material3.Toolbar"
             app:menu="@menu/toolbar_menu"
             app:title="@string/app_name"
             app:titleTextColor="?attr/colorOnPrimary" />
@@ -41,7 +41,6 @@
             android:id="@+id/bottomNavigation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            style="@style/BottomNavigationView"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

@@ -3,6 +3,7 @@ package me.theclashfruit.rithle
 import android.app.Application
 import android.os.Process
 import android.util.Log
+import com.google.android.material.color.DynamicColors
 import java.io.BufferedWriter
 import java.io.File
 import java.io.FileWriter
@@ -14,6 +15,8 @@ import kotlin.system.exitProcess
 
 class RithleApplication : Application()  {
     override fun onCreate() {
+        DynamicColors.applyToActivitiesIfAvailable(this)
+
         super.onCreate()
 
         initializeExceptionHandler()

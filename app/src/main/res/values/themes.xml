@@ -1,5 +1,5 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <style name="Theme.Rithle" parent="Theme.MaterialComponents.Light.NoActionBar">
+    <style name="Theme.Rithle" parent="Theme.Material3.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimaryLight</item>
         <item name="colorPrimaryVariant">@color/colorPrimaryVariantLight</item>
         <item name="colorOnPrimary">@color/colorWhite</item>
@@ -17,17 +17,10 @@
 
         <item name="elevationOverlayEnabled">false</item>
 
-        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
-        <item name="android:windowLightStatusBar">false</item>
-
-        <item name="android:navigationBarColor">?attr/colorSurfaceVariant</item>
-        <item name="android:windowLightNavigationBar">true</item>
-
-        <item name="bottomNavigationStyle">@style/BottomNavigationView</item>
         <item name="tabStyle">@style/TabLayout</item>
     </style>
 
-    <style name="IconOnlyButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
+    <style name="IconOnlyButton" parent="Widget.Material3.Button.OutlinedButton">
         <item name="iconTint">?attr/colorOnPrimary</item>
         <item name="iconPadding">0dp</item>
         <item name="iconGravity">textStart</item>
@@ -45,17 +38,17 @@
         <item name="android:paddingRight">0dp</item>
     </style>
 
-    <style name="TabLayout" parent="Widget.MaterialComponents.TabLayout">
+    <style name="TabLayout" parent="Widget.Material3.TabLayout">
         <item name="colorControlNormal">?attr/colorOnPrimary</item>
     </style>
 
-    <style name="ToolBar" parent="ThemeOverlay.MaterialComponents.Toolbar.Primary">
+    <style name="ToolBar" parent="ThemeOverlay.Material3.Toolbar.Surface">
         <item name="colorControlNormal">?attr/colorOnPrimary</item>
 
         <item name="android:textColorSecondary">@color/colorWhiteTransparent</item>
     </style>
 
-    <style name="BottomNavigationView" parent="Widget.MaterialComponents.BottomNavigationView">
+    <style name="BottomNavigationView" parent="Widget.Material3.BottomNavigationView">
         <item name="materialThemeOverlay">@style/ThemeOverlay.App.BottomNavigationView</item>
     </style>
 

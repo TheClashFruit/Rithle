@@ -1,5 +1,5 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <style name="Theme.Rithle" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="Theme.Rithle" parent="Theme.Material3.Dark.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryVariant">@color/colorPrimaryVariant</item>
         <item name="colorOnPrimary">@color/colorBlack</item>
@@ -16,17 +16,9 @@
         <item name="colorOnBackground">@color/colorWhite</item>
 
         <item name="elevationOverlayEnabled">false</item>
-
-        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
-        <item name="android:windowLightStatusBar">true</item>
-
-        <item name="android:navigationBarColor">?attr/colorSurfaceVariant</item>
-        <item name="android:windowLightNavigationBar">false</item>
-
-        <item name="bottomNavigationStyle">@style/BottomNavigationView</item>
     </style>
 
-    <style name="BottomNavigationView" parent="Widget.MaterialComponents.BottomNavigationView">
+    <style name="BottomNavigationView" parent="Widget.Material3.BottomNavigationView">
         <item name="materialThemeOverlay">@style/ThemeOverlay.App.BottomNavigationView</item>
     </style>
 
@@ -34,7 +26,7 @@
         <item name="colorSurface">@color/colorSurfaceRaisedDark</item>
     </style>
 
-    <style name="ToolBar" parent="ThemeOverlay.MaterialComponents.Toolbar.Primary">
+    <style name="ToolBar" parent="Widget.Material3.Toolbar.Surface">
         <item name="colorControlNormal">?attr/colorOnPrimary</item>
 
         <item name="android:textColorSecondary">@color/colorBlackTransparent</item>
