@@ -22,12 +22,7 @@
   Screenshots
 </h2>
 
-<p>
-  <img alt="Mods" src="https://cdn.theclashfruit.me/apps/me.theclashfruit.rithle/screenshots/mods.dark.jpg#gh-dark-mode-only" width="20%">
-  <img alt="Mod Preview" src="https://cdn.theclashfruit.me/apps/me.theclashfruit.rithle/screenshots/project_view.dark.jpg#gh-dark-mode-only" width="20%">
-  <img alt="Mods" src="https://cdn.theclashfruit.me/apps/me.theclashfruit.rithle/screenshots/mods.light.jpg#gh-light-mode-only" width="20%">
-  <img alt="Mod Preview" src="https://cdn.theclashfruit.me/apps/me.theclashfruit.rithle/screenshots/project_view.light.jpg#gh-light-mode-only" width="20%">
-</p>
+![screenshots_of_rithle](https://user-images.githubusercontent.com/55049569/222969306-a26a90d4-769a-4564-bd85-a4fa90638997.png)
 
 <h2>
   Building
