@@ -6,12 +6,18 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
 import me.theclashfruit.rithle.classes.FilterBuilder
 import me.theclashfruit.rithle.R
 
 class HomeFragment : Fragment() {
+    private val tabTexts = listOf("Mods", "Plugins", "Data Packs", "Shader Packs", "Resource Packs", "Modpacks")
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -23,29 +29,18 @@ class HomeFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val rootView = inflater.inflate(R.layout.fragment_home, container, false)
+        val rootView  = inflater.inflate(R.layout.fragment_home, container, false)
 
-        val bottomNav = rootView.findViewById<BottomNavigationView>(R.id.bottomNavigation)
+        val tabLayout = rootView.findViewById<TabLayout>(R.id.tabLayout)
+        val viewPager = rootView.findViewById<ViewPager2>(R.id.viewPager)
+
         val toolBar   = rootView.findViewById<MaterialToolbar>(R.id.toolbar)
 
-        val filter = FilterBuilder()
-            .setProjectType("mod")
-            .addFilterItem("categories:'forge'")
-            .addFilterItem("categories:'fabric'")
-            .addFilterItem("categories:'quilt'")
-            .addFilterItem("categories:'liteloader'")
-            .addFilterItem("categories:'modloader'")
-            .addFilterItem("categories:'rift'")
-            .build()
+        viewPager.adapter = ScreenSlidePagerAdapter(this)
 
-        val fragmentTransaction = parentFragmentManager.beginTransaction()
-        var listFragment = ListFragment.newInstance(filter)
-
-        fragmentTransaction
-            .replace(R.id.fragmentContainer, listFragment)
-            .commit()
-
-        Log.w("YesFilter", filter)
+        TabLayoutMediator(tabLayout, viewPager) { tab, position ->
+            tab.text = tabTexts[position]
+        }.attach()
 
         toolBar.setOnMenuItemClickListener { item ->
             val toolBarFragmentTransaction = parentFragmentManager.beginTransaction()
@@ -78,11 +73,15 @@ class HomeFragment : Fragment() {
             }
         }
 
-        bottomNav.setOnNavigationItemSelectedListener { item ->
-            val bottomNavFragmentTransaction = parentFragmentManager.beginTransaction()
+        return rootView
+    }
 
-            when(item.itemId) {
-                R.id.itemMods -> {
+    private inner class ScreenSlidePagerAdapter(fa: Fragment) : FragmentStateAdapter(fa) {
+        override fun getItemCount(): Int = 6
+
+        override fun createFragment(position: Int) : Fragment {
+            when(tabTexts[position]) {
+                "Mods" -> {
                     val fragmentFilter = FilterBuilder()
                         .setProjectType("mod")
                         .addFilterItem("categories:'forge'")
@@ -93,15 +92,10 @@ class HomeFragment : Fragment() {
                         .addFilterItem("categories:'rift'")
                         .build()
 
-                    listFragment = ListFragment.newInstance(fragmentFilter)
-
-                    bottomNavFragmentTransaction
-                        .replace(R.id.fragmentContainer, listFragment)
-                        .commit()
-
-                    return@setOnNavigationItemSelectedListener true
+                    return ListFragment.newInstance(fragmentFilter)
                 }
-                R.id.itemPlugins -> {
+
+                "Plugins" -> {
                     val fragmentFilter = FilterBuilder()
                         .setProjectType("mod")
                         .addFilterItem("categories:'bukkit'")
@@ -114,45 +108,57 @@ class HomeFragment : Fragment() {
                         .addFilterItem("categories:'velocity'")
                         .build()
 
-                    listFragment = ListFragment.newInstance(fragmentFilter)
-
-                    bottomNavFragmentTransaction
-                        .replace(R.id.fragmentContainer, listFragment)
-                        .commit()
-
-                    return@setOnNavigationItemSelectedListener true
+                    return ListFragment.newInstance(fragmentFilter)
                 }
-                R.id.itemResourcePacks -> {
+
+                "Data Packs" -> {
+                    val fragmentFilter = FilterBuilder()
+                        .setProjectType("mod")
+                        .addFilterItem("categories:'datapack'")
+                        .build()
+
+                    return ListFragment.newInstance(fragmentFilter)
+                }
+
+                "Shader Packs" -> {
+                    val fragmentFilter = FilterBuilder()
+                        .setProjectType("shader")
+                        .build()
+
+                    return ListFragment.newInstance(fragmentFilter)
+                }
+
+                "Resource Packs" -> {
                     val fragmentFilter = FilterBuilder()
                         .setProjectType("resourcepack")
                         .build()
 
-                    listFragment = ListFragment.newInstance(fragmentFilter)
-
-                    bottomNavFragmentTransaction
-                        .replace(R.id.fragmentContainer, listFragment)
-                        .commit()
-
-                    return@setOnNavigationItemSelectedListener true
+                    return ListFragment.newInstance(fragmentFilter)
                 }
-                R.id.itemModpacks -> {
+
+                "Modpacks" -> {
                     val fragmentFilter = FilterBuilder()
                         .setProjectType("modpack")
                         .build()
 
-                    listFragment = ListFragment.newInstance(fragmentFilter)
-
-                    bottomNavFragmentTransaction
-                        .replace(R.id.fragmentContainer, listFragment)
-                        .commit()
-
-                    return@setOnNavigationItemSelectedListener true
+                    return ListFragment.newInstance(fragmentFilter)
                 }
-                else -> false
+
+                else -> {
+                    val fragmentFilter = FilterBuilder()
+                        .setProjectType("mod")
+                        .addFilterItem("categories:'forge'")
+                        .addFilterItem("categories:'fabric'")
+                        .addFilterItem("categories:'quilt'")
+                        .addFilterItem("categories:'liteloader'")
+                        .addFilterItem("categories:'modloader'")
+                        .addFilterItem("categories:'rift'")
+                        .build()
+
+                    return ListFragment.newInstance(fragmentFilter)
+                }
             }
         }
-
-        return rootView
     }
 
     companion object {

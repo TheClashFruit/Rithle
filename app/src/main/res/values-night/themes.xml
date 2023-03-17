@@ -2,7 +2,7 @@
     <style name="Theme.Rithle" parent="Theme.Material3.Dark.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryVariant">@color/colorPrimaryVariant</item>
-        <item name="colorOnPrimary">@color/colorBlack</item>
+        <item name="colorOnPrimary">@color/colorWhite</item>
 
         <item name="colorSecondary">@color/colorSecondary</item>
         <item name="colorSecondaryVariant">@color/colorSecondaryVariant</item>
@@ -13,22 +13,11 @@
         <item name="android:colorBackground">?attr/colorSurface</item>
         <item name="background">?attr/colorSurface</item>
 
-        <item name="colorOnBackground">@color/colorWhite</item>
+        <item name="colorOnBackground">@color/colorBlack</item>
 
-        <item name="elevationOverlayEnabled">false</item>
-    </style>
+        <item name="elevationOverlayColor">@color/colorSurfaceRaisedDark</item>
 
-    <style name="BottomNavigationView" parent="Widget.Material3.BottomNavigationView">
-        <item name="materialThemeOverlay">@style/ThemeOverlay.App.BottomNavigationView</item>
-    </style>
-
-    <style name="ThemeOverlay.App.BottomNavigationView" parent="">
-        <item name="colorSurface">@color/colorSurfaceRaisedDark</item>
-    </style>
-
-    <style name="ToolBar" parent="Widget.Material3.Toolbar.Surface">
-        <item name="colorControlNormal">?attr/colorOnPrimary</item>
-
-        <item name="android:textColorSecondary">@color/colorBlackTransparent</item>
+        <item name="android:statusBarColor">?attr/colorSurface</item>
+        <item name="android:navigationBarColor">?attr/colorSurface</item>
     </style>
 </resources>

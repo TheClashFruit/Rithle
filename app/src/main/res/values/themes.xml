@@ -15,50 +15,9 @@
 
         <item name="colorOnBackground">@color/colorBlack</item>
 
-        <item name="elevationOverlayEnabled">false</item>
+        <item name="elevationOverlayColor">@color/colorSurfaceRaisedLight</item>
 
-        <item name="tabStyle">@style/TabLayout</item>
-    </style>
-
-    <style name="IconOnlyButton" parent="Widget.Material3.Button.OutlinedButton">
-        <item name="iconTint">?attr/colorOnPrimary</item>
-        <item name="iconPadding">0dp</item>
-        <item name="iconGravity">textStart</item>
-        <item name="strokeColor">@android:color/transparent</item>
-
-        <item name="android:shadowColor">@android:color/transparent</item>
-
-        <item name="android:insetBottom">0dp</item>
-        <item name="android:insetTop">0dp</item>
-        <item name="android:insetLeft">0dp</item>
-        <item name="android:insetRight">0dp</item>
-        <item name="android:paddingBottom">0dp</item>
-        <item name="android:paddingTop">0dp</item>
-        <item name="android:paddingLeft">0dp</item>
-        <item name="android:paddingRight">0dp</item>
-    </style>
-
-    <style name="TabLayout" parent="Widget.Material3.TabLayout">
-        <item name="colorControlNormal">?attr/colorOnPrimary</item>
-    </style>
-
-    <style name="ToolBar" parent="ThemeOverlay.Material3.Toolbar.Surface">
-        <item name="colorControlNormal">?attr/colorOnPrimary</item>
-
-        <item name="android:textColorSecondary">@color/colorWhiteTransparent</item>
-    </style>
-
-    <style name="BottomNavigationView" parent="Widget.Material3.BottomNavigationView">
-        <item name="materialThemeOverlay">@style/ThemeOverlay.App.BottomNavigationView</item>
-    </style>
-
-    <style name="ThemeOverlay.App.TabLayout" parent="">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorSurface">@color/colorPrimary</item>
-        <item name="colorOnSurface">@color/colorBlack</item>
-    </style>
-
-    <style name="ThemeOverlay.App.BottomNavigationView" parent="">
-        <item name="colorSurface">@color/colorSurfaceRaisedLight</item>
+        <item name="android:statusBarColor">?attr/colorSurface</item>
+        <item name="android:navigationBarColor">?attr/colorSurface</item>
     </style>
 </resources>

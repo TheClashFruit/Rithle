@@ -18,6 +18,7 @@ class FilterBuilder {
             "mod" -> filterData.add(arrayListOf("project_type:$projectType"))
             "modpack" -> filterData.add(arrayListOf("project_type:$projectType"))
             "resourcepack" -> filterData.add(arrayListOf("project_type:$projectType"))
+            "shader" -> filterData.add(arrayListOf("project_type:$projectType"))
             else -> throw NoSuchFieldError("Invalid Project Type!")
         }
 
