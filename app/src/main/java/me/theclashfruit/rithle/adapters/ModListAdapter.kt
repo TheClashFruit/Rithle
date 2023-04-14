@@ -17,8 +17,11 @@ import me.theclashfruit.rithle.classes.RithleSingleton
 import me.theclashfruit.rithle.fragments.ProjectViewFragment
 import me.theclashfruit.rithle.models.ModrinthSearchHitsModel
 
-class ModListAdapter(private val modList: ArrayList<ModrinthSearchHitsModel>, private val appContext: Context, private val fragmentManager: FragmentManager) : RecyclerView.Adapter<ModListAdapter.StreamHolder?>() {
-
+class ModListAdapter(
+    private val modList: ArrayList<ModrinthSearchHitsModel>,
+    private val appContext: Context,
+    private val fragmentManager: FragmentManager
+) : RecyclerView.Adapter<ModListAdapter.StreamHolder?>() {
     class StreamHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
         init {
             itemView.setOnClickListener(this)
@@ -74,6 +77,8 @@ class ModListAdapter(private val modList: ArrayList<ModrinthSearchHitsModel>, pr
                 .addToBackStack("projectViewFragment")
                 .add(R.id.parentFragmentContainer, projectViewFragment)
                 .commit()
+
+
         }
     }
 
