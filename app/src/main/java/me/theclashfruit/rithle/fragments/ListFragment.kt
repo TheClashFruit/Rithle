@@ -54,7 +54,7 @@ class ListFragment : Fragment() {
         recyclerView     = rootView.findViewById(R.id.recyclerView)
         nestedScrollView = rootView.findViewById(R.id.nestedScrollView)
 
-        listAdapter   = ModListAdapter(allData, requireContext(), childFragmentManager)
+        listAdapter   = ModListAdapter(allData, requireContext(), requireActivity().supportFragmentManager)
         layoutManager = LinearLayoutManager(requireContext())
 
         recyclerView!!.layoutManager = layoutManager

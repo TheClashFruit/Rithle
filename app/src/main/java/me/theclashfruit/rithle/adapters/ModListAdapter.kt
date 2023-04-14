@@ -20,7 +20,7 @@ import me.theclashfruit.rithle.models.ModrinthSearchHitsModel
 class ModListAdapter(
     private val modList: ArrayList<ModrinthSearchHitsModel>,
     private val appContext: Context,
-    private val fragmentManager: FragmentManager
+    private val fragmentManager: FragmentManager,
 ) : RecyclerView.Adapter<ModListAdapter.StreamHolder?>() {
     class StreamHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
         init {
