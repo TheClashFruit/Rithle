@@ -22,6 +22,7 @@
     <string name="settings_about">About</string>
 
     <string name="material_you">Material You</string>
+    <string name="material_you_summary">Use your Material You scheme instead of the build in color scheme.</string>
     <string name="dark_mode">Dark Mode</string>
     <string name="dark_mode_summary">Force the app to use dark mode even if the device is in light mode.</string>
     <string name="github_token">GitHub Token</string>

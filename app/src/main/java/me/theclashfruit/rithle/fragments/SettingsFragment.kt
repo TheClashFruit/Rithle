@@ -15,7 +15,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
         setPreferencesFromResource(R.xml.root_preferences, rootKey)
 
         val licensePref = findPreference<Preference>("licensesItem")
-        val darkModePRef = findPreference<CheckBoxPreference>("darkMode")
 
         licensePref!!.onPreferenceClickListener = Preference.OnPreferenceClickListener {
             R.raw.licenses.toString()
@@ -27,10 +26,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 .show()
 
             return@OnPreferenceClickListener true
-        }
-
-        darkModePRef!!.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { p, v ->
-            return@OnPreferenceChangeListener true
         }
     }
 }
