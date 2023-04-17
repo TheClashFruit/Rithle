@@ -38,12 +38,13 @@ class ProjectViewFragment : Fragment() {
         val rootView = inflater.inflate(R.layout.fragment_project_view, container, false)
 
         val toolBar: MaterialToolbar           = rootView.findViewById(R.id.toolbar)
-        val bottomNavBar: BottomNavigationView = rootView.findViewById(R.id.bottomNavigation)
+        // val bottomNavBar: BottomNavigationView = rootView.findViewById(R.id.bottomNavigation)
 
         toolBar.setNavigationOnClickListener {
             parentFragmentManager.popBackStack()
         }
 
+        /*
         bottomNavBar.setOnNavigationItemSelectedListener { item ->
             val bottomNavFragmentTransaction = parentFragmentManager.beginTransaction()
 
@@ -82,6 +83,7 @@ class ProjectViewFragment : Fragment() {
                 else -> false
             }
         }
+        */
 
         val format = Json { ignoreUnknownKeys = true }
 

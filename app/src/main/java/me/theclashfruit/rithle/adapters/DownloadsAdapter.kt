@@ -52,14 +52,23 @@ class DownloadsAdapter(private val downloadsList: JSONArray, private val appCont
         val downloadButton: ImageView = holder.itemView.findViewById(R.id.imageView3)
 
         val data = downloadsList.getJSONObject(position)
-        var versionList = ""
+        val versionList =
+            if(0 < data.getJSONArray("game_versions").length() - 1) {
+                data.getJSONArray("game_versions").getString(0) +
+                " - " +
+                data.getJSONArray("game_versions").getString(data.getJSONArray("game_versions").length() - 1)
+            } else {
+                data.getJSONArray("game_versions").getString(0)
+            }
 
+        /*
         for (i in 0 until data.getJSONArray("game_versions").length()) {
             versionList = if (i == 0)
                 data.getJSONArray("game_versions").getString(i)
             else
                 versionList + ", " + data.getJSONArray("game_versions").getString(i)
         }
+        */
 
         versionNumber.text        = data.getString("version_number")
         versionCompatibility.text = versionList

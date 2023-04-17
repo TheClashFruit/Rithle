@@ -4,8 +4,8 @@
         <item name="colorPrimaryVariant">@color/colorPrimaryVariantLight</item>
         <item name="colorOnPrimary">@color/colorWhite</item>
 
-        <item name="colorSecondary">@color/colorSecondary</item>
-        <item name="colorSecondaryVariant">@color/colorSecondaryVariant</item>
+        <item name="colorSecondary">@color/colorPrimaryLight</item>
+        <item name="colorSecondaryVariant">@color/colorPrimaryVariantLight</item>
         <item name="colorOnSecondary">@color/colorWhite</item>
 
         <item name="colorSurface">@color/colorSurfaceLight</item>
@@ -15,9 +15,14 @@
 
         <item name="colorOnBackground">@color/colorBlack</item>
 
+        <item name="colorButtonNormal">@color/colorButtonBackgroundLight</item>
+
         <item name="elevationOverlayColor">@color/colorSurfaceRaisedLight</item>
 
-        <item name="android:statusBarColor">?attr/colorSurface</item>
+        <item name="android:statusBarColor">?attr/colorSurfaceVariant</item>
         <item name="android:navigationBarColor">?attr/colorSurface</item>
+
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar">true</item>
     </style>
 </resources>

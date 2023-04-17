@@ -15,7 +15,7 @@ import kotlin.system.exitProcess
 
 class RithleApplication : Application()  {
     override fun onCreate() {
-        DynamicColors.applyToActivitiesIfAvailable(this)
+        //DynamicColors.applyToActivitiesIfAvailable(this)
 
         super.onCreate()
 

@@ -15,6 +15,9 @@
     <color name="colorSurfaceRaisedLight">#ffffff</color>
     <color name="colorSurfaceRaisedDark">#26292f</color>
 
+    <color name="colorButtonBackgroundLight">#E5E7EB</color>
+    <color name="colorButtonBackgroundDark">#434956</color>
+
     <color name="colorBlack">#FF000000</color>
     <color name="colorBlackTransparent">#99000000</color>
     <color name="colorWhite">#FFFFFFFF</color>

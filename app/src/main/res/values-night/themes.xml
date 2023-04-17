@@ -4,8 +4,8 @@
         <item name="colorPrimaryVariant">@color/colorPrimaryVariant</item>
         <item name="colorOnPrimary">@color/colorWhite</item>
 
-        <item name="colorSecondary">@color/colorSecondary</item>
-        <item name="colorSecondaryVariant">@color/colorSecondaryVariant</item>
+        <item name="colorSecondary">@color/colorPrimary</item>
+        <item name="colorSecondaryVariant">@color/colorPrimaryVariant</item>
         <item name="colorOnSecondary">@color/colorWhite</item>
 
         <item name="colorSurface">@color/colorSurfaceDark</item>
@@ -15,9 +15,11 @@
 
         <item name="colorOnBackground">@color/colorBlack</item>
 
+        <item name="colorButtonNormal">@color/colorButtonBackgroundDark</item>
+
         <item name="elevationOverlayColor">@color/colorSurfaceRaisedDark</item>
 
-        <item name="android:statusBarColor">?attr/colorSurface</item>
+        <item name="android:statusBarColor">?attr/colorSurfaceVariant</item>
         <item name="android:navigationBarColor">?attr/colorSurface</item>
     </style>
 </resources>
