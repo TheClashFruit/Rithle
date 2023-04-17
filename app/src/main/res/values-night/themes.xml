@@ -13,7 +13,8 @@
         <item name="android:colorBackground">?attr/colorSurface</item>
         <item name="background">?attr/colorSurface</item>
 
-        <item name="colorOnBackground">@color/colorBlack</item>
+        <item name="colorOnBackground">@color/colorWhite</item>
+        <item name="colorOnSurface">@color/colorWhite</item>
 
         <item name="colorButtonNormal">@color/colorButtonBackgroundDark</item>
 

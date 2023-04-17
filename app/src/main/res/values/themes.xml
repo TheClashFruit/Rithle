@@ -14,6 +14,7 @@
         <item name="background">?attr/colorSurface</item>
 
         <item name="colorOnBackground">@color/colorBlack</item>
+        <item name="colorOnSurface">@color/colorBlack</item>
 
         <item name="colorButtonNormal">@color/colorButtonBackgroundLight</item>
 
