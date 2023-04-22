@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
@@ -49,6 +50,34 @@ class ModListAdapter(
         holder.itemView.findViewById<TextView>(R.id.textView2).text = "by ${modList[position].author}"
         holder.itemView.findViewById<TextView>(R.id.textView3).text = modList[position].description
 
+        if(modList[position].color != null) {
+            holder.itemView.findViewById<LinearLayout>(R.id.featuredGalleryBg)
+                .setBackgroundColor(modList[position].color!!)
+
+            holder.itemView.findViewById<ImageView>(R.id.featuredGalleryIcon)
+                .setBackgroundColor(modList[position].color!!)
+        }
+
+        if(modList[position].featured_gallery != null) {
+            RithleSingleton.getInstance(appContext).imageLoader.get(
+                modList[position].featured_gallery.toString(),
+                object : ImageLoader.ImageListener {
+                    override fun onResponse(
+                        response: ImageLoader.ImageContainer?,
+                        isImmediate: Boolean
+                    ) {
+                        if (response != null) {
+                            holder.itemView.findViewById<ImageView>(R.id.featuredGalleryIcon)
+                                .setImageBitmap(response.bitmap)
+                        }
+                    }
+
+                    override fun onErrorResponse(error: VolleyError?) {
+                        Log.e("imageLoader", error!!.stackTraceToString())
+                    }
+                })
+        }
+
         if(modList[position].icon_url!!.isNotEmpty()) {
             RithleSingleton.getInstance(appContext).imageLoader.get(
                 modList[position].icon_url.toString(),
@@ -60,6 +89,9 @@ class ModListAdapter(
                         if (response != null) {
                             holder.itemView.findViewById<ImageView>(R.id.imageView)
                                 .setImageBitmap(response.bitmap)
+
+                            holder.itemView.findViewById<ImageView>(R.id.imageView)
+                                .scaleType = ImageView.ScaleType.CENTER_CROP
                         }
                     }
 

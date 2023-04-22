@@ -24,5 +24,7 @@ data class ModrinthSearchHitsModel(
   @SerializedName("license"            ) var license            : String?           = null,
   @SerializedName("client_side"        ) var client_side        : String?           = null,
   @SerializedName("server_side"        ) var server_side        : String?           = null,
-  @SerializedName("gallery"            ) var gallery            : ArrayList<String> = arrayListOf()
+  @SerializedName("gallery"            ) var gallery            : ArrayList<String> = arrayListOf(),
+  @SerializedName("featured_gallery"   ) var featured_gallery   : String?           = null,
+  @SerializedName("color"              ) var color              : Int?              = null
 )
