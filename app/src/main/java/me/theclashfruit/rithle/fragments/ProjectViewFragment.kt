@@ -1,32 +1,37 @@
 package me.theclashfruit.rithle.fragments
 
 import android.annotation.SuppressLint
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.android.volley.toolbox.JsonObjectRequest
+import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.appbar.MaterialToolbar
-import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
-import me.theclashfruit.rithle.BuildConfig
 import me.theclashfruit.rithle.R
-import me.theclashfruit.rithle.classes.MrApiUrlUtil
-import me.theclashfruit.rithle.classes.RithleSingleton
-import me.theclashfruit.rithle.models.ModrinthProjectModel
+import me.theclashfruit.rithle.models.ModrinthSearchHitsModel
 
 class ProjectViewFragment : Fragment() {
     private var modId: String? = null
-    private var dataRaw: String? = null
+    private var modData: ModrinthSearchHitsModel? = null
+
+    private val tabTexts = listOf("Description", "Gallery", "Changelog", "Versions")
+    private val tabTextsNoGallery = listOf("Description", "Changelog", "Versions")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val format = Json { ignoreUnknownKeys = true }
+
         arguments?.let {
             modId = it.getString("modId")
+            modData = format.decodeFromString<ModrinthSearchHitsModel>(it.getString("modData")!!)
         }
     }
 
@@ -38,92 +43,75 @@ class ProjectViewFragment : Fragment() {
         val rootView = inflater.inflate(R.layout.fragment_project_view, container, false)
 
         val toolBar: MaterialToolbar           = rootView.findViewById(R.id.toolbar)
-        // val bottomNavBar: BottomNavigationView = rootView.findViewById(R.id.bottomNavigation)
+
+        val tabLayout = rootView.findViewById<TabLayout>(R.id.tabLayout)
+        val viewPager = rootView.findViewById<ViewPager2>(R.id.viewPager)
+
+        if(modData!!.featured_gallery == null)
+            tabLayout.removeTabAt(1)
 
         toolBar.setNavigationOnClickListener {
             parentFragmentManager.popBackStack()
         }
 
-        /*
-        bottomNavBar.setOnNavigationItemSelectedListener { item ->
-            val bottomNavFragmentTransaction = parentFragmentManager.beginTransaction()
+        viewPager.adapter = ScreenSlidePagerAdapter(this, modData!!.featured_gallery != null)
 
-            when(item.itemId) {
-                R.id.itemInfo -> {
-                    val infoFragment = ProjectInfoFragment.newInstance(dataRaw!!)
-
-                    bottomNavFragmentTransaction
-                        .replace(R.id.projectFragmentContainer, infoFragment)
-                        .commit()
-
-                    return@setOnNavigationItemSelectedListener true
-                }
-                R.id.itemChangelog -> {
-                    val descriptionFragment = ProjectDescriptionFragment.newInstance(dataRaw!!)
-
-                    bottomNavFragmentTransaction
-                        .replace(R.id.projectFragmentContainer, descriptionFragment)
-                        .commit()
-
-                    return@setOnNavigationItemSelectedListener true
-                }
-                R.id.itemDownloads -> {
-                    val downloadsFragment = ProjectDownloadsFragment.newInstance(modId)
-
-                    bottomNavFragmentTransaction
-                        .replace(R.id.projectFragmentContainer, downloadsFragment)
-                        .commit()
-
-                    return@setOnNavigationItemSelectedListener true
-                }
-                R.id.itemSettings -> {
-
-                    return@setOnNavigationItemSelectedListener true
-                }
-                else -> false
+        TabLayoutMediator(tabLayout, viewPager) { tab, position ->
+            if(modData!!.featured_gallery != null) {
+                tab.text = tabTexts[position]
+            } else {
+                tab.text = tabTextsNoGallery[position]
             }
-        }
-        */
+        }.attach()
 
-        val format = Json { ignoreUnknownKeys = true }
+        Log.d("assss",
+            ScreenSlidePagerAdapter(this, modData!!.featured_gallery != null).itemCount.toString()
+        )
 
-        val jsonObjectRequest = @SuppressLint("SetTextI18n")
-        object : JsonObjectRequest(
-            Method.GET, MrApiUrlUtil().getApiUrl() + "/v2/project/${modId}", null,
-            { response ->
-                    dataRaw  = response.toString()
-                val dataJson = format.decodeFromString<ModrinthProjectModel>(response.toString())
-
-                toolBar.subtitle = dataJson.title
-
-                val infoFragment = ProjectInfoFragment.newInstance(dataRaw!!)
-
-                parentFragmentManager.beginTransaction()
-                    .replace(R.id.projectFragmentContainer, infoFragment)
-                    .commit()
-            },
-            { error ->
-                Log.e("webCall", error.toString())
-            }
-        ) {
-            override fun getHeaders(): MutableMap<String, String> {
-                val headers = HashMap<String, String>()
-                headers["User-Agent"] = "Mozilla/5.0 (Linux; Android ${Build.VERSION.RELEASE}) Rithle/${BuildConfig.VERSION_NAME} (github.com/TheClashFruit/Rithle; admin@theclashfruit.me) Volley/1.2.1"
-                return headers
-            }
-        }
-
-        RithleSingleton.getInstance(requireContext()).addToRequestQueue(jsonObjectRequest)
+        Log.d("assss",
+            tabLayout.tabCount.toString()
+        )
 
         return rootView
     }
 
+    private inner class ScreenSlidePagerAdapter(fa: Fragment, hasGallery: Boolean) : FragmentStateAdapter(fa) {
+        private val hasGallery = hasGallery
+
+        val length: Int = if(hasGallery) 4 else 3
+
+        override fun getItemCount(): Int = length
+
+        override fun createFragment(position: Int) : Fragment {
+            val tabbyTexty = if(hasGallery) tabTexts else tabTextsNoGallery
+
+            when(tabbyTexty[position]) {
+                "Description" -> {
+                    return ProjectInfoFragment.newInstance(modId)
+                }
+                "Gallery" -> {
+                    return ProjectChangelogFragment.newInstance(modId)
+                }
+                "Changelog" -> {
+                    return ProjectChangelogFragment.newInstance(modId)
+                }
+                "Versions" -> {
+                    return ProjectDownloadsFragment.newInstance(modId)
+                }
+                else -> {
+                    return ProjectChangelogFragment.newInstance(modId)
+                }
+            }
+        }
+    }
+
     companion object {
         @JvmStatic
-        fun newInstance(modId: String) =
+        fun newInstance(modId: String, modData: String) =
             ProjectViewFragment().apply {
                 arguments = Bundle().apply {
                     putString("modId", modId)
+                    putString("modData", modData)
                 }
             }
     }

@@ -3,13 +3,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.ProjectDescriptionFragment">
+    tools:context=".fragments.ProjectChangelogFragment">
 
     <TextView
         android:id="@+id/textView5"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center_horizontal|center_vertical"
-        android:text="tba"
+        android:text="WIP"
         android:textAlignment="gravity" />
 </FrameLayout>

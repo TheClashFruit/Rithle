@@ -1,9 +1,11 @@
 package me.theclashfruit.rithle.fragments
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -17,6 +19,8 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.android.volley.VolleyError
 import com.android.volley.toolbox.ImageLoader
+import com.android.volley.toolbox.JsonObjectRequest
+import com.google.android.material.tabs.TabLayoutMediator
 import io.noties.markwon.AbstractMarkwonPlugin
 import io.noties.markwon.Markwon
 import io.noties.markwon.MarkwonConfiguration
@@ -28,7 +32,9 @@ import io.noties.markwon.image.ImagesPlugin
 import io.noties.markwon.linkify.LinkifyPlugin
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
+import me.theclashfruit.rithle.BuildConfig
 import me.theclashfruit.rithle.R
+import me.theclashfruit.rithle.classes.MrApiUrlUtil
 import me.theclashfruit.rithle.classes.ProxySchemeHandler
 import me.theclashfruit.rithle.classes.RithleSingleton
 import me.theclashfruit.rithle.models.ModrinthProjectModel
@@ -39,14 +45,13 @@ import java.util.*
 
 class ProjectInfoFragment : Fragment() {
     private var projectData: ModrinthProjectModel? = null
+    private var modId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val format = Json { ignoreUnknownKeys = true }
-
         arguments?.let {
-            projectData = format.decodeFromString<ModrinthProjectModel>(it.getString("projectData")!!)
+            modId = it.getString("modId")!!
         }
     }
 
@@ -63,10 +68,6 @@ class ProjectInfoFragment : Fragment() {
         val textViewTitle     = rootView.findViewById<TextView>(R.id.textViewTitle)
         val textViewDownloads = rootView.findViewById<TextView>(R.id.textViewDownloads)
         val textViewFollowers = rootView.findViewById<TextView>(R.id.textViewFollowers)
-
-        textViewTitle.text     = projectData!!.title
-        textViewDownloads.text = resources.getQuantityString(R.plurals.project_downloads, projectData!!.downloads!!.toInt(), nf.format(projectData!!.downloads!!.toLong()).toString())
-        textViewFollowers.text = resources.getQuantityString(R.plurals.project_followers, projectData!!.followers!!.toInt(), nf.format(projectData!!.followers!!.toLong()).toString())
 
         val markwon = Markwon.builder(requireContext())
             .usePlugin(HtmlPlugin.create())
@@ -126,32 +127,59 @@ class ProjectInfoFragment : Fragment() {
             })
             .build()
 
+        val format = Json { ignoreUnknownKeys = true }
 
-        markwon.setParsedMarkdown(rootView.findViewById(R.id.textViewDescription), markwon.render(markwon.parse(projectData!!.body!!)))
+        val jsonObjectRequest = @SuppressLint("SetTextI18n")
+        object : JsonObjectRequest(
+            Method.GET, MrApiUrlUtil().getApiUrl() + "/v2/project/${modId}", null,
+            { response ->
+                val dataRaw  = response.toString()
+                val dataJson = format.decodeFromString<ModrinthProjectModel>(dataRaw)
 
-        if(projectData!!.icon_url != null) {
-            RithleSingleton.getInstance(requireContext()).imageLoader.get(projectData!!.icon_url.toString(), object : ImageLoader.ImageListener {
-                override fun onResponse(response: ImageLoader.ImageContainer?, isImmediate: Boolean) {
-                    if (response != null) {
-                        projectIcon.setImageBitmap(response.bitmap)
-                    }
+                projectData = dataJson
+
+                textViewTitle.text     = projectData!!.title
+                textViewDownloads.text = resources.getQuantityString(R.plurals.project_downloads, projectData!!.downloads!!.toInt(), nf.format(projectData!!.downloads!!.toLong()).toString())
+                textViewFollowers.text = resources.getQuantityString(R.plurals.project_followers, projectData!!.followers!!.toInt(), nf.format(projectData!!.followers!!.toLong()).toString())
+
+                markwon.setParsedMarkdown(rootView.findViewById(R.id.textViewDescription), markwon.render(markwon.parse(projectData!!.body!!)))
+
+                if(projectData!!.icon_url != null) {
+                    RithleSingleton.getInstance(requireContext()).imageLoader.get(projectData!!.icon_url.toString(), object : ImageLoader.ImageListener {
+                        override fun onResponse(response: ImageLoader.ImageContainer?, isImmediate: Boolean) {
+                            if (response != null) {
+                                projectIcon.setImageBitmap(response.bitmap)
+                            }
+                        }
+
+                        override fun onErrorResponse(error: VolleyError?) {
+                            Log.d("imageLoader", "wtf are you doing, you either don't have internet or the url is fucking wrong, btw the error is: ${error.toString()}")
+                        }
+                    })
                 }
-
-                override fun onErrorResponse(error: VolleyError?) {
-                    Log.d("imageLoader", "wtf are you doing, you either don't have internet or the url is fucking wrong, btw the error is: ${error.toString()}")
-                }
-            })
+            },
+            { error ->
+                Log.e("webCall", error.toString())
+            }
+        ) {
+            override fun getHeaders(): MutableMap<String, String> {
+                val headers = HashMap<String, String>()
+                headers["User-Agent"] = "Mozilla/5.0 (Linux; Android ${Build.VERSION.RELEASE}) Rithle/${BuildConfig.VERSION_NAME} (github.com/TheClashFruit/Rithle; admin@theclashfruit.me) Volley/1.2.1"
+                return headers
+            }
         }
+
+        RithleSingleton.getInstance(requireContext()).addToRequestQueue(jsonObjectRequest)
 
         return rootView
     }
 
     companion object {
         @JvmStatic
-        fun newInstance(projectDataString: String) =
+        fun newInstance(modId: String?) =
             ProjectInfoFragment().apply {
                 arguments = Bundle().apply {
-                    putString("projectData", projectDataString)
+                    putString("modId", modId)
                 }
             }
     }

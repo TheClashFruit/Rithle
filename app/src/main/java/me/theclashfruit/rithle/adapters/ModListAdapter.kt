@@ -15,6 +15,9 @@ import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.android.volley.VolleyError
 import com.android.volley.toolbox.ImageLoader
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.serializer
 import me.theclashfruit.rithle.R
 import me.theclashfruit.rithle.classes.RithleSingleton
 import me.theclashfruit.rithle.fragments.ProjectViewFragment
@@ -111,7 +114,7 @@ class ModListAdapter(
 
         holder.itemView.rootView.setOnClickListener {
             val mainFragmentTransaction = fragmentManager.beginTransaction()
-            val projectViewFragment = ProjectViewFragment.newInstance(modList[position].project_id.toString())
+            val projectViewFragment = ProjectViewFragment.newInstance(modList[position].project_id.toString(), Json.encodeToString(modList[position]))
 
             mainFragmentTransaction
                 .addToBackStack("projectViewFragment")
