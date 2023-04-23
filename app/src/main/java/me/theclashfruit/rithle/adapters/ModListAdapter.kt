@@ -2,6 +2,8 @@ package me.theclashfruit.rithle.adapters
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Color
+import android.graphics.ColorSpace
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -51,11 +53,17 @@ class ModListAdapter(
         holder.itemView.findViewById<TextView>(R.id.textView3).text = modList[position].description
 
         if(modList[position].color != null) {
+            val finalColor: Int =
+                if(Integer.toHexString(modList[position].color!!).length < 6)
+                    Color.parseColor("#" + Integer.toHexString(modList[position].color!!) + "0")
+                else
+                    Color.parseColor("#" + Integer.toHexString(modList[position].color!!))
+
             holder.itemView.findViewById<LinearLayout>(R.id.featuredGalleryBg)
-                .setBackgroundColor(modList[position].color!!)
+                .setBackgroundColor(finalColor)
 
             holder.itemView.findViewById<ImageView>(R.id.featuredGalleryIcon)
-                .setBackgroundColor(modList[position].color!!)
+                .setBackgroundColor(finalColor)
         }
 
         if(modList[position].featured_gallery != null) {
