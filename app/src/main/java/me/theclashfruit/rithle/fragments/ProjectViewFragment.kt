@@ -64,14 +64,6 @@ class ProjectViewFragment : Fragment() {
             }
         }.attach()
 
-        Log.d("assss",
-            ScreenSlidePagerAdapter(this, modData!!.featured_gallery != null).itemCount.toString()
-        )
-
-        Log.d("assss",
-            tabLayout.tabCount.toString()
-        )
-
         return rootView
     }
 
