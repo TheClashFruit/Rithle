@@ -47,6 +47,13 @@ class HomeFragment : Fragment() {
 
             when(item.itemId) {
                 R.id.toolBarSearch -> {
+                    val searchFragment = SearchFragment.newInstance("a", "b")
+
+                    toolBarFragmentTransaction
+                        .addToBackStack("searchFragment")
+                        .add(R.id.parentFragmentContainer, searchFragment)
+                        .commit()
+
                     return@setOnMenuItemClickListener true
                 }
                 R.id.toolBarAccount -> {
