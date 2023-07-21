@@ -35,10 +35,9 @@
 
                 <ImageView
                     android:id="@+id/featuredGalleryIcon"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="0"
-                    android:background="#96A2B0"
                     android:scaleType="centerCrop"
                     android:contentDescription="Project Icon" />
             </LinearLayout>

@@ -65,8 +65,10 @@ class ModListAdapter(
             holder.itemView.findViewById<LinearLayout>(R.id.featuredGalleryBg)
                 .setBackgroundColor(finalColor)
 
+            /*
             holder.itemView.findViewById<ImageView>(R.id.featuredGalleryIcon)
                 .setBackgroundColor(finalColor)
+             */
         }
 
         if(modList[position].featured_gallery != null) {
