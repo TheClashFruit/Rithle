@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <group
+        android:id="@+id/projectsMenuList"
+        android:checkableBehavior="single">
+        <item
+            android:checkable="true"
+            android:icon="@drawable/ic_inventory"
+            android:title="Mods"
+            app:showAsAction="ifRoom" />
+        <item
+            android:checkable="true"
+            android:icon="@drawable/ic_inventory"
+            android:title="Plugins"
+            app:showAsAction="ifRoom" />
+        <item
+            android:checkable="true"
+            android:icon="@drawable/ic_inventory"
+            android:title="Data Packs"
+            app:showAsAction="ifRoom" />
+        <item
+            android:checkable="true"
+            android:icon="@drawable/ic_inventory"
+            android:title="Shaders"
+            app:showAsAction="ifRoom" />
+        <item
+            android:checkable="true"
+            android:icon="@drawable/ic_inventory"
+            android:title="Resource Packs"
+            app:showAsAction="ifRoom" />
+        <item
+            android:checkable="true"
+            android:icon="@drawable/ic_inventory"
+            android:title="Modpacks"
+            app:showAsAction="ifRoom" />
+    </group>
+    <group
+        android:id="@+id/drawerOtherMenu"
+        android:checkableBehavior="none">
+        <item
+            android:icon="@drawable/ic_person"
+            android:title="Profile"
+            app:showAsAction="ifRoom" />
+        <item
+            android:icon="@drawable/ic_notifications"
+            android:title="Notifications" />
+        <item
+            android:icon="@drawable/ic_dashboard"
+            android:title="Dashboard"
+            app:showAsAction="ifRoom" />
+        <item
+            android:icon="@drawable/ic_settings"
+            android:title="Settings"
+            app:showAsAction="ifRoom" />
+    </group>
+
+</menu>
