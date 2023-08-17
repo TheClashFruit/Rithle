@@ -9,6 +9,9 @@
     <color name="colorSecondary">#4f9cff</color>
     <color name="colorSecondaryVariant">#4f9cff</color>
 
+    <color name="colorSecondaryContainer">#261BD96A</color>
+    <color name="colorSecondaryContainerLight">#2600AF5C</color>
+
     <color name="colorSurfaceLight">#e5e7eb</color>
     <color name="colorSurfaceDark">#16181C</color>
 

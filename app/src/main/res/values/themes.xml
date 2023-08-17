@@ -8,6 +8,9 @@
         <item name="colorSecondaryVariant">@color/colorPrimaryVariantLight</item>
         <item name="colorOnSecondary">@color/colorWhite</item>
 
+        <item name="colorSecondaryContainer">@color/colorSecondaryContainerLight</item>
+        <item name="colorOnSecondaryContainer">@color/colorWhite</item>
+
         <item name="colorSurface">@color/colorSurfaceLight</item>
         <item name="colorSurfaceVariant">@color/colorSurfaceRaisedLight</item>
         <item name="android:colorBackground">?attr/colorSurface</item>
