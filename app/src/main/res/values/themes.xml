@@ -1,9 +1,29 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.Rithle" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
+    <style name="Theme.Rithle" parent="Theme.Material3.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimaryLight</item>
-    </style>
+        <item name="colorPrimaryVariant">@color/colorPrimaryVariantLight</item>
+        <item name="colorOnPrimary">@color/colorWhite</item>
 
-    <style name="Theme.Rithle" parent="Base.Theme.Rithle" />
+        <item name="colorSecondary">@color/colorPrimaryLight</item>
+        <item name="colorSecondaryVariant">@color/colorPrimaryVariantLight</item>
+        <item name="colorOnSecondary">@color/colorWhite</item>
+
+        <item name="colorSurface">@color/colorSurfaceLight</item>
+        <item name="colorSurfaceVariant">@color/colorSurfaceRaisedLight</item>
+        <item name="android:colorBackground">?attr/colorSurface</item>
+        <item name="background">?attr/colorSurface</item>
+
+        <item name="colorOnBackground">@color/colorBlack</item>
+        <item name="colorOnSurface">@color/colorBlack</item>
+
+        <item name="colorSurfaceContainerHigh">@color/colorSurfaceContainerHighLight</item>
+
+        <item name="elevationOverlayColor">@color/colorSurfaceRaisedLight</item>
+
+        <item name="android:statusBarColor">?attr/colorSurfaceVariant</item>
+        <item name="android:navigationBarColor">?attr/colorSurface</item>
+
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar">true</item>
+    </style>
 </resources>

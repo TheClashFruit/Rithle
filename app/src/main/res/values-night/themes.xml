@@ -1,7 +1,26 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.Rithle" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your dark theme here. -->
-        <item name="colorPrimary">@color/colorPrimaryDark</item>
+    <style name="Theme.Rithle" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryVariant">@color/colorPrimaryVariant</item>
+        <item name="colorOnPrimary">@color/colorWhite</item>
+
+        <item name="colorSecondary">@color/colorPrimary</item>
+        <item name="colorSecondaryVariant">@color/colorPrimaryVariant</item>
+        <item name="colorOnSecondary">@color/colorWhite</item>
+
+        <item name="colorSurface">@color/colorSurfaceDark</item>
+        <item name="colorSurfaceVariant">@color/colorSurfaceRaisedDark</item>
+        <item name="android:colorBackground">?attr/colorSurface</item>
+        <item name="background">?attr/colorSurface</item>
+
+        <item name="colorOnBackground">@color/colorWhite</item>
+        <item name="colorOnSurface">@color/colorWhite</item>
+
+        <item name="colorSurfaceContainerHigh">@color/colorSurfaceContainerHighDark</item>
+
+        <item name="elevationOverlayColor">@color/colorSurfaceRaisedDark</item>
+
+        <item name="android:statusBarColor">?attr/colorSurfaceVariant</item>
+        <item name="android:navigationBarColor">?attr/colorSurface</item>
     </style>
 </resources>

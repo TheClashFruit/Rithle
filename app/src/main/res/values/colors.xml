@@ -1,8 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <color name="colorPrimary">#1bd96a</color>
+    <color name="colorPrimaryVariant">#1bd96a</color>
 
     <color name="colorPrimaryLight">#00af5c</color>
-    <color name="colorPrimaryDark">#1bd96a</color>
+    <color name="colorPrimaryVariantLight">#00af5c</color>
+
+    <color name="colorSecondary">#4f9cff</color>
+    <color name="colorSecondaryVariant">#4f9cff</color>
+
+    <color name="colorSurfaceLight">#dfeceb</color>
+    <color name="colorSurfaceDark">#171c1c</color>
+
+    <color name="colorSurfaceRaisedLight">#f0f5f4</color>
+    <color name="colorSurfaceRaisedDark">#222a29</color>
+
+    <color name="colorSurfaceContainerHighLight">#e7efee</color>
+    <color name="colorSurfaceContainerHighDark">#303635</color>
+
+    <color name="colorBlack">#FF000000</color>
+    <color name="colorBlackTransparent">#99000000</color>
+    <color name="colorWhite">#FFFFFFFF</color>
+    <color name="colorWhiteTransparent">#99FFFFFF</color>
+
+    <color name="ic_launcher_background">#171c1c</color>
 </resources>

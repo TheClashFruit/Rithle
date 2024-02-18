@@ -1,4 +1,4 @@
-![ritle_banner](https://user-images.githubusercontent.com/55049569/218251089-1782245b-d742-4ecd-b743-77c18811dba6.svg)
+![ritle_banner](https://cdn-new.theclashfruit.me/forgejo/rithle/banner.svg)
 
 <h1 align="center">
   Rithle
