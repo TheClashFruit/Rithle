@@ -1,5 +1,6 @@
 package me.theclashfruit.rithle
 
+import android.accounts.AccountManager
 import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.Drawable
@@ -44,6 +45,27 @@ class MainActivity : AppCompatActivity() {
         searchBar = binding.searchBar;
         searchView = binding.searchView;
 
+        val auth = AccountManager.get(this).getAuthToken(AccountManager.get(this).getAccountsByType("me.theclashfruit.rithle")[0], "pat", null, this, null, null)
+
+        lifecycleScope.launch(Dispatchers.Default){
+            val token = auth.result.getString(AccountManager.KEY_AUTHTOKEN) ?: "unset"
+
+            val modrinthApi = Modrinth.getInstance(this@MainActivity)
+
+            if (token != "unset") {
+                modrinthApi.setToken(token)
+            } else {
+                Intent(this@MainActivity, OnboardingActivity::class.java).also {
+                    startActivity(it)
+                    finish()
+                }
+            }
+
+            modrinthApi.loggedInUser {
+                loadImage(it.avatarUrl)
+            }
+        }
+
         searchBar.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.profile -> {
@@ -59,9 +81,10 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        /*
         val sharedPref = getSharedPreferences("me.theclashfruit.rithle_preferences", Context.MODE_PRIVATE)
 
-        val token = sharedPref.getString("modrinth_token", null)
+        val token = sharedPref.getString("modrinth_token", "")
 
         if (token == null) {
             Intent(this, OnboardingActivity::class.java).also {
@@ -127,6 +150,7 @@ class MainActivity : AppCompatActivity() {
                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
                 override fun afterTextChanged(s: android.text.Editable?) {}
             })
+        */
     }
 
     private fun loadImage(avatarUrl: String?) {

@@ -1,9 +1,12 @@
 package me.theclashfruit.rithle.onboarding
 
+import android.accounts.Account
+import android.accounts.AccountManager
 import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import me.theclashfruit.rithle.MainActivity
 import me.theclashfruit.rithle.databinding.ActivityOnboardingBinding
 import me.theclashfruit.rithle.modrinth.Modrinth
@@ -21,7 +24,7 @@ class OnboardingActivity : AppCompatActivity() {
         val patField = binding.patField
         val buttonContinue = binding.buttonContinue
 
-        val sharedPref = getSharedPreferences("me.theclashfruit.rithle_preferences", Context.MODE_PRIVATE)
+        val accountManager = AccountManager.get(this)
 
         buttonContinue.setOnClickListener {
             val pat = patField.editText?.text.toString()
@@ -33,13 +36,17 @@ class OnboardingActivity : AppCompatActivity() {
                     modrinthApi.setToken(pat)
 
                     modrinthApi.loggedInUser {
-                        sharedPref
-                            .edit()
-                            .putString("modrinth_token", pat)
-                            .apply()
+                        val account = Account(it.username, "me.theclashfruit.rithle")
+                        val userData = Bundle()
 
-                        Intent(this, MainActivity::class.java).also {
-                            startActivity(it)
+                        userData.putString("id", it.id)
+
+                        accountManager.addAccountExplicitly(account, pat, userData)
+                        accountManager.setAuthToken(account, "pat", pat)
+                        accountManager.notifyAccountAuthenticated(account)
+
+                        Intent(this, MainActivity::class.java).also { i ->
+                            startActivity(i)
                             finish()
                         }
                     }
