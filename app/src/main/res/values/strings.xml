@@ -1,5 +1,18 @@
 <resources>
-    <string name="app_name">Rithle</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="app_name" translatable="false">Rithle</string>
+
+    <string name="mods">Mods</string>
+    <string name="plugins">Plugins</string>
+    <string name="data_packs">Data Packs</string>
+    <string name="shaders">Shaders</string>
+    <string name="resource_packs">Resource Packs</string>
+    <string name="mod_packs">Mod Packs</string>
+
+    <string name="notifications">Notifications</string>
+    <string name="profile">Profile</string>
+
+    <string name="onboarding_guide"><![CDATA[You will need to enter a Modrinth PAT to continue. Create one over at https://modrinth.com/settings/pats then enter into the input bellow.\n\nThe following scopes are required for the app:\n* Read & Write User Data\n* Read Notifications\n\nHowever it is recommended to have every scope so you can use the app like you would the website.]]></string>
+    <string name="onboarding_title">Welcome to</string>
+    <string name="onboarding_hint">Enter your Modrinth PAT.</string>
+    <string name="onboarding_continue">Continue</string>
 </resources>

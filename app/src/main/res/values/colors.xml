@@ -1,30 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#1bd96a</color>
-    <color name="colorPrimaryVariant">#1bd96a</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
 
     <color name="colorPrimaryLight">#00af5c</color>
-    <color name="colorPrimaryVariantLight">#00af5c</color>
-
-    <color name="colorSecondary">#4f9cff</color>
-    <color name="colorSecondaryVariant">#4f9cff</color>
-
-    <color name="colorSecondaryContainer">#261BD96A</color>
-    <color name="colorSecondaryContainerLight">#2600AF5C</color>
-
-    <color name="colorSurfaceLight">#e5e7eb</color>
-    <color name="colorSurfaceDark">#16181C</color>
-
-    <color name="colorSurfaceRaisedLight">#ffffff</color>
-    <color name="colorSurfaceRaisedDark">#26292f</color>
-
-    <color name="colorButtonBackgroundLight">#E5E7EB</color>
-    <color name="colorButtonBackgroundDark">#434956</color>
-
-    <color name="colorBlack">#FF000000</color>
-    <color name="colorBlackTransparent">#99000000</color>
-    <color name="colorWhite">#FFFFFFFF</color>
-    <color name="colorWhiteTransparent">#99FFFFFF</color>
-
-    <color name="ic_launcher_background">#002111</color>
+    <color name="colorPrimaryDark">#1bd96a</color>
 </resources>

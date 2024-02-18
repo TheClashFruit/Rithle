@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <item
+        android:id="@+id/notifications"
+        android:title="@string/notifications"
+        android:contentDescription="@string/notifications"
+        android:icon="@drawable/ic_notifications"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/profile"
+        android:title="@string/profile"
+        android:contentDescription="@string/profile"
+        tools:icon="@tools:sample/avatars"
+        app:showAsAction="ifRoom" />
+</menu>
