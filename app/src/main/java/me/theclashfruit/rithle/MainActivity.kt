@@ -96,12 +96,16 @@ class MainActivity : AppCompatActivity() {
         val mainFragment = MainFragment()
 
         if (intent?.action == Intent.ACTION_VIEW) {
-            val id: String? = intent?.getStringExtra("id")
+            val data: Uri? = intent?.data
 
-            supportFragmentManager
-                .beginTransaction()
-                .replace(fragmentView.id, ProjectFragment.newInstance(id!!))
-                .commit()
+            if (data!!.path!!.matches(Regex("((/)((mod/.+)|(plugin/.+)|(datapack/.+)|(shader/.+)|(resourcepack/.+)|(modpack/.+)|(project/.+)))"))) {
+                val id: String = data.pathSegments[1]
+
+                supportFragmentManager
+                    .beginTransaction()
+                    .replace(fragmentView.id, ProjectFragment.newInstance(id))
+                    .commit()
+            }
         } else {
             supportFragmentManager
                 .beginTransaction()

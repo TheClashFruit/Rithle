@@ -1,7 +1,9 @@
 package me.theclashfruit.rithle.fragments
 
 import android.accounts.AccountManager
-import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.text.TextWatcher
 import android.util.Log
@@ -10,7 +12,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.core.graphics.drawable.toBitmap
+import androidx.core.graphics.drawable.toBitmapOrNull
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.search.SearchBar
@@ -18,13 +25,15 @@ import com.google.android.material.search.SearchView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import me.theclashfruit.rithle.R
+import me.theclashfruit.rithle.adapters.ModalAdapter
 import me.theclashfruit.rithle.databinding.FragmentMainBinding
+import me.theclashfruit.rithle.models.ItemWithIcon
 import me.theclashfruit.rithle.modrinth.Modrinth
 import me.theclashfruit.rithle.modrinth.facets.Category
 import me.theclashfruit.rithle.modrinth.facets.FacetBuilder
 import me.theclashfruit.rithle.modrinth.facets.ProjectType
-import me.theclashfruit.rithle.onboarding.OnboardingActivity
 import me.theclashfruit.rithle.util.ImageUtil
+import org.w3c.dom.Text
 
 class MainFragment : Fragment() {
     private var _binding: FragmentMainBinding? = null
@@ -35,7 +44,10 @@ class MainFragment : Fragment() {
 
     private lateinit var viewPager: ViewPager2
 
-    private lateinit var accountManager: AccountManager
+    private lateinit var userName: String
+    private lateinit var email: String
+
+    private lateinit var iconDrawable: Bitmap
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,8 +67,13 @@ class MainFragment : Fragment() {
 
         val modrinthApi = Modrinth.getInstance(requireContext())
 
-        modrinthApi.loggedInUser {
-            ImageUtil.loadImage(it.avatarUrl, requireContext()) {
+        modrinthApi.loggedInUser { user ->
+            ImageUtil.loadImage(user.avatarUrl, requireContext()) {
+                iconDrawable = it.toBitmapOrNull(128, 128, null)!!
+
+                userName = user.username
+                email    = user.email!!
+
                 lifecycleScope.launch(Dispatchers.Main) {
                     searchBar.menu.findItem(R.id.profile).icon = it
                 }
@@ -66,11 +83,45 @@ class MainFragment : Fragment() {
         searchBar.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.profile -> {
+                    val listItems: Array<ItemWithIcon> = arrayOf(
+                        ItemWithIcon(R.drawable.ic_close, "Profile"),
+                        ItemWithIcon(R.drawable.ic_close, "Create Project"),
+                        ItemWithIcon(R.drawable.ic_close, "Collections"),
+                        ItemWithIcon(R.drawable.ic_close, "Notifications"),
+                        ItemWithIcon(R.drawable.ic_close, "Dashboard"),
+                        ItemWithIcon(R.drawable.ic_close, "Settings"),
+                        ItemWithIcon(R.drawable.ic_close, "Logout")
+                    )
+
+                    val view = layoutInflater.inflate(R.layout.profile_modal, null)
+
+                    val recyclerView = view.findViewById<RecyclerView>(R.id.recyclerView)
+                    val imageView = view.findViewById<ImageView>(R.id.imageView)
+
+                    val userNameTextView = view.findViewById<TextView>(R.id.textView4)
+                    val emailTextView = view.findViewById<TextView>(R.id.textView5)
+
+                    val adapter = ModalAdapter(listItems)
+
+                    Log.d("RithleApp", adapter.itemCount.toString())
+
                     MaterialAlertDialogBuilder(requireContext())
-                        .setItems(arrayOf("Account", "Settings")) { dialog, which ->
-                            dialog.dismiss()
-                        }
+                        .setView(view)
                         .show()
+
+                    imageView.setImageBitmap(iconDrawable)
+
+                    recyclerView.adapter = adapter
+                    recyclerView.refreshDrawableState()
+
+                    userNameTextView.text = userName
+                    emailTextView.text    = email
+
+
+
+                    /* .setItems(arrayOf("Profile", "Create Project", "Collections", "Notifications", "Dashboard", "Settings", "Logout")) { dialog, which ->
+                            dialog.dismiss()
+                        }*/
 
                     true
                 }
