@@ -53,29 +53,12 @@ class MainFragment : Fragment() {
 
         viewPager = binding.viewPager;
 
-        accountManager = AccountManager.get(requireActivity())
-
-        val auth = accountManager.getAuthToken(AccountManager.get(requireContext()).getAccountsByType("me.theclashfruit.rithle")[0], "pat", null, requireActivity(), null, null)
-
         val modrinthApi = Modrinth.getInstance(requireContext())
 
-        lifecycleScope.launch(Dispatchers.Default) {
-            val token = auth.result.getString(AccountManager.KEY_AUTHTOKEN) ?: "unset"
-
-            if (token != "unset") {
-                modrinthApi.setToken(token)
-            } else {
-                Intent(requireActivity(), OnboardingActivity::class.java).also {
-                    startActivity(it)
-                    requireActivity().finish()
-                }
-            }
-
-            modrinthApi.loggedInUser {
-                ImageUtil.loadImage(it.avatarUrl, requireContext()) {
-                    lifecycleScope.launch(Dispatchers.Main) {
-                        searchBar.menu.findItem(R.id.profile).icon = it
-                    }
+        modrinthApi.loggedInUser {
+            ImageUtil.loadImage(it.avatarUrl, requireContext()) {
+                lifecycleScope.launch(Dispatchers.Main) {
+                    searchBar.menu.findItem(R.id.profile).icon = it
                 }
             }
         }

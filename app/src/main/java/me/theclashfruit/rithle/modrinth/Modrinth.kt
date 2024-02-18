@@ -17,6 +17,7 @@ import com.android.volley.toolbox.JsonArrayRequest
 import com.android.volley.toolbox.JsonObjectRequest
 import com.google.gson.Gson
 import me.theclashfruit.rithle.BuildConfig
+import me.theclashfruit.rithle.modrinth.models.Project
 import me.theclashfruit.rithle.modrinth.models.SearchRes
 import me.theclashfruit.rithle.modrinth.models.SearchResult
 import me.theclashfruit.rithle.modrinth.models.User
@@ -78,6 +79,26 @@ class Modrinth {
                 val data = gson.fromJson(res.toString(), SearchRes::class.java)
 
                 callback(data.hits)
+            }, { error ->
+                throw Error(error.message)
+            }
+        )
+    }
+
+    fun project(id: String, callback: (Project) -> Unit) {
+        val url =
+            apiUri
+                .buildUpon()
+                .appendPath("project")
+                .appendPath(id)
+                .build()
+                .toString()
+
+        objectRequestHelper(Request.Method.GET, url, null,
+            { res ->
+                val data = gson.fromJson(res.toString(), Project::class.java)
+
+                callback(data)
             }, { error ->
                 throw Error(error.message)
             }

@@ -54,7 +54,9 @@
                 <data android:scheme="http" />
                 <data android:scheme="https" />
                 <data android:scheme="rithle" />
+
                 <data android:host="modrinth.com" />
+
                 <data android:host="auth" />
             </intent-filter>
         </activity>
