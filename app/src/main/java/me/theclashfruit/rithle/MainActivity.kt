@@ -47,10 +47,10 @@ class MainActivity : AppCompatActivity() {
 
         val auth = AccountManager.get(this).getAuthToken(AccountManager.get(this).getAccountsByType("me.theclashfruit.rithle")[0], "pat", null, this, null, null)
 
+        val modrinthApi = Modrinth.getInstance(this)
+
         lifecycleScope.launch(Dispatchers.Default){
             val token = auth.result.getString(AccountManager.KEY_AUTHTOKEN) ?: "unset"
-
-            val modrinthApi = Modrinth.getInstance(this@MainActivity)
 
             if (token != "unset") {
                 modrinthApi.setToken(token)
@@ -80,6 +80,47 @@ class MainActivity : AppCompatActivity() {
                 else -> false
             }
         }
+
+        val listView = binding.listView
+
+        val facets =
+            FacetBuilder()
+                .addCategories(Category.ALL_MOD_LOADERS)
+                .addProjectType(ProjectType.MOD)
+                .build()
+
+        searchView
+            .editText
+            .setOnEditorActionListener { v, actionId, event ->
+                Log.d("RithleApp", "Search: ${v.text}")
+
+                searchBar.setText(searchView.text);
+                searchView.hide();
+
+                false
+            }
+
+
+        searchView
+            .editText
+            .addTextChangedListener(object : TextWatcher {
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    modrinthApi.search(searchView.editText.text.toString(), facets) {
+                        val list = mutableListOf<String>()
+
+                        it.forEach { project ->
+                            list.add(project.title)
+                        }
+
+                        listView.adapter = ArrayAdapter(this@MainActivity, android.R.layout.simple_list_item_1, list)
+
+                        listView.refreshDrawableState()
+                    }
+                }
+
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+                override fun afterTextChanged(s: android.text.Editable?) {}
+            })
 
         /*
         val sharedPref = getSharedPreferences("me.theclashfruit.rithle_preferences", Context.MODE_PRIVATE)
