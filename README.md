@@ -1,4 +1,4 @@
-![ritle_banner](https://cdn-new.theclashfruit.me/forgejo/rithle/banner.svg)
+<img alt="Rithle Banner" src="https://cdn-new.theclashfruit.me/forgejo/rithle/banner.svg" width="100%">
 
 <h1 align="center">
   Rithle
