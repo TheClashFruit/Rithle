@@ -74,21 +74,21 @@ class MainActivity : AppCompatActivity() {
                 startActivity(it)
                 finish()
             }
-        }
+        } else {
+            val auth = AccountManager.get(this).getAuthToken(AccountManager.get(this).getAccountsByType("me.theclashfruit.rithle")[0], "pat", null, this, null, null)
 
-        val auth = AccountManager.get(this).getAuthToken(AccountManager.get(this).getAccountsByType("me.theclashfruit.rithle")[0], "pat", null, this, null, null)
+            val modrinthApi = Modrinth.getInstance(this)
 
-        val modrinthApi = Modrinth.getInstance(this)
+            lifecycleScope.launch(Dispatchers.Default) {
+                val token = auth.result.getString(AccountManager.KEY_AUTHTOKEN) ?: "unset"
 
-        lifecycleScope.launch(Dispatchers.Default) {
-            val token = auth.result.getString(AccountManager.KEY_AUTHTOKEN) ?: "unset"
-
-            if (token != "unset") {
-                modrinthApi.setToken(token)
-            } else {
-                Intent(this@MainActivity, OnboardingActivity::class.java).also {
-                    startActivity(it)
-                    this@MainActivity.finish()
+                if (token != "unset") {
+                    modrinthApi.setToken(token)
+                } else {
+                    Intent(this@MainActivity, OnboardingActivity::class.java).also {
+                        startActivity(it)
+                        this@MainActivity.finish()
+                    }
                 }
             }
         }

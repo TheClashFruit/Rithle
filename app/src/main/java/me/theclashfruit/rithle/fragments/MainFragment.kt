@@ -1,25 +1,23 @@
 package me.theclashfruit.rithle.fragments
 
-import android.accounts.AccountManager
 import android.graphics.Bitmap
-import android.graphics.drawable.BitmapDrawable
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.text.TextWatcher
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.core.graphics.drawable.toBitmap
 import androidx.core.graphics.drawable.toBitmapOrNull
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.divider.MaterialDividerItemDecoration
 import com.google.android.material.search.SearchBar
 import com.google.android.material.search.SearchView
 import kotlinx.coroutines.Dispatchers
@@ -33,7 +31,7 @@ import me.theclashfruit.rithle.modrinth.facets.Category
 import me.theclashfruit.rithle.modrinth.facets.FacetBuilder
 import me.theclashfruit.rithle.modrinth.facets.ProjectType
 import me.theclashfruit.rithle.util.ImageUtil
-import org.w3c.dom.Text
+
 
 class MainFragment : Fragment() {
     private var _binding: FragmentMainBinding? = null
@@ -68,11 +66,11 @@ class MainFragment : Fragment() {
         val modrinthApi = Modrinth.getInstance(requireContext())
 
         modrinthApi.loggedInUser { user ->
+            userName = user.username
+            email    = user.email!!
+
             ImageUtil.loadImage(user.avatarUrl, requireContext()) {
                 iconDrawable = it.toBitmapOrNull(128, 128, null)!!
-
-                userName = user.username
-                email    = user.email!!
 
                 lifecycleScope.launch(Dispatchers.Main) {
                     searchBar.menu.findItem(R.id.profile).icon = it
@@ -84,13 +82,13 @@ class MainFragment : Fragment() {
             when (menuItem.itemId) {
                 R.id.profile -> {
                     val listItems: Array<ItemWithIcon> = arrayOf(
-                        ItemWithIcon(R.drawable.ic_close, "Profile"),
-                        ItemWithIcon(R.drawable.ic_close, "Create Project"),
-                        ItemWithIcon(R.drawable.ic_close, "Collections"),
-                        ItemWithIcon(R.drawable.ic_close, "Notifications"),
-                        ItemWithIcon(R.drawable.ic_close, "Dashboard"),
-                        ItemWithIcon(R.drawable.ic_close, "Settings"),
-                        ItemWithIcon(R.drawable.ic_close, "Logout")
+                        ItemWithIcon(R.drawable.ic_person, "Profile"),
+                        ItemWithIcon(R.drawable.ic_add, "Create Project"),
+                        ItemWithIcon(R.drawable.ic_category, "Collections"),
+                        ItemWithIcon(R.drawable.ic_notifications, "Notifications"),
+                        ItemWithIcon(R.drawable.ic_dashboard, "Dashboard"),
+                        ItemWithIcon(R.drawable.ic_settings, "Settings"),
+                        ItemWithIcon(R.drawable.ic_logout, "Logout")
                     )
 
                     val view = layoutInflater.inflate(R.layout.profile_modal, null)
@@ -101,7 +99,10 @@ class MainFragment : Fragment() {
                     val userNameTextView = view.findViewById<TextView>(R.id.textView4)
                     val emailTextView = view.findViewById<TextView>(R.id.textView5)
 
-                    val adapter = ModalAdapter(listItems)
+                    val adapter       = ModalAdapter(listItems)
+                    val layoutManager = LinearLayoutManager(context)
+
+                    layoutManager.orientation = LinearLayoutManager.VERTICAL
 
                     Log.d("RithleApp", adapter.itemCount.toString())
 
@@ -111,7 +112,9 @@ class MainFragment : Fragment() {
 
                     imageView.setImageBitmap(iconDrawable)
 
-                    recyclerView.adapter = adapter
+                    recyclerView.layoutManager = layoutManager
+                    recyclerView.adapter       = adapter
+
                     recyclerView.refreshDrawableState()
 
                     userNameTextView.text = userName

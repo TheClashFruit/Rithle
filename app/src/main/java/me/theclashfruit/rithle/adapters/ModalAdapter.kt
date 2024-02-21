@@ -1,13 +1,12 @@
 package me.theclashfruit.rithle.adapters
 
-import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.divider.MaterialDivider
 import me.theclashfruit.rithle.R
 import me.theclashfruit.rithle.models.ItemWithIcon
 
@@ -32,8 +31,6 @@ class ModalAdapter(private val dataSet: Array<ItemWithIcon>) : RecyclerView.Adap
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         viewHolder.imageView.setImageResource(dataSet[position].icon)
         viewHolder.textView.text = dataSet[position].title
-
-        Log.d("ModalAdapter", dataSet[position].title)
     }
 
     override fun getItemCount() = dataSet.size
