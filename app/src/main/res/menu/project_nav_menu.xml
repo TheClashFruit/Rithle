@@ -3,13 +3,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/action_share"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:icon="@drawable/ic_share"
-        android:title="Share"
-        app:showAsAction="always" />
-    <item
         android:id="@+id/action_follow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -26,15 +19,42 @@
         android:visible="false"
         app:showAsAction="always" />
     <item
-        android:id="@+id/action_edit"
+        android:id="@+id/action_save"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:icon="@drawable/ic_edit"
-        android:visible="false"
-        android:title="Edit" />
+        android:icon="@drawable/ic_bookmark_add"
+        android:title="Save to Collection"
+        app:showAsAction="always"/>
+
     <item
-        android:id="@+id/action_report"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:title="Report" />
+        android:id="@+id/empty"
+        android:icon="@drawable/ic_more_vert"
+        android:orderInCategory="101"
+        android:title="More Options"
+        app:showAsAction="always">
+        <menu>
+            <item
+                android:id="@+id/action_edit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:icon="@drawable/ic_edit"
+                android:visible="false"
+                android:title="Edit"
+                app:showAsAction="always|withText"/>
+            <item
+                android:id="@+id/action_share"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:icon="@drawable/ic_share"
+                android:title="Share"
+                app:showAsAction="always|withText"/>
+            <item
+                android:id="@+id/action_report"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:icon="@drawable/ic_flag"
+                android:title="Report"
+                app:showAsAction="always|withText"/>
+        </menu>
+    </item>
 </menu>
