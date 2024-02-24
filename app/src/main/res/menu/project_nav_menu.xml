@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/action_share"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:icon="@drawable/ic_share"
+        android:title="Share"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_follow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:icon="@drawable/ic_favorite"
+        android:title="Follow"
+        android:visible="true"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_unfollow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:icon="@drawable/ic_close"
+        android:title="Unfollow"
+        android:visible="false"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_edit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:icon="@drawable/ic_edit"
+        android:title="Edit" />
+    <item
+        android:id="@+id/action_report"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:title="Report" />
+</menu>

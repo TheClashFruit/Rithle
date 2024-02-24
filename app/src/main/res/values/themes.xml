@@ -2,21 +2,22 @@
     <style name="Theme.Rithle" parent="Theme.Material3.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimaryLight</item>
         <item name="colorPrimaryVariant">@color/colorPrimaryVariantLight</item>
-        <item name="colorOnPrimary">@color/colorWhite</item>
+        <item name="colorOnPrimary">@color/colorOnSurfaceDark</item>
 
         <item name="colorSecondary">@color/colorPrimaryLight</item>
         <item name="colorSecondaryVariant">@color/colorPrimaryVariantLight</item>
-        <item name="colorOnSecondary">@color/colorWhite</item>
+        <item name="colorOnSecondary">@color/colorOnSurfaceDark</item>
 
         <item name="colorSurface">@color/colorSurfaceLight</item>
         <item name="colorSurfaceVariant">@color/colorSurfaceRaisedLight</item>
         <item name="android:colorBackground">?attr/colorSurface</item>
         <item name="background">?attr/colorSurface</item>
 
-        <item name="colorOnBackground">@color/colorBlack</item>
-        <item name="colorOnSurface">@color/colorBlack</item>
+        <item name="colorOnBackground">@color/colorOnSurfaceLight</item>
+        <item name="colorOnSurface">@color/colorOnSurfaceLight</item>
 
         <item name="colorSurfaceContainerHigh">@color/colorSurfaceContainerHighLight</item>
+        <item name="colorSurfaceContainerHighest">@color/colorSurfaceContainerHighLight</item>
 
         <item name="elevationOverlayColor">@color/colorSurfaceRaisedLight</item>
 

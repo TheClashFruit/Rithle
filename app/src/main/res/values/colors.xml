@@ -18,6 +18,12 @@
     <color name="colorSurfaceContainerHighLight">#e7efee</color>
     <color name="colorSurfaceContainerHighDark">#303635</color>
 
+    <color name="colorSurfaceContainerHighestLight">#d1e0df</color>
+    <color name="colorSurfaceContainerHighestDark">#3d4342</color>
+
+    <color name="colorOnSurfaceLight">#062D2A</color>
+    <color name="colorOnSurfaceDark">#D3DEDE</color>
+
     <color name="colorBlack">#FF000000</color>
     <color name="colorBlackTransparent">#99000000</color>
     <color name="colorWhite">#FFFFFFFF</color>

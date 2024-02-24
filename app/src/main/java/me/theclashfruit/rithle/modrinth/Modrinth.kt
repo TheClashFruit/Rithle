@@ -15,6 +15,7 @@ import com.android.volley.toolbox.HurlStack
 import com.android.volley.toolbox.ImageLoader
 import com.android.volley.toolbox.JsonArrayRequest
 import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.StringRequest
 import com.google.gson.Gson
 import me.theclashfruit.rithle.BuildConfig
 import me.theclashfruit.rithle.modrinth.models.Notification
@@ -106,6 +107,46 @@ class Modrinth {
         )
     }
 
+    fun followProject(id: String, callback: (Boolean) -> Unit) {
+        val url =
+            apiUri
+                .buildUpon()
+                .appendPath("project")
+                .appendPath(id)
+                .appendPath("follow")
+                .build()
+                .toString()
+
+        stringRequestHelper(Request.Method.POST, url,
+            { _ ->
+                callback(true)
+            },
+            { _ ->
+                callback(false)
+            }
+        )
+    }
+
+    fun unfollowProject(id: String, callback: (Boolean) -> Unit) {
+        val url =
+            apiUri
+                .buildUpon()
+                .appendPath("project")
+                .appendPath(id)
+                .appendPath("follow")
+                .build()
+                .toString()
+
+        stringRequestHelper(Request.Method.DELETE, url,
+            { _ ->
+                callback(true)
+            },
+            { _ ->
+                callback(false)
+            }
+        )
+    }
+
     fun loggedInUser(callback: (User) -> Unit) {
         val url =
             apiUri
@@ -169,6 +210,28 @@ class Modrinth {
         )
     }
 
+    fun userFollowing(user: User, callback: (List<Project>) -> Unit) {
+        val url =
+            apiUri
+                .buildUpon()
+                .appendPath("user")
+                .appendPath(user.id)
+                .appendPath("follows")
+                .build()
+                .toString()
+
+        arrayRequestHelper(Request.Method.GET, url, null,
+            { res ->
+                val data = gson.fromJson(res.toString(), Array<Project>::class.java).toList()
+
+                callback(data)
+            },
+            { error ->
+                throw Error(error.message)
+            }
+        )
+    }
+
     // --------------------------------------------- //
 
     val imageLoader: ImageLoader by lazy {
@@ -187,6 +250,24 @@ class Modrinth {
     }
 
     // --------------------------------------------- //
+
+    private fun stringRequestHelper(method: Int, url: String, callback: (String) -> Unit, errorCallback: (VolleyError) -> Unit) {
+        val stringRequest = object : StringRequest(method, url,
+            { res -> callback(res) },
+            { error -> errorCallback(error) }
+        ) {
+            override fun getHeaders(): MutableMap<String, String> {
+                val headers = HashMap<String, String>()
+
+                headers["User-Agent"] = "Mozilla/5.0 (Linux; Android ${Build.VERSION.RELEASE}) Rithle/${BuildConfig.VERSION_NAME} (github.com/TheClashFruit/Rithle; admin@theclashfruit.me) Volley/1.2.1"
+                headers["Authorization"] = authToken
+
+                return headers
+            }
+        }
+
+        requestQueue.add(stringRequest)
+    }
 
     private fun objectRequestHelper(method: Int, url: String, jsonRequest: JSONObject?, callback: (Any) -> Unit, errorCallback: (VolleyError) -> Unit) {
         val jsonObjectRequest = object : JsonObjectRequest(method, url, jsonRequest,

@@ -120,12 +120,6 @@ class MainFragment : Fragment() {
                     userNameTextView.text = userName
                     emailTextView.text    = email
 
-
-
-                    /* .setItems(arrayOf("Profile", "Create Project", "Collections", "Notifications", "Dashboard", "Settings", "Logout")) { dialog, which ->
-                            dialog.dismiss()
-                        }*/
-
                     true
                 }
                 else -> false
