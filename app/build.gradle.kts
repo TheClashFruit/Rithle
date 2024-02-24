@@ -58,6 +58,9 @@ dependencies {
     implementation("com.android.volley:volley:1.2.1")
     implementation("com.google.code.gson:gson:2.10.1")
 
+    implementation("io.noties.markwon:core:4.6.2")
+    implementation("io.noties.markwon:image-glide:4.6.2")
+
     implementation("com.github.bumptech.glide:glide:4.15.1")
 
     testImplementation("junit:junit:4.13.2")

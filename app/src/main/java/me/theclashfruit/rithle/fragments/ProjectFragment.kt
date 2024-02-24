@@ -3,22 +3,25 @@ package me.theclashfruit.rithle.fragments
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import io.noties.markwon.Markwon
+import io.noties.markwon.image.glide.GlideImagesPlugin
 import me.theclashfruit.rithle.R
-import me.theclashfruit.rithle.databinding.FragmentMainBinding
 import me.theclashfruit.rithle.databinding.FragmentProjectBinding
 import me.theclashfruit.rithle.modrinth.Modrinth
 import me.theclashfruit.rithle.modrinth.models.Project
+import me.theclashfruit.rithle.util.ImageUtil
+
 
 class ProjectFragment : Fragment() {
     private var _binding: FragmentProjectBinding? = null
     private val binding get() = _binding!!
 
     private var projectId: String? = null
+    private var markwon: Markwon? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,28 +40,46 @@ class ProjectFragment : Fragment() {
 
         var projectData: Project? = null;
 
+        val topAppBar = binding.topAppBar
+
+        markwon =
+            Markwon
+                .builder(requireActivity())
+                .usePlugin(GlideImagesPlugin.create(ImageUtil(requireContext()).requestManager))
+                .build()
+
         modrinthApi.loggedInUser { user ->
             modrinthApi.project(projectId!!) {
-                binding.textView.text = it.toString()
+                markwon!!.setMarkdown(binding.textView, it.body)
 
-                binding.topAppBar.title = it.title
-                binding.topAppBar.subtitle = it.description
+                topAppBar.title = it.title
+                topAppBar.subtitle = it.description
 
                 projectData = it;
             }
 
+            modrinthApi.projectMembers(projectId!!) {
+                if(it.any { p -> p.user.id == user.id })
+                    topAppBar.menu.findItem(R.id.action_edit).isVisible = true
+            }
+
             modrinthApi.userFollowing(user) {
                 if (it.any { p -> p.slug == projectId || p.id == projectId }) {
-                    binding.topAppBar.menu.findItem(R.id.action_follow).isVisible = false
-                    binding.topAppBar.menu.findItem(R.id.action_unfollow).isVisible = true
+                    topAppBar.menu.findItem(R.id.action_follow).isVisible = false
+                    topAppBar.menu.findItem(R.id.action_unfollow).isVisible = true
                 } else {
-                    binding.topAppBar.menu.findItem(R.id.action_follow).isVisible = true
-                    binding.topAppBar.menu.findItem(R.id.action_unfollow).isVisible = false
+                    topAppBar.menu.findItem(R.id.action_follow).isVisible = true
+                    topAppBar.menu.findItem(R.id.action_unfollow).isVisible = false
                 }
             }
         }
 
-        binding.topAppBar.setOnMenuItemClickListener { item ->
+        topAppBar.setNavigationOnClickListener {
+            requireActivity()
+                .onBackPressed()
+        }
+
+        topAppBar.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.action_share -> {
                     val shareIntent: Intent = Intent().apply {
@@ -78,8 +99,8 @@ class ProjectFragment : Fragment() {
                 R.id.action_follow -> {
                     modrinthApi.followProject(projectData!!.id) {
                         if (it) {
-                            binding.topAppBar.menu.findItem(R.id.action_follow).isVisible = false
-                            binding.topAppBar.menu.findItem(R.id.action_unfollow).isVisible = true
+                            topAppBar.menu.findItem(R.id.action_follow).isVisible = false
+                            topAppBar.menu.findItem(R.id.action_unfollow).isVisible = true
                         }
                     }
 
@@ -88,8 +109,8 @@ class ProjectFragment : Fragment() {
                 R.id.action_unfollow -> {
                     modrinthApi.unfollowProject(projectData!!.id) {
                         if (it) {
-                            binding.topAppBar.menu.findItem(R.id.action_follow).isVisible = true
-                            binding.topAppBar.menu.findItem(R.id.action_unfollow).isVisible = false
+                            topAppBar.menu.findItem(R.id.action_follow).isVisible = true
+                            topAppBar.menu.findItem(R.id.action_unfollow).isVisible = false
                         }
                     }
 

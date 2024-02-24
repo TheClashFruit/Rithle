@@ -22,6 +22,7 @@ import me.theclashfruit.rithle.modrinth.models.Notification
 import me.theclashfruit.rithle.modrinth.models.Project
 import me.theclashfruit.rithle.modrinth.models.SearchRes
 import me.theclashfruit.rithle.modrinth.models.SearchResult
+import me.theclashfruit.rithle.modrinth.models.TeamMember
 import me.theclashfruit.rithle.modrinth.models.User
 import me.theclashfruit.rithle.util.FileSize
 import me.theclashfruit.rithle.util.FileSize.SizeUnit
@@ -102,6 +103,28 @@ class Modrinth {
 
                 callback(data)
             }, { error ->
+                throw Error(error.message)
+            }
+        )
+    }
+
+    fun projectMembers(id: String, callback: (List<TeamMember>) -> Unit) {
+        val url =
+            apiUri
+                .buildUpon()
+                .appendPath("project")
+                .appendPath(id)
+                .appendPath("members")
+                .build()
+                .toString()
+
+        arrayRequestHelper(Request.Method.GET, url, null,
+            { res ->
+                val data = gson.fromJson(res.toString(), Array<TeamMember>::class.java).toList()
+
+                callback(data)
+            },
+            { error ->
                 throw Error(error.message)
             }
         )

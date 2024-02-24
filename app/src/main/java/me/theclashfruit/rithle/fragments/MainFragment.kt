@@ -69,7 +69,7 @@ class MainFragment : Fragment() {
             userName = user.username
             email    = user.email!!
 
-            ImageUtil.loadImage(user.avatarUrl, requireContext()) {
+            ImageUtil(requireContext()).loadImage(user.avatarUrl) {
                 iconDrawable = it.toBitmapOrNull(128, 128, null)!!
 
                 lifecycleScope.launch(Dispatchers.Main) {
