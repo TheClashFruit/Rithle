@@ -18,13 +18,13 @@
 
     <string name="project_update">Project Updates</string>
     <string name="team_invite">Team Invites</string>
+    <string name="organization_invite">Organization Invites</string>
     <string name="status_change">Status Changes</string>
     <string name="moderator_message">Moderator Messages</string>
 
     <string name="project_update_desc">Project Updates</string>
     <string name="team_invite_desc">Team Invites</string>
+    <string name="organization_invite_desc">Organization Invites</string>
     <string name="status_change_desc">Status Changes</string>
     <string name="moderator_message_desc">Moderator Messages</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

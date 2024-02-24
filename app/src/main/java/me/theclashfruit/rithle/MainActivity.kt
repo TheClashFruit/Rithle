@@ -25,6 +25,7 @@ import me.theclashfruit.rithle.fragments.ProjectFragment
 import me.theclashfruit.rithle.modrinth.Modrinth
 import me.theclashfruit.rithle.modrinth.models.Project
 import me.theclashfruit.rithle.onboarding.OnboardingActivity
+import me.theclashfruit.rithle.service.NotificationService
 import me.theclashfruit.rithle.util.ImageUtil
 
 
@@ -54,6 +55,12 @@ class MainActivity : AppCompatActivity() {
             "mr:team_invite",
             getString(R.string.team_invite),
             getString(R.string.team_invite_desc),
+            4
+        )
+        registerNotificationChannel(
+            "mr:organization_invite",
+            getString(R.string.organization_invite),
+            getString(R.string.organization_invite_desc),
             4
         )
         registerNotificationChannel(
@@ -145,6 +152,12 @@ class MainActivity : AppCompatActivity() {
 
         if(sharedPref.getBoolean("notifications_perms", true) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
             requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+
+        /*
+        val intent = Intent(this, NotificationService::class.java)
+
+        startService(intent)
+        */
     }
 
     private fun registerNotificationChannel(id: String, name: String, description: String, importance: Int) {

@@ -17,6 +17,7 @@ import com.android.volley.toolbox.JsonArrayRequest
 import com.android.volley.toolbox.JsonObjectRequest
 import com.google.gson.Gson
 import me.theclashfruit.rithle.BuildConfig
+import me.theclashfruit.rithle.modrinth.models.Notification
 import me.theclashfruit.rithle.modrinth.models.Project
 import me.theclashfruit.rithle.modrinth.models.SearchRes
 import me.theclashfruit.rithle.modrinth.models.SearchResult
@@ -125,6 +126,49 @@ class Modrinth {
         )
     }
 
+    fun user(userId: String, callback: (User) -> Unit) {
+        val url =
+            apiUri
+                .buildUpon()
+                .appendPath("user")
+                .appendPath(userId)
+                .build()
+                .toString()
+
+        objectRequestHelper(Request.Method.GET, url, null,
+            { res ->
+                val data = gson.fromJson(res.toString(), User::class.java)
+
+                callback(data)
+            },
+            { error ->
+                throw Error(error.message)
+            }
+        )
+    }
+
+    fun userNotifications(user: User, callback: (List<Notification>) -> Unit) {
+        val url =
+            apiUri
+                .buildUpon()
+                .appendPath("user")
+                .appendPath(user.id)
+                .appendPath("notifications")
+                .build()
+                .toString()
+
+        arrayRequestHelper(Request.Method.GET, url, null,
+            { res ->
+                val data = gson.fromJson(res.toString(), Array<Notification>::class.java).toList()
+
+                callback(data)
+            },
+            { error ->
+                throw Error(error.message)
+            }
+        )
+    }
+
     // --------------------------------------------- //
 
     val imageLoader: ImageLoader by lazy {
@@ -162,10 +206,10 @@ class Modrinth {
         requestQueue.add(jsonObjectRequest)
     }
 
-    private fun arrayRequestHelper(method: Int, url: String, jsonRequest: JSONArray?, callback: (Any) -> Unit) {
+    private fun arrayRequestHelper(method: Int, url: String, jsonRequest: JSONArray?, callback: (Any) -> Unit, errorCallback: (VolleyError) -> Unit) {
         val jsonArrayRequest = object : JsonArrayRequest(method, url, jsonRequest,
             { res -> callback(res) },
-            { error -> Log.e(logTag, error.stackTraceToString()) }
+            { error -> errorCallback(error) }
         ) {
             override fun getHeaders(): MutableMap<String, String> {
                 val headers = HashMap<String, String>()
