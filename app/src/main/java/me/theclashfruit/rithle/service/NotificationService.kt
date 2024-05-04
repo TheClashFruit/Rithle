@@ -10,6 +10,7 @@ import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import me.theclashfruit.rithle.MainActivity
 import me.theclashfruit.rithle.R
 import me.theclashfruit.rithle.modrinth.Modrinth
 import java.text.SimpleDateFormat
@@ -54,7 +55,7 @@ class NotificationService : Service() {
                     Log.d("NotificationService", notification.toString())
                     Log.d("NotificationService", it.size.toString())
 
-                    if (/* !notification.read!! && */ notification.body!!.type != "legacy_markdown") {
+                    if (!notification.read!! && notification.body!!.type != "legacy_markdown") {
                         when (notification.body.type) {
                             "team_invite" -> {
                                 modrinthApi.user(notification.body.invited_by!!) { user ->
@@ -106,88 +107,104 @@ class NotificationService : Service() {
                                 modrinthApi.user(notification.body.invited_by!!) { user ->
                                     Log.d("NotificationService", user.toString())
 
-                                    val notif = NotificationCompat.Builder(this, "mr:${notification.type}")
-                                        .setSmallIcon(R.drawable.ic_person_add)
-                                        .setWhen(ZonedDateTime.parse(notification.created!!).toEpochSecond() * 1000)
-                                        .setColor(getColor(R.color.colorPrimaryLight))
+                                    modrinthApi.organization(notification.body.organization_id!!) { org ->
+                                        val notif = NotificationCompat.Builder(this, "mr:${notification.type}")
+                                            .setSmallIcon(R.drawable.ic_person_add)
+                                            .setWhen(ZonedDateTime.parse(notification.created!!).toEpochSecond() * 1000)
+                                            .setColor(org.color)
 
-                                    notif.setContentTitle(notification.title)
-                                    notif.setContentText("${user.username} has invited you to join ${notification.body.organization_id}.")
+                                        notif.setContentTitle(notification.title)
+                                        notif.setContentText("${user.username} has invited you to join ${org.name}.")
 
-                                    if (notification.actions!!.isNotEmpty()) {
-                                        notification.actions.forEach { action ->
-                                            notif.addAction(
-                                                NotificationCompat.Action.Builder(
-                                                    R.drawable.ic_notifications,
-                                                    action.title,
-                                                    PendingIntent.getActivity(
-                                                        this,
-                                                        0,
-                                                        Intent(Intent.ACTION_VIEW, Uri.parse("https://modrinth.com/${action.actionRoute?.get(1)}")),
-                                                        PendingIntent.FLAG_IMMUTABLE
-                                                    )
-                                                ).build()
-                                            )
-                                        }
-                                    }
-
-                                    with(NotificationManagerCompat.from(this)) {
-                                        val codeArray = notification.id!!.toCharArray().map { char ->
-                                            char.code
+                                        if (notification.actions!!.isNotEmpty()) {
+                                            notification.actions.forEach { action ->
+                                                notif.addAction(
+                                                    NotificationCompat.Action.Builder(
+                                                        R.drawable.ic_notifications,
+                                                        action.title,
+                                                        PendingIntent.getActivity(
+                                                            this,
+                                                            0,
+                                                            Intent(Intent.ACTION_VIEW, Uri.parse("https://modrinth.com/${action.actionRoute?.get(1)}")),
+                                                            PendingIntent.FLAG_IMMUTABLE
+                                                        )
+                                                    ).build()
+                                                )
+                                            }
                                         }
 
-                                        var num = 0
+                                        with(NotificationManagerCompat.from(this)) {
+                                            val codeArray = notification.id!!.toCharArray().map { char ->
+                                                char.code
+                                            }
 
-                                        codeArray.forEach { code ->
-                                            num += code
+                                            var num = 0
+
+                                            codeArray.forEach { code ->
+                                                num += code
+                                            }
+
+                                            Log.d("NotificationService", "SENDING")
+
+                                            notify(num, notif.build())
                                         }
-
-                                        Log.d("NotificationService", "SENDING")
-
-                                        notify(num, notif.build())
                                     }
                                 }
                             }
                             "project_update" -> {
-                                val notif = NotificationCompat.Builder(this, "mr:${notification.type}")
-                                    .setSmallIcon(R.drawable.ic_update)
-                                    .setWhen(ZonedDateTime.parse(notification.created!!).toEpochSecond() * 1000)
-                                    .setColor(getColor(R.color.colorPrimaryLight))
+                                modrinthApi.project(notification.body.project_id!!) { project ->
+                                    modrinthApi.version(notification.body.version_id!!) { version ->
+                                        val notif = NotificationCompat.Builder(this, "mr:${notification.type}")
+                                            .setSmallIcon(R.drawable.ic_update)
+                                            .setWhen(ZonedDateTime.parse(notification.created!!).toEpochSecond() * 1000)
+                                            .setColor(getColor(R.color.colorPrimaryLight))
 
-                                notif.setContentTitle(notification.title)
-                                notif.setContentText(notification.text)
+                                        notif.setContentTitle(notification.title)
+                                        notif.setContentText("${project.title} has released a new version, ${version.name}.")
 
-                                if (notification.actions!!.isNotEmpty()) {
-                                    notification.actions.forEach { action ->
-                                        notif.addAction(
-                                            NotificationCompat.Action.Builder(
-                                                R.drawable.ic_notifications,
-                                                action.title,
-                                                PendingIntent.getActivity(
-                                                    this,
-                                                    0,
-                                                    Intent(Intent.ACTION_VIEW, Uri.parse("https://modrinth.com/${action.actionRoute?.get(1)}")),
-                                                    PendingIntent.FLAG_IMMUTABLE
+                                        val intent = Intent(this, MainActivity::class.java)
+
+                                        intent.setData(Uri.parse("https://modrinth.com/project/${project.id}"))
+
+                                        intent.action = Intent.ACTION_VIEW
+
+                                        val pIntent = PendingIntent.getActivity(applicationContext, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+
+                                        notif.setContentIntent(pIntent)
+
+                                        if (notification.actions!!.isNotEmpty()) {
+                                            notification.actions.forEach { action ->
+                                                notif.addAction(
+                                                    NotificationCompat.Action.Builder(
+                                                        R.drawable.ic_notifications,
+                                                        action.title,
+                                                        PendingIntent.getActivity(
+                                                            this,
+                                                            0,
+                                                            Intent(Intent.ACTION_VIEW, Uri.parse("https://modrinth.com/${action.actionRoute?.get(1)}")),
+                                                            PendingIntent.FLAG_IMMUTABLE
+                                                        )
+                                                    ).build()
                                                 )
-                                            ).build()
-                                        )
+                                            }
+                                        }
+
+                                        with(NotificationManagerCompat.from(this)) {
+                                            val codeArray = notification.id!!.toCharArray().map { char ->
+                                                char.code
+                                            }
+
+                                            var num = 0
+
+                                            codeArray.forEach { code ->
+                                                num += code
+                                            }
+
+                                            Log.d("NotificationService", "SENDING")
+
+                                            notify(num, notif.build())
+                                        }
                                     }
-                                }
-
-                                with(NotificationManagerCompat.from(this)) {
-                                    val codeArray = notification.id!!.toCharArray().map { char ->
-                                        char.code
-                                    }
-
-                                    var num = 0
-
-                                    codeArray.forEach { code ->
-                                        num += code
-                                    }
-
-                                    Log.d("NotificationService", "SENDING")
-
-                                    notify(num, notif.build())
                                 }
                             }
                         }

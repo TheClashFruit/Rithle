@@ -5,7 +5,7 @@ import com.google.android.material.color.DynamicColors
 
 class RithleApplication : Application() {
     override fun onCreate() {
-        // DynamicColors.applyToActivitiesIfAvailable(this)
+        DynamicColors.applyToActivitiesIfAvailable(this)
 
         super.onCreate()
     }

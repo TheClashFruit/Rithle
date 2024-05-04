@@ -19,11 +19,13 @@ import com.android.volley.toolbox.StringRequest
 import com.google.gson.Gson
 import me.theclashfruit.rithle.BuildConfig
 import me.theclashfruit.rithle.modrinth.models.Notification
+import me.theclashfruit.rithle.modrinth.models.Organization
 import me.theclashfruit.rithle.modrinth.models.Project
 import me.theclashfruit.rithle.modrinth.models.SearchRes
 import me.theclashfruit.rithle.modrinth.models.SearchResult
 import me.theclashfruit.rithle.modrinth.models.TeamMember
 import me.theclashfruit.rithle.modrinth.models.User
+import me.theclashfruit.rithle.modrinth.models.Version
 import me.theclashfruit.rithle.util.FileSize
 import me.theclashfruit.rithle.util.FileSize.SizeUnit
 import org.json.JSONArray
@@ -100,6 +102,26 @@ class Modrinth {
         objectRequestHelper(Request.Method.GET, url, null,
             { res ->
                 val data = gson.fromJson(res.toString(), Project::class.java)
+
+                callback(data)
+            }, { error ->
+                throw Error(error.message)
+            }
+        )
+    }
+
+    fun version(id: String, callback: (Version) -> Unit) {
+        val url =
+            apiUri
+                .buildUpon()
+                .appendPath("version")
+                .appendPath(id)
+                .build()
+                .toString()
+
+        objectRequestHelper(Request.Method.GET, url, null,
+            { res ->
+                val data = gson.fromJson(res.toString(), Version::class.java)
 
                 callback(data)
             }, { error ->
@@ -246,6 +268,27 @@ class Modrinth {
         arrayRequestHelper(Request.Method.GET, url, null,
             { res ->
                 val data = gson.fromJson(res.toString(), Array<Project>::class.java).toList()
+
+                callback(data)
+            },
+            { error ->
+                throw Error(error.message)
+            }
+        )
+    }
+
+    fun organization(id: String, callback: (Organization) -> Unit) {
+        val url =
+            apiUri
+                .buildUpon()
+                .appendPath("organization")
+                .appendPath(id)
+                .build()
+                .toString()
+
+        objectRequestHelper(Request.Method.GET, url, null,
+            { res ->
+                val data = gson.fromJson(res.toString(), Organization::class.java)
 
                 callback(data)
             },

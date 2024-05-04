@@ -153,11 +153,9 @@ class MainActivity : AppCompatActivity() {
         if(sharedPref.getBoolean("notifications_perms", true) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
             requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
 
-        /*
-        val intent = Intent(this, NotificationService::class.java)
-
-        startService(intent)
-        */
+        startService(
+            Intent(this, NotificationService::class.java)
+        )
     }
 
     private fun registerNotificationChannel(id: String, name: String, description: String, importance: Int) {
