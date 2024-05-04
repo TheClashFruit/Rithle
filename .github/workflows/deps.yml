@@ -1,0 +1,18 @@
+name: Submin Depenencies
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  submit:
+    name: Submit Dependencies
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run Dependency Submission
+        uses: mikepenz/gradle-dependency-submission@v1.0.0
+        with:
+          gradle-build-module: ":app"
