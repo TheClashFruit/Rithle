@@ -1,3 +1,6 @@
+> [!IMPORTANT]
+> Please check out issue [#9](https://github.com/TheClashFruit/Rithle/issues/9) of you are wondering why there hasn't been an update since Febuary of 2023!
+
 ![ritle_banner](https://user-images.githubusercontent.com/55049569/218251089-1782245b-d742-4ecd-b743-77c18811dba6.svg)
 
 <h1 align="center">
