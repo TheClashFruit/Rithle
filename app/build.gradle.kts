@@ -87,6 +87,7 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
 
+    implementation(libs.icons.lucide.cmp)
 
     implementation(libs.ktor.client.core)
     implementation(libs.ktor.client.android)
