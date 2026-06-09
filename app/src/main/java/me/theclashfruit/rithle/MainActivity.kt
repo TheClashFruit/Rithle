@@ -1,45 +1,109 @@
 package me.theclashfruit.rithle
 
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
+import android.os.Build
 import android.os.Bundle
-import androidx.browser.customtabs.CustomTabsIntent
-import androidx.core.content.ContextCompat
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import me.theclashfruit.rithle.fragments.HomeFragment
-import me.theclashfruit.rithle.services.NotificationService
+import android.util.Log
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import me.theclashfruit.rithle.modrinth.Modrinth
+import me.theclashfruit.rithle.modrinth.enums.Scope
+import me.theclashfruit.rithle.ui.theme.RithleTheme
+import androidx.core.net.toUri
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import androidx.navigation.navDeepLink
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : ComponentActivity() {
+    private lateinit var navController: NavHostController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
 
-        val mainFragmentTransaction = supportFragmentManager.beginTransaction()
-        val homeFragment            = HomeFragment.newInstance()
+        enableEdgeToEdge()
 
-        val sharedPref = getSharedPreferences("me.theclashfruit.rithle_preferences", Context.MODE_PRIVATE)
-        val authToken  = sharedPref!!.getString("authToken", "")
+        setContent {
+            navController = rememberNavController()
 
-        if(authToken != "")
-            ContextCompat.startForegroundService(this, Intent(this, NotificationService::class.java))
+            val modrinth = Modrinth()
+            val oauth = modrinth.OAuth("", "")
 
-        mainFragmentTransaction
-            .replace(R.id.parentFragmentContainer, homeFragment)
-            .commit()
+            RithleTheme {
+                NavHost(
+                    navController = navController,
+                    startDestination = "/"
+                ) {
+                    composable("/") {
+                        Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                            val url = oauth.authorizationUrl("rithle://oauth/callback", Scope.entries, "tbd")
 
-        /*
-        MaterialAlertDialogBuilder(this)
-            .setTitle("⚠️ Warning!")
-            .setMessage("This is an alpha build, it is not intended for regular use, report bugs on GitHub.")
-            .setPositiveButton("Ok") { dialog, which ->
+                            Log.d("OAuth", url)
 
+                            Button(
+                                onClick = {
+                                    val intent = Intent(Intent.ACTION_VIEW, url.toUri())
+                                    startActivity(intent)
+                                },
+                                modifier = Modifier.padding(innerPadding)
+                            ) {
+                                Text(text = "Login with Modrinth")
+                            }
+                        }
+                    }
+
+                    composable(
+                        route = "oauth/callback?code={code}&state={state}",
+                        deepLinks = listOf(
+                            navDeepLink {
+                                uriPattern = "rithle://oauth/callback?code={code}&state={state}"
+                            }
+                        ),
+                        arguments = listOf(
+                            navArgument("code") { nullable = false },
+                            navArgument("state") { nullable = false }
+                        )
+                    ) { backStackEntry ->
+                        val code = backStackEntry.arguments?.getString("code")!!
+                        val state = backStackEntry.arguments?.getString("state")!!
+
+                        LaunchedEffect(true) {
+                            val token = oauth.token(code, "rithle://oauth/callback")!!
+                            Log.d("Token", token.toString())
+
+                            modrinth.userToken = token.accessToken
+                            navController.navigate("/")
+                        }
+
+                        Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                            Text(
+                                text = "Auth code: $code; Auth state: $state",
+                                modifier = Modifier.padding(innerPadding)
+                            )
+                        }
+                    }
+                }
             }
-            .show()
-        */
+        }
+    }
 
-        // https://github.com/login/oauth/authorize?client_id=2f7fbf1e6e196b0d2069
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+
+        navController.handleDeepLink(intent)
     }
 }

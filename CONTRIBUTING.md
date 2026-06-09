@@ -1,25 +1,34 @@
 # Contributing
 
-## Branches
+Thank you for being interested in contributing to the project.
 
-- `main` Stable release of app, do not commit your changes here
-- `dev` Development branch, commit your changes here
+If you find any issues with this document feel free to open up a pull request to fix the issues.
+If you have some suggestion on changing parts of the document feel free to open up an issue so the community can discuss your changes.
 
-## Commit Messages
+**_I have a question!_** Check the [FAQs](#faqs) section to see if your question was already answered, if it wasn't join my [Discord](https://discord.gg/CWEApqJ6rc) server or open up an issue.
 
-Please do try to follow the committing style if you wanted to contribute, it makes the repository much more clean and consistent.
-- Do not squash commits
-- Explain what the commit does or what did you do in the commit message with less than 50 characters
-- Use the commit description if you can't fit what you did in the commit message
+## Stuff To Know Before Contributing
+
+### Proposing a Feature
+
+If you want to submit a new feature please don't open a pull request directly, open up an issue first for discussion, you can build your feature as the discussion and after the issue came to a conclusion and your feature was "approved" you can open up your pull request.
+
+### Commit Messages
+
+Please try to follow the repo's commit style if you plan on contributing. This helps to make the repo a bit more organised.
+
+- Explain what the commit does or what did you do in the commit message with less than 50 characters.
+- Use the commit description if you can't fit what you did in the commit message.
 - Use one of these prefixes in your commit messages:
-    - `fix` When you fixed a bug or maybe a flaw within the codebase
-    - `feat` When you added something within the codebase (can be anything)
-    - `tweak` When you do a little tweak in the codebase, like a tiny UI change
-    - `chore` When you do fix something, but it doesn't affect the app in terms of functionality
-    - `refactor` When you refactored the code, like cleaning up the code
+  - `fix:` When you fixed a bug or maybe a flaw within the codebase.
+  - `feat:` When you added something within the codebase (can be anything).
+  - `tweak:` When you do a little tweak in the codebase, like a tiny texture change.
+  - `chore:` When you fixed something, but it doesn't affect the app in terms of functionality (e.g., updating dependencies).
+  - `refactor:` When you refactored the code, like cleaning up the code.
+  - `docs:` When you changed the documentation, like the README.md file.
 
-## Pull Requests
+## FAQs
 
-- Please be descriptive with you pull request
-- Please do not ping anyone in your pull request, it will not make the reviewing process faster
-- Please do not reopen your pull request without any changes if it has been denied
+There is nothing here yet!
+
+<!-- Thanks, @iyxan23, for writing an awesome contributing guide in Blokkok that I stole and modified. :3 -->
