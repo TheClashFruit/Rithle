@@ -8,6 +8,22 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.SizeTransform
+import androidx.compose.animation.core.keyframes
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandIn
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.shrinkOut
+import androidx.compose.animation.slideIn
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOut
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.unveilIn
+import androidx.compose.animation.veilOut
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
@@ -20,6 +36,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.tooling.preview.Preview
 import me.theclashfruit.rithle.modrinth.Modrinth
 import me.theclashfruit.rithle.modrinth.enums.Scope
@@ -33,10 +50,12 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
 import me.theclashfruit.rithle.ui.pages.HomeScreen
+import me.theclashfruit.rithle.ui.pages.NotificationsScreen
 
 class MainActivity : ComponentActivity() {
     private lateinit var navController: NavHostController
 
+    @OptIn(ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -55,6 +74,12 @@ class MainActivity : ComponentActivity() {
                 ) {
                     composable("/") {
                         HomeScreen(
+                            navController = navController
+                        )
+                    }
+
+                    composable("/notifications") {
+                        NotificationsScreen(
                             navController = navController
                         )
                     }
