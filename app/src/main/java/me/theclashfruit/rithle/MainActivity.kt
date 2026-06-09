@@ -15,6 +15,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import me.theclashfruit.rithle.modrinth.Modrinth
@@ -28,6 +32,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
+import me.theclashfruit.rithle.ui.pages.HomeScreen
 
 class MainActivity : ComponentActivity() {
     private lateinit var navController: NavHostController
@@ -40,8 +45,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             navController = rememberNavController()
 
-            val modrinth = Modrinth()
-            val oauth = modrinth.OAuth("", "")
+            val modrinth = Modrinth.getInstance()
+            val oauth = modrinth.OAuth(BuildConfig.CLIENT_ID, BuildConfig.CLIENT_SECRET)
 
             RithleTheme {
                 NavHost(
@@ -49,23 +54,12 @@ class MainActivity : ComponentActivity() {
                     startDestination = "/"
                 ) {
                     composable("/") {
-                        Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                            val url = oauth.authorizationUrl("rithle://oauth/callback", Scope.entries, "tbd")
-
-                            Log.d("OAuth", url)
-
-                            Button(
-                                onClick = {
-                                    val intent = Intent(Intent.ACTION_VIEW, url.toUri())
-                                    startActivity(intent)
-                                },
-                                modifier = Modifier.padding(innerPadding)
-                            ) {
-                                Text(text = "Login with Modrinth")
-                            }
-                        }
+                        HomeScreen(
+                            navController = navController
+                        )
                     }
 
+                    // Authentication
                     composable(
                         route = "oauth/callback?code={code}&state={state}",
                         deepLinks = listOf(
