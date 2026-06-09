@@ -18,7 +18,6 @@ import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
-import io.ktor.client.utils.EmptyContent.contentType
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
@@ -29,6 +28,9 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import me.theclashfruit.rithle.BuildConfig
 import me.theclashfruit.rithle.modrinth.enums.Scope
+import me.theclashfruit.rithle.modrinth.serializables.Category
+import me.theclashfruit.rithle.modrinth.serializables.GameVersion
+import me.theclashfruit.rithle.modrinth.serializables.Loader
 import me.theclashfruit.rithle.modrinth.serializables.TokenResponse
 import me.theclashfruit.rithle.modrinth.serializables.User
 
@@ -88,6 +90,43 @@ class Modrinth(private val staging: Boolean = false) {
         Log.d("ModrinthApiRaw", response.bodyAsText())
 
         return response.body<User>()
+    }
+
+    // Meta (Tag) Stuff
+    private var _gameVersions: List<GameVersion>? = null
+    suspend fun gameVersions(): List<GameVersion> {
+        _gameVersions?.let { return it }
+
+        val response: HttpResponse = httpClient.get("${url}/v2/tag/game_version")
+
+        val body = response.body<List<GameVersion>>()
+        _gameVersions = body
+
+        return body
+    }
+
+    private var _loaders: List<Loader>? = null
+    suspend fun loaders(): List<Loader> {
+        _loaders?.let { return it }
+
+        val response: HttpResponse = httpClient.get("${url}/v3/tag/loader")
+
+        val body = response.body<List<Loader>>()
+        _loaders = body
+
+        return body
+    }
+
+    private var _categories: List<Category>? = null
+    suspend fun categories(): List<Category> {
+        _categories?.let { return it }
+
+        val response: HttpResponse = httpClient.get("${url}/v2/tag/category")
+
+        val body = response.body<List<Category>>()
+        _categories = body
+
+        return body
     }
 
     // OAuth stuff

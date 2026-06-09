@@ -42,6 +42,7 @@ import me.theclashfruit.rithle.modrinth.Modrinth
 import me.theclashfruit.rithle.modrinth.enums.Scope
 import me.theclashfruit.rithle.ui.theme.RithleTheme
 import androidx.core.net.toUri
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -49,6 +50,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
+import kotlinx.coroutines.launch
 import me.theclashfruit.rithle.ui.pages.HomeScreen
 import me.theclashfruit.rithle.ui.pages.NotificationsScreen
 
@@ -66,6 +68,13 @@ class MainActivity : ComponentActivity() {
 
             val modrinth = Modrinth.getInstance()
             val oauth = modrinth.OAuth(BuildConfig.CLIENT_ID, BuildConfig.CLIENT_SECRET)
+
+            // Preload Meta (Tag)
+            LaunchedEffect(true) {
+                modrinth.gameVersions()
+                modrinth.loaders()
+                modrinth.categories()
+            }
 
             RithleTheme {
                 NavHost(
