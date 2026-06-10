@@ -40,6 +40,8 @@ android {
 
         buildConfigField("String", "CLIENT_ID", "\"${localProps.getProperty("client.id") ?: System.getenv("CLIENT_ID") ?: ""}\"")
         buildConfigField("String", "CLIENT_SECRET", "\"${localProps.getProperty("client.secret") ?: System.getenv("CLIENT_ID") ?: ""}\"")
+
+        buildConfigField("String", "GIT_HASH", "\"${gitHash()}\"")
     }
 
     buildTypes {

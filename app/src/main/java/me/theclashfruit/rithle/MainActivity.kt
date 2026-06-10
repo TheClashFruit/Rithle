@@ -53,6 +53,7 @@ import androidx.navigation.navDeepLink
 import kotlinx.coroutines.launch
 import me.theclashfruit.rithle.ui.pages.HomeScreen
 import me.theclashfruit.rithle.ui.pages.NotificationsScreen
+import me.theclashfruit.rithle.ui.pages.SettingsScreen
 
 class MainActivity : ComponentActivity() {
     private lateinit var navController: NavHostController
@@ -89,6 +90,12 @@ class MainActivity : ComponentActivity() {
 
                     composable("/notifications") {
                         NotificationsScreen(
+                            navController = navController
+                        )
+                    }
+
+                    composable("/settings") {
+                        SettingsScreen(
                             navController = navController
                         )
                     }

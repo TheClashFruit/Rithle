@@ -106,13 +106,15 @@ fun ProjectCard(
 
                     Text(
                         text = "by ${project.author}",
-                        style = MaterialTheme.typography.bodyMedium
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
 
                     Text(
                         text = project.description,
                         style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier.padding(top = 4.dp)
+                        modifier = Modifier.padding(top = 4.dp),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }

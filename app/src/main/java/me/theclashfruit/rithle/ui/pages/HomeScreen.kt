@@ -53,6 +53,7 @@ import com.composables.icons.lucide.Bell
 import com.composables.icons.lucide.ChevronDown
 import com.composables.icons.lucide.ExternalLink
 import com.composables.icons.lucide.Info
+import com.composables.icons.lucide.LogIn
 import com.composables.icons.lucide.LogOut
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.MessageCircleWarning
@@ -153,26 +154,9 @@ fun HomeScreen(
             )
         }
 
-    val refreshState = rememberPullToRefreshState()
-    var isRefreshing by remember { mutableStateOf(false) }
-
-    val onRefresh: () -> Unit = {
-        isRefreshing = true
-        scope.launch {
-            delay(100)
-            isRefreshing = false
-        }
-    }
-
-
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
-            .pullToRefresh(
-                state = refreshState,
-                isRefreshing = isRefreshing,
-                onRefresh = { onRefresh() },
-            )
             .nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             Column(
@@ -209,28 +193,33 @@ fun HomeScreen(
                                 expanded = isAccountMenuExpanded,
                                 onDismissRequest = { isAccountMenuExpanded = false }
                             ) {
-                                DropdownMenuItem(
-                                    text = { Text("Profile") },
-                                    leadingIcon = { Icon(Lucide.User, contentDescription = null) },
-                                    onClick = {
-                                        isAccountMenuExpanded = false
-                                    }
-                                )
+                                if (modrinth.authenticated)
+                                    DropdownMenuItem(
+                                        text = { Text("Profile") },
+                                        leadingIcon = { Icon(Lucide.User, contentDescription = null) },
+                                        onClick = {
+                                            isAccountMenuExpanded = false
+                                        }
+                                    )
+                                else
+                                    DropdownMenuItem(
+                                        text = { Text("Login") },
+                                        leadingIcon = { Icon(Lucide.LogIn, contentDescription = null) },
+                                        onClick = {
+                                            isAccountMenuExpanded = false
+                                        }
+                                    )
+
+                                HorizontalDivider()
 
                                 DropdownMenuItem(
                                     text = { Text("Settings") },
                                     leadingIcon = { Icon(Lucide.Settings, contentDescription = null) },
                                     onClick = {
                                         isAccountMenuExpanded = false
+
+                                        navController.navigate("/settings")
                                     }
-                                )
-
-                                HorizontalDivider()
-
-                                DropdownMenuItem(
-                                    text = { Text("About") },
-                                    leadingIcon = { Icon(Lucide.Info, contentDescription = null) },
-                                    onClick = { /* Do something... */ }
                                 )
 
                                 DropdownMenuItem(
@@ -239,19 +228,22 @@ fun HomeScreen(
                                     trailingIcon = { Icon(Lucide.ExternalLink, contentDescription = null) },
                                     onClick = {
                                         uriHandler.openUri("https://github.com/TheClashFruit/Rithle/issues")
-                                    }
-                                )
 
-
-                                HorizontalDivider()
-
-                                DropdownMenuItem(
-                                    text = { Text("Log Out") },
-                                    leadingIcon = { Icon(Lucide.LogOut, contentDescription = null) },
-                                    onClick = {
                                         isAccountMenuExpanded = false
                                     }
                                 )
+
+                                if (modrinth.authenticated) {
+                                    HorizontalDivider()
+
+                                    DropdownMenuItem(
+                                        text = { Text("Log Out") },
+                                        leadingIcon = { Icon(Lucide.LogOut, contentDescription = null) },
+                                        onClick = {
+                                            isAccountMenuExpanded = false
+                                        }
+                                    )
+                                }
                             }
                         }
                     }
@@ -439,6 +431,9 @@ fun HomeScreen(
                                     or(Facet.Category, *selectedCategories.map { it.name }.toTypedArray())
                                 if (selectedLoaders.isNotEmpty())
                                     or(Facet.Category, *selectedLoaders.map { it.name }.toTypedArray())
+
+                                if (openSource)
+                                    and(Facet.OpenSource, true)
                             }
                     )
                 }
