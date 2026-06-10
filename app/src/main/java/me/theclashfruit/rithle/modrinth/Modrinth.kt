@@ -1,6 +1,7 @@
 package me.theclashfruit.rithle.modrinth
 
 import android.util.Log
+import androidx.compose.ui.geometry.Offset
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.android.Android
@@ -24,13 +25,18 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.Parameters
 import io.ktor.http.URLBuilder
 import io.ktor.http.contentType
+import io.ktor.http.parameters
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import me.theclashfruit.rithle.BuildConfig
+import me.theclashfruit.rithle.modrinth.enums.Index
 import me.theclashfruit.rithle.modrinth.enums.Scope
 import me.theclashfruit.rithle.modrinth.serializables.Category
 import me.theclashfruit.rithle.modrinth.serializables.GameVersion
 import me.theclashfruit.rithle.modrinth.serializables.Loader
+import me.theclashfruit.rithle.modrinth.serializables.Project
+import me.theclashfruit.rithle.modrinth.serializables.ProjectResult
+import me.theclashfruit.rithle.modrinth.serializables.Search
 import me.theclashfruit.rithle.modrinth.serializables.TokenResponse
 import me.theclashfruit.rithle.modrinth.serializables.User
 
@@ -84,14 +90,6 @@ class Modrinth(private val staging: Boolean = false) {
     val authenticated: Boolean
         get() = userToken != null
 
-    suspend fun user(): User {
-        val response: HttpResponse = httpClient.get("${url}/v2/user")
-
-        Log.d("ModrinthApiRaw", response.bodyAsText())
-
-        return response.body<User>()
-    }
-
     // Meta (Tag) Stuff
     private var _gameVersions: List<GameVersion>? = null
     suspend fun gameVersions(): List<GameVersion> {
@@ -127,6 +125,52 @@ class Modrinth(private val staging: Boolean = false) {
         _categories = body
 
         return body
+    }
+
+    // API
+    suspend fun search(
+        query: String? = null,
+        facets: List<List<String>>? = null,
+        index: Index? = null,
+        offset: Int = 0,
+        limit: Int = 10
+    ): Search<ProjectResult> {
+        val response: HttpResponse = httpClient.get("${url}/v2/search") {
+            url {
+                parameters.append("offset", offset.toString())
+                parameters.append("limit", limit.toString())
+
+                if (facets != null) {
+                    parameters.append("facets", facets.joinToString(
+                        prefix = "[",
+                        separator = ",",
+                        postfix = "]"
+                    ) {
+                        it.joinToString(
+                            prefix = "[\"",
+                            separator = "\",\"",
+                            postfix = "\"]"
+                        )
+                    })
+                }
+
+                if (query != null) {
+                    parameters.append("query", query)
+                }
+
+                if (index != null) {
+                    parameters.append("index", index.toString())
+                }
+            }
+        }
+
+        return response.body<Search<ProjectResult>>()
+    }
+
+    suspend fun user(): User {
+        val response: HttpResponse = httpClient.get("${url}/v2/user")
+
+        return response.body<User>()
     }
 
     // OAuth stuff

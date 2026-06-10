@@ -1,49 +1,29 @@
 package me.theclashfruit.rithle.ui.pages
 
 import android.util.Log
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.scrollable
+import android.widget.Toast
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.text.input.rememberTextFieldState
-import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Notifications
-import androidx.compose.material.icons.outlined.Person
-import androidx.compose.material.icons.outlined.Search
-import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.AppBarWithSearch
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuGroup
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExpandedFullScreenContainedSearchBar
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilterChip
@@ -51,26 +31,16 @@ import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LoadingIndicator
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.PrimaryScrollableTabRow
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBarDefaults
-import androidx.compose.material3.SearchBarState
 import androidx.compose.material3.SearchBarValue
-import androidx.compose.material3.SheetValue
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
 import androidx.compose.material3.pulltorefresh.pullToRefresh
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
-import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.material3.rememberContainedSearchBarState
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -79,25 +49,20 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.composables.icons.lucide.ArrowLeft
-import com.composables.icons.lucide.Axe
 import com.composables.icons.lucide.Bell
-import com.composables.icons.lucide.Box
 import com.composables.icons.lucide.ChevronDown
 import com.composables.icons.lucide.ExternalLink
 import com.composables.icons.lucide.Info
-import com.composables.icons.lucide.LogIn
 import com.composables.icons.lucide.LogOut
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.MessageCircleWarning
@@ -105,19 +70,18 @@ import com.composables.icons.lucide.Search
 import com.composables.icons.lucide.Settings
 import com.composables.icons.lucide.User
 import com.composables.icons.lucide.X
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import me.theclashfruit.rithle.modrinth.Modrinth
 import me.theclashfruit.rithle.modrinth.serializables.Category
-import me.theclashfruit.rithle.ui.composables.ProjectCard
-import kotlin.collections.listOf
-import java.util.Locale
 import me.theclashfruit.rithle.modrinth.serializables.GameVersion
 import me.theclashfruit.rithle.modrinth.serializables.Loader
+import me.theclashfruit.rithle.modrinth.serializables.ProjectResult
+import me.theclashfruit.rithle.modrinth.serializables.Search
 import me.theclashfruit.rithle.ui.composables.FilterBottomSheetWithIcons
 import me.theclashfruit.rithle.ui.composables.GameVersionFilterBottomSheet
-import androidx.compose.ui.platform.LocalLocale
+import me.theclashfruit.rithle.ui.composables.ProjectCard
+import me.theclashfruit.rithle.util.Facet
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -488,9 +452,44 @@ fun HomeScreen(
                 .padding(innerPadding)
                 .fillMaxSize()
         ) {
-            Column(modifier = Modifier.fillMaxSize()) {
-                ScrollableTabContent(30)
+            var projects by remember { mutableStateOf<List<ProjectResult>>(emptyList()) }
+            var offset by remember { mutableIntStateOf(0) }
+            var isLoading by remember { mutableStateOf(false) }
+            var hasMore by remember { mutableStateOf(true) }
+            val limit = 20
+            val coroutineScope = rememberCoroutineScope()
+
+            val loadMore: () -> Unit = remember {
+                {
+                    if (!isLoading && hasMore) {
+                        coroutineScope.launch {
+                            isLoading = true
+                            val result = modrinth.search(
+                                facets = Facet
+                                    .builder()
+                                    .and(Facet.ProjectType, "mod")
+                                    .build(),
+                                offset = offset,
+                                limit = limit
+                            )
+                            projects = projects + result.hits
+                            offset += limit
+                            hasMore = offset < result.totalHits
+                            isLoading = false
+                        }
+                    }
+                }
             }
+
+            LaunchedEffect(true) {
+                loadMore()
+            }
+
+            ProjectCardList(
+                projects = projects,
+                isLoading = isLoading,
+                onEndReached = { coroutineScope.launch { loadMore() } }
+            )
 
             PullToRefreshDefaults.Indicator(
                 state = refreshState,
@@ -502,21 +501,42 @@ fun HomeScreen(
 }
 
 @Composable
-fun ScrollableTabContent(count: Int) {
-    val itemsList = remember(count) { List(count) { "Item #$it" } }
+fun ProjectCardList(
+    projects: List<ProjectResult>,
+    onEndReached: () -> Unit,
+    isLoading: Boolean,
+) {
+    val listState = rememberLazyListState()
+
+    // Trigger when 3 items from the end
+    val endReached by remember {
+        derivedStateOf {
+            val last = listState.layoutInfo.visibleItemsInfo.lastOrNull()
+            last != null && last.index >= listState.layoutInfo.totalItemsCount - 3
+        }
+    }
+
+    LaunchedEffect(endReached) {
+        if (endReached) onEndReached()
+    }
 
     LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = androidx.compose.foundation.layout.PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        state = listState,
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        contentPadding = PaddingValues(16.dp)
     ) {
-        items(itemsList) { itemText ->
-            ProjectCard(
-                title = itemText,
-                author = "John",
-                description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur et nisi justo. Duis eget euismod ex.",
-                onClick = {}
-            )
+        items(projects, key = { it.slug }) { project ->
+            ProjectCard(project = project, onClick = {})
+        }
+        if (isLoading) {
+            item {
+                Box(
+                    modifier = Modifier.fillMaxWidth().padding(16.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
+            }
         }
     }
 }
