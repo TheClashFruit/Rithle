@@ -7,9 +7,12 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.android.Android
 import io.ktor.client.plugins.UserAgent
+import io.ktor.client.plugins.cache.HttpCache
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.logging.ANDROID
+import io.ktor.client.plugins.logging.BodyFilterResult
+import io.ktor.client.plugins.logging.CommonLogBodyFilter
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
@@ -21,13 +24,22 @@ import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
+import io.ktor.http.Headers
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.Parameters
 import io.ktor.http.URLBuilder
+import io.ktor.http.Url
 import io.ktor.http.contentType
+import io.ktor.http.isTextType
 import io.ktor.http.parameters
 import io.ktor.serialization.kotlinx.json.json
+import io.ktor.utils.io.ByteReadChannel
+import io.ktor.utils.io.readBuffer
+import io.ktor.utils.io.readRemaining
+import io.ktor.utils.io.readText
+import kotlinx.io.Buffer
+import kotlinx.io.writeString
 import kotlinx.serialization.json.Json
 import me.theclashfruit.rithle.BuildConfig
 import me.theclashfruit.rithle.modrinth.enums.Index
@@ -40,6 +52,7 @@ import me.theclashfruit.rithle.modrinth.serializables.ProjectResult
 import me.theclashfruit.rithle.modrinth.serializables.Search
 import me.theclashfruit.rithle.modrinth.serializables.TokenResponse
 import me.theclashfruit.rithle.modrinth.serializables.User
+import java.nio.file.Files.writeString
 import java.util.Locale
 import java.util.Locale.getDefault
 
@@ -64,11 +77,33 @@ class Modrinth(private val staging: Boolean = false) {
         install(Logging) {
             logger = Logger.ANDROID
             level = if (BuildConfig.DEBUG) LogLevel.ALL else LogLevel.NONE
+            bodyFilter = CommonLogBodyFilter { contentLength, contentType, _, body ->
+                Log.d("Filterer", ":3")
+                BodyFilterResult.Skip(":3", contentLength)
+
+                val tokenRegex = Regex("""mro_[A-Za-z0-9_-]+""")
+
+                contentType?.isTextType()?.let {
+                    if (!it) {
+                        BodyFilterResult.Skip("binary", contentLength)
+                    }
+                }
+
+                val text = body.readBuffer().readText()
+                    .replace(tokenRegex, "***")
+                val buffer = Buffer().apply {
+                    writeString(text)
+                }
+
+                BodyFilterResult.BufferContent(buffer, Charsets.UTF_8)
+            }
 
             sanitizeHeader { header -> header == HttpHeaders.Authorization }
             sanitizeHeader { header -> header.lowercase(getDefault()) == "set-cookie" }
             sanitizeHeader { header -> header.lowercase(getDefault()) == "cf-ray" }
         }
+
+        install(HttpCache)
 
         defaultRequest {
             userToken?.let {

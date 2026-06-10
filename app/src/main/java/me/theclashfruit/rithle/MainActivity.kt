@@ -37,6 +37,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.tooling.preview.Preview
 import me.theclashfruit.rithle.modrinth.Modrinth
 import me.theclashfruit.rithle.modrinth.enums.Scope
@@ -50,10 +51,13 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import me.theclashfruit.rithle.ui.pages.HomeScreen
+import me.theclashfruit.rithle.ui.pages.LoadingScreen
 import me.theclashfruit.rithle.ui.pages.NotificationsScreen
 import me.theclashfruit.rithle.ui.pages.SettingsScreen
+import kotlin.time.Duration.Companion.milliseconds
 
 class MainActivity : ComponentActivity() {
     private lateinit var navController: NavHostController
@@ -118,18 +122,18 @@ class MainActivity : ComponentActivity() {
 
                         LaunchedEffect(true) {
                             val token = oauth.token(code, "rithle://oauth/callback")!!
-                            Log.d("Token", token.toString())
+
+                            delay(1000.milliseconds)
 
                             modrinth.userToken = token.accessToken
-                            navController.navigate("/")
+                            navController.navigate("/") {
+                                popUpTo("oauth/callback?code={code}&state={state}") {
+                                    inclusive = true
+                                }
+                            }
                         }
 
-                        Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                            Text(
-                                text = "Auth code: $code; Auth state: $state",
-                                modifier = Modifier.padding(innerPadding)
-                            )
-                        }
+                        LoadingScreen()
                     }
                 }
             }

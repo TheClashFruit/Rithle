@@ -4,10 +4,13 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeContent
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.text.input.rememberTextFieldState
@@ -28,8 +31,6 @@ import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.SearchBarValue
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
-import androidx.compose.material3.pulltorefresh.pullToRefresh
-import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.material3.rememberContainedSearchBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -52,7 +53,6 @@ import com.composables.icons.lucide.ArrowLeft
 import com.composables.icons.lucide.Bell
 import com.composables.icons.lucide.ChevronDown
 import com.composables.icons.lucide.ExternalLink
-import com.composables.icons.lucide.Info
 import com.composables.icons.lucide.LogIn
 import com.composables.icons.lucide.LogOut
 import com.composables.icons.lucide.Lucide
@@ -61,9 +61,10 @@ import com.composables.icons.lucide.Search
 import com.composables.icons.lucide.Settings
 import com.composables.icons.lucide.User
 import com.composables.icons.lucide.X
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import me.theclashfruit.rithle.BuildConfig
 import me.theclashfruit.rithle.modrinth.Modrinth
+import me.theclashfruit.rithle.modrinth.enums.Scope
 import me.theclashfruit.rithle.modrinth.serializables.Category
 import me.theclashfruit.rithle.modrinth.serializables.GameVersion
 import me.theclashfruit.rithle.modrinth.serializables.Loader
@@ -78,6 +79,8 @@ fun HomeScreen(
     navController: NavHostController
 ) {
     val modrinth = Modrinth.getInstance()
+    val oauth = modrinth.OAuth(BuildConfig.CLIENT_ID, BuildConfig.CLIENT_SECRET)
+
     val locale = LocalLocale.current.platformLocale
 
     var categories by remember { mutableStateOf<List<Category>>(listOf()) }
@@ -207,6 +210,9 @@ fun HomeScreen(
                                         leadingIcon = { Icon(Lucide.LogIn, contentDescription = null) },
                                         onClick = {
                                             isAccountMenuExpanded = false
+
+                                            val url = oauth.authorizationUrl("rithle://oauth/callback", Scope.entries, ":3")
+                                            uriHandler.openUri(url)
                                         }
                                     )
 
@@ -434,7 +440,7 @@ fun HomeScreen(
 
                                 if (openSource)
                                     and(Facet.OpenSource, true)
-                            }
+                            },
                     )
                 }
 
