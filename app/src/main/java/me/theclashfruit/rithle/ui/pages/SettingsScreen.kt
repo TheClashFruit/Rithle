@@ -20,6 +20,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -29,10 +32,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.composables.icons.lucide.ArrowLeft
+import com.composables.icons.lucide.Book
+import com.composables.icons.lucide.Bug
+import com.composables.icons.lucide.ChevronRight
 import com.composables.icons.lucide.Cuboid
 import com.composables.icons.lucide.Download
 import com.composables.icons.lucide.ExternalLink
@@ -42,15 +49,23 @@ import com.composables.icons.lucide.Languages
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Moon
 import me.theclashfruit.rithle.BuildConfig
+import me.theclashfruit.rithle.modrinth.Modrinth
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
     navController: NavHostController
 ) {
+    val modrinth = Modrinth.getInstance()
+
     val extractModpacks = remember { mutableStateOf(false) }
+    var secretClicks by remember { mutableStateOf(0) }
+
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
 
     Scaffold(
+        modifier = Modifier
+            .nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             LargeTopAppBar(
                 title = { Text("Settings") },
@@ -61,7 +76,8 @@ fun SettingsScreen(
                             contentDescription = "Back"
                         )
                     }
-                }
+                },
+                scrollBehavior = scrollBehavior
             )
         }
     ) { innerPadding ->
@@ -74,6 +90,11 @@ fun SettingsScreen(
         ) {
             // TODO: Account section
 
+            if (modrinth.authenticated)
+                Card() { }
+            else
+                Card() { }
+
             SettingsSection(label = "Appearance") {
                 SettingsCard(
                     icon = Lucide.Moon,
@@ -81,6 +102,7 @@ fun SettingsScreen(
                     subtitle = "System Default",
                     onClick = {}
                 )
+
                 SettingsCard(
                     icon = Lucide.Languages,
                     title = "Language",
@@ -96,6 +118,7 @@ fun SettingsScreen(
                     subtitle = "Extract modpack contents after download",
                     enabled = extractModpacks
                 )
+
                 SettingsCard(
                     icon = Lucide.Download,
                     title = "Modpack Location",
@@ -109,14 +132,32 @@ fun SettingsScreen(
                     icon = Lucide.History,
                     title = "Version",
                     subtitle = "v${BuildConfig.VERSION_NAME} (${BuildConfig.GIT_HASH})",
+                    onClick = {
+                        secretClicks++
+                    }
+                )
+
+                SettingsCard(
+                    icon = Lucide.Book,
+                    title = "Licenses",
                     onClick = {}
                 )
+
                 SettingsCardWithExternalLink(
                     icon = Lucide.Github,
                     title = "Source Code",
-                    subtitle = "github.com/TheClashFruit/Rithle",
                     uri = "https://github.com/TheClashFruit/Rithle"
                 )
+            }
+
+            if (BuildConfig.DEBUG || secretClicks > 5) {
+                SettingsSection(label = "Debug") {
+                    SettingsCard(
+                        icon = Lucide.Bug,
+                        title = "Export Debug Logs",
+                        onClick = {}
+                    )
+                }
             }
         }
     }
@@ -142,7 +183,7 @@ fun SettingsSection(
 fun SettingsCard(
     icon: ImageVector,
     title: String,
-    subtitle: String,
+    subtitle: String = "",
     onClick: () -> Unit
 ) {
     Card(
@@ -156,16 +197,18 @@ fun SettingsCard(
             verticalAlignment = Alignment.CenterVertically
         ) {
             SettingsIcon(icon = icon)
-            Column {
+            Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = title,
                     style = MaterialTheme.typography.bodyLarge
                 )
-                Text(
-                    text = subtitle,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                if (subtitle.isNotEmpty()) {
+                    Text(
+                        text = subtitle,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
             }
         }
     }
@@ -175,7 +218,7 @@ fun SettingsCard(
 fun SettingsCardWithSwitch(
     icon: ImageVector,
     title: String,
-    subtitle: String,
+    subtitle: String = "",
     enabled: MutableState<Boolean>
 ) {
     var checked by enabled
@@ -196,11 +239,13 @@ fun SettingsCardWithSwitch(
                     text = title,
                     style = MaterialTheme.typography.bodyLarge
                 )
-                Text(
-                    text = subtitle,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                if (subtitle.isNotEmpty()) {
+                    Text(
+                        text = subtitle,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
             }
             Switch(
                 checked = checked,
@@ -214,7 +259,7 @@ fun SettingsCardWithSwitch(
 fun SettingsCardWithExternalLink(
     icon: ImageVector,
     title: String,
-    subtitle: String,
+    subtitle: String = "",
     uri: String
 ) {
     val uriHandler = LocalUriHandler.current
