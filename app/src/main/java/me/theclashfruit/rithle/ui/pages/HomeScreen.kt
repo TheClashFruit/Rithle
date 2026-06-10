@@ -1,26 +1,17 @@
 package me.theclashfruit.rithle.ui.pages
 
-import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.AppBarWithSearch
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExpandedFullScreenContainedSearchBar
@@ -37,7 +28,6 @@ import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.SearchBarValue
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
-import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
 import androidx.compose.material3.pulltorefresh.pullToRefresh
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.material3.rememberContainedSearchBarState
@@ -76,11 +66,9 @@ import me.theclashfruit.rithle.modrinth.Modrinth
 import me.theclashfruit.rithle.modrinth.serializables.Category
 import me.theclashfruit.rithle.modrinth.serializables.GameVersion
 import me.theclashfruit.rithle.modrinth.serializables.Loader
-import me.theclashfruit.rithle.modrinth.serializables.ProjectResult
-import me.theclashfruit.rithle.modrinth.serializables.Search
 import me.theclashfruit.rithle.ui.composables.FilterBottomSheetWithIcons
 import me.theclashfruit.rithle.ui.composables.GameVersionFilterBottomSheet
-import me.theclashfruit.rithle.ui.composables.ProjectCard
+import me.theclashfruit.rithle.ui.composables.ProjectCardList
 import me.theclashfruit.rithle.util.Facet
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
@@ -94,18 +82,7 @@ fun HomeScreen(
     var categories by remember { mutableStateOf<List<Category>>(listOf()) }
     var loaders by remember { mutableStateOf<List<Loader>>(listOf()) }
     LaunchedEffect(true) {
-        categories = modrinth.categories().map { item ->
-            item.copy(
-                name = item.name
-                    .split("-")
-                    .joinToString(" ") { i ->
-                        i.replaceFirstChar {
-                            if (it.isLowerCase()) it.titlecase(locale) else it.toString()
-                        }
-                    }
-            )
-        }
-
+        categories = modrinth.categories()
         loaders = modrinth.loaders()
     }
 
@@ -288,9 +265,10 @@ fun HomeScreen(
                     var showGameVersionsBottomSheet by remember { mutableStateOf(false) }
                     var showLoadersBottomSheet by remember { mutableStateOf(false) }
 
-                    var openSource by remember { mutableStateOf(false) }
-
                     var gameVersions by remember { mutableStateOf<List<GameVersion>>(listOf()) }
+                    var selectedLoaders by remember { mutableStateOf<List<Loader>>(listOf()) }
+                    var selectedCategories by remember { mutableStateOf<List<Category>>(listOf()) }
+                    var openSource by remember { mutableStateOf(false) }
 
                     // filter stuff out
                     val filteredCategories by remember(categories, currentType) {
@@ -342,15 +320,18 @@ fun HomeScreen(
 
                         GameVersionFilterBottomSheet(
                             show = showGameVersionsBottomSheet,
-                            onDismiss = { selection ->
+                            selection = gameVersions,
+                            onChange = { selection ->
                                 gameVersions = selection
+                            },
+                            onDismiss = {
                                 showGameVersionsBottomSheet = false
                             }
                         )
 
-                        if (filteredLoaders.isNotEmpty()) {
+                        if (filteredLoaders.isNotEmpty() && filteredLoaders.size > 1) {
                             FilterChip(
-                                selected = false,
+                                selected = selectedLoaders.isNotEmpty(),
                                 modifier =
                                     Modifier
                                         .padding(horizontal = 4.dp)
@@ -358,7 +339,9 @@ fun HomeScreen(
                                 onClick = { showLoadersBottomSheet = true },
                                 label = {
                                     Text(
-                                        "Loader"
+                                        if (selectedLoaders.size > 1) "${selectedLoaders[0].name} +${selectedLoaders.size - 1}"
+                                        else if (selectedLoaders.size == 1) selectedLoaders[0].name
+                                        else "Loader"
                                     )
                                 },
                                 trailingIcon = {
@@ -374,26 +357,36 @@ fun HomeScreen(
                                 title = "Loader",
                                 show = showLoadersBottomSheet,
                                 items = filteredLoaders,
+                                selection = selectedLoaders,
                                 icon = { it.icon },
                                 label = { it.name },
-                                onDismiss = { showLoadersBottomSheet = false }
+                                onChange = { selectedLoaders = it },
+                                onDismiss = { showLoadersBottomSheet = false },
                             )
                         }
 
                         filteredCategories.forEach { (header, items) ->
-                            var active by remember { mutableStateOf(false) }
                             var open by remember { mutableStateOf(false) }
+                            var selection by remember { mutableStateOf<List<Category>>(listOf()) }
+
+                            LaunchedEffect(selection) {
+                                selectedCategories = (selectedCategories - items.toSet()) + selection
+                            }
 
                             val title = header.replaceFirstChar { if (it.isLowerCase()) it.titlecase(locale) else it.toString() }
 
                             FilterChip(
-                                selected = active,
+                                selected = selection.isNotEmpty(),
                                 modifier =
                                     Modifier
                                         .padding(horizontal = 4.dp)
                                         .align(alignment = Alignment.CenterVertically),
                                 onClick = { open = true },
-                                label = { Text(title) },
+                                label = { Text(
+                                    if (selection.size > 1) "${selection[0].name} +${selection.size - 1}"
+                                    else if (selection.size == 1) selection[0].name
+                                    else title
+                                ) },
                                 trailingIcon = {
                                     Icon(
                                         imageVector = Lucide.ChevronDown,
@@ -407,8 +400,10 @@ fun HomeScreen(
                                 title = title,
                                 show = open,
                                 items = items,
+                                selection = selection,
                                 icon = { it.icon },
                                 label = { it.name },
+                                onChange = { selection = it },
                                 onDismiss = { open = false }
                             )
                         }
@@ -426,9 +421,25 @@ fun HomeScreen(
                     }
 
                     // The search!
-
-                    Text(
-                        text = "HELLOW ORLD: ${textFieldState.text}"
+                    ProjectCardList(
+                        query = textFieldState.text.toString(),
+                        facets = Facet
+                            .builder()
+                            .and(Facet.ProjectType, when (selectedTabIndex) {
+                                0 -> "mod"
+                                1 -> "resourcepack"
+                                2 -> "datapack"
+                                3 -> "modpack"
+                                4 -> "shader"
+                                5 -> "plugin"
+                                else -> "n/a"
+                            })
+                            .apply {
+                                if (selectedCategories.isNotEmpty())
+                                    or(Facet.Category, *selectedCategories.map { it.name }.toTypedArray())
+                                if (selectedLoaders.isNotEmpty())
+                                    or(Facet.Category, *selectedLoaders.map { it.name }.toTypedArray())
+                            }
                     )
                 }
 
@@ -452,91 +463,19 @@ fun HomeScreen(
                 .padding(innerPadding)
                 .fillMaxSize()
         ) {
-            var projects by remember { mutableStateOf<List<ProjectResult>>(emptyList()) }
-            var offset by remember { mutableIntStateOf(0) }
-            var isLoading by remember { mutableStateOf(false) }
-            var hasMore by remember { mutableStateOf(true) }
-            val limit = 20
-            val coroutineScope = rememberCoroutineScope()
-
-            val loadMore: () -> Unit = remember {
-                {
-                    if (!isLoading && hasMore) {
-                        coroutineScope.launch {
-                            isLoading = true
-                            val result = modrinth.search(
-                                facets = Facet
-                                    .builder()
-                                    .and(Facet.ProjectType, "mod")
-                                    .build(),
-                                offset = offset,
-                                limit = limit
-                            )
-                            projects = projects + result.hits
-                            offset += limit
-                            hasMore = offset < result.totalHits
-                            isLoading = false
-                        }
-                    }
-                }
-            }
-
-            LaunchedEffect(true) {
-                loadMore()
-            }
-
             ProjectCardList(
-                projects = projects,
-                isLoading = isLoading,
-                onEndReached = { coroutineScope.launch { loadMore() } }
+                facets = Facet
+                    .builder()
+                    .and(Facet.ProjectType, when (selectedTabIndex) {
+                        0 -> "mod"
+                        1 -> "resourcepack"
+                        2 -> "datapack"
+                        3 -> "modpack"
+                        4 -> "shader"
+                        5 -> "plugin"
+                        else -> "n/a"
+                    }),
             )
-
-            PullToRefreshDefaults.Indicator(
-                state = refreshState,
-                isRefreshing = isRefreshing,
-                modifier = Modifier.align(Alignment.TopCenter)
-            )
-        }
-    }
-}
-
-@Composable
-fun ProjectCardList(
-    projects: List<ProjectResult>,
-    onEndReached: () -> Unit,
-    isLoading: Boolean,
-) {
-    val listState = rememberLazyListState()
-
-    // Trigger when 3 items from the end
-    val endReached by remember {
-        derivedStateOf {
-            val last = listState.layoutInfo.visibleItemsInfo.lastOrNull()
-            last != null && last.index >= listState.layoutInfo.totalItemsCount - 3
-        }
-    }
-
-    LaunchedEffect(endReached) {
-        if (endReached) onEndReached()
-    }
-
-    LazyColumn(
-        state = listState,
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        contentPadding = PaddingValues(16.dp)
-    ) {
-        items(projects, key = { it.slug }) { project ->
-            ProjectCard(project = project, onClick = {})
-        }
-        if (isLoading) {
-            item {
-                Box(
-                    modifier = Modifier.fillMaxWidth().padding(16.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
-                }
-            }
         }
     }
 }

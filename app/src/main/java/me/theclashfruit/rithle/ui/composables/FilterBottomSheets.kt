@@ -17,6 +17,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -33,7 +34,9 @@ import me.theclashfruit.rithle.modrinth.serializables.GameVersion
 @Composable
 fun GameVersionFilterBottomSheet(
     show: Boolean,
-    onDismiss: (selection: List<GameVersion>) -> Unit
+    selection: List<GameVersion>?,
+    onChange: (selection: List<GameVersion>) -> Unit,
+    onDismiss: () -> Unit
 ) {
     val modrinth = Modrinth.getInstance()
 
@@ -42,7 +45,7 @@ fun GameVersionFilterBottomSheet(
     if (show) {
         var allGameVersions by remember { mutableStateOf<List<GameVersion>>(listOf()) }
         var showSnapshots by remember { mutableStateOf(false) }
-        val selectedVersions = remember { mutableStateListOf<GameVersion>() }
+        val selectedVersions = remember { mutableStateListOf<GameVersion>().also { it.addAll(selection ?: emptyList()) } }
 
         val filteredVersions = remember(allGameVersions, showSnapshots) {
             allGameVersions.filter { showSnapshots || it.versionType == "release" }
@@ -52,9 +55,23 @@ fun GameVersionFilterBottomSheet(
             allGameVersions = modrinth.gameVersions()
         }
 
+        LaunchedEffect(selectedVersions.toList()) {
+            onChange(selectedVersions.toList())
+
+            if (selectedVersions.any { it.versionType == "snapshot" }) {
+                showSnapshots = true
+            }
+        }
+
+        LaunchedEffect(showSnapshots) {
+            if (!showSnapshots) {
+                selectedVersions.removeAll { it.versionType == "snapshot" }
+            }
+        }
+
         ModalBottomSheet(
             onDismissRequest = {
-                onDismiss(selectedVersions.toList())
+                onDismiss()
             },
             sheetState = sheetState
         ) {
@@ -132,18 +149,24 @@ fun <T> FilterBottomSheetWithIcons(
     show: Boolean,
     title: String,
     items: List<T>,
+    selection: List<T>?,
     icon: (item: T) -> String,
     label: (item: T) -> String,
-    onDismiss: (selection: List<T>) -> Unit
+    onChange: (selection: List<T>) -> Unit,
+    onDismiss: () -> Unit
 ) {
     val sheetState = rememberModalBottomSheetState()
 
     if (show) {
-        val selected = remember { mutableStateListOf<T>() }
+        val selected = remember { mutableStateListOf<T>().also { it.addAll(selection ?: emptyList()) } }
+
+        LaunchedEffect(selected.toList()) {
+            onChange(selected.toList())
+        }
 
         ModalBottomSheet(
             onDismissRequest = {
-                onDismiss(selected.toList())
+                onDismiss()
             },
             sheetState = sheetState
         ) {

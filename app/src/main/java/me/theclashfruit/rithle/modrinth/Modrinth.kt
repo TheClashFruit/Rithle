@@ -2,6 +2,7 @@ package me.theclashfruit.rithle.modrinth
 
 import android.util.Log
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.text.toLowerCase
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.android.Android
@@ -39,6 +40,8 @@ import me.theclashfruit.rithle.modrinth.serializables.ProjectResult
 import me.theclashfruit.rithle.modrinth.serializables.Search
 import me.theclashfruit.rithle.modrinth.serializables.TokenResponse
 import me.theclashfruit.rithle.modrinth.serializables.User
+import java.util.Locale
+import java.util.Locale.getDefault
 
 class Modrinth(private val staging: Boolean = false) {
     private val url = if (staging) "https://staging-api.modrinth.com" else "https://api.modrinth.com"
@@ -63,6 +66,8 @@ class Modrinth(private val staging: Boolean = false) {
             level = if (BuildConfig.DEBUG) LogLevel.ALL else LogLevel.NONE
 
             sanitizeHeader { header -> header == HttpHeaders.Authorization }
+            sanitizeHeader { header -> header.lowercase(getDefault()) == "set-cookie" }
+            sanitizeHeader { header -> header.lowercase(getDefault()) == "cf-ray" }
         }
 
         defaultRequest {
