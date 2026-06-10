@@ -73,6 +73,7 @@ import androidx.compose.material3.rememberContainedSearchBarState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -108,12 +109,15 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import me.theclashfruit.rithle.modrinth.Modrinth
+import me.theclashfruit.rithle.modrinth.serializables.Category
 import me.theclashfruit.rithle.ui.composables.ProjectCard
 import kotlin.collections.listOf
+import java.util.Locale
 import me.theclashfruit.rithle.modrinth.serializables.GameVersion
 import me.theclashfruit.rithle.modrinth.serializables.Loader
 import me.theclashfruit.rithle.ui.composables.FilterBottomSheetWithIcons
 import me.theclashfruit.rithle.ui.composables.GameVersionFilterBottomSheet
+import androidx.compose.ui.platform.LocalLocale
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -121,11 +125,39 @@ fun HomeScreen(
     navController: NavHostController
 ) {
     val modrinth = Modrinth.getInstance()
+    val locale = LocalLocale.current.platformLocale
+
+    var categories by remember { mutableStateOf<List<Category>>(listOf()) }
+    var loaders by remember { mutableStateOf<List<Loader>>(listOf()) }
+    LaunchedEffect(true) {
+        categories = modrinth.categories().map { item ->
+            item.copy(
+                name = item.name
+                    .split("-")
+                    .joinToString(" ") { i ->
+                        i.replaceFirstChar {
+                            if (it.isLowerCase()) it.titlecase(locale) else it.toString()
+                        }
+                    }
+            )
+        }
+
+        loaders = modrinth.loaders()
+    }
 
     val uriHandler = LocalUriHandler.current
 
     var selectedTabIndex by remember { mutableIntStateOf(0) }
     val tabs = listOf("Mods", "Resource Packs", "Data Packs", "Modpacks", "Shaders", "Plugins")
+    val currentType = when (selectedTabIndex) {
+        0 -> "mod"
+        1 -> "resourcepack"
+        2 -> "mod" // datapacks are mods on modrinth
+        3 -> "modpack"
+        4 -> "shader"
+        5 -> "mod" // plugins are mods on modrinth
+        else -> "n/a"
+    }
 
     var isAccountMenuExpanded by remember { mutableStateOf(false) }
     val textFieldState = rememberTextFieldState()
@@ -144,7 +176,7 @@ fun HomeScreen(
                 colors = appBarWithSearchColors.searchBarColors.inputFieldColors,
                 onSearch = { scope.launch { searchBarState.animateToCollapsed() } },
                 placeholder = {
-                    Text(modifier = Modifier.clearAndSetSemantics {}, text = "Search")
+                    Text(modifier = Modifier.clearAndSetSemantics {}, text = "Search ${tabs[selectedTabIndex]}...")
                 },
                 leadingIcon = {
                     if (searchBarState.currentValue == SearchBarValue.Expanded)
@@ -179,8 +211,6 @@ fun HomeScreen(
                 }
             )
         }
-
-    val sheetState = rememberModalBottomSheetState()
 
     val refreshState = rememberPullToRefreshState()
     var isRefreshing by remember { mutableStateOf(false) }
@@ -294,18 +324,26 @@ fun HomeScreen(
                     var showGameVersionsBottomSheet by remember { mutableStateOf(false) }
                     var showLoadersBottomSheet by remember { mutableStateOf(false) }
 
-                    var loaders by remember { mutableStateOf<List<Loader>>(listOf()) }
-
                     var openSource by remember { mutableStateOf(false) }
-
-                    var hasLoaders by remember { mutableStateOf(false) }
-                    var hasCategories by remember { mutableStateOf(false) }
-                    var hasEnvironment by remember { mutableStateOf(false) }
 
                     var gameVersions by remember { mutableStateOf<List<GameVersion>>(listOf()) }
 
-                    LaunchedEffect(Unit) {
-                        loaders = modrinth.loaders().filter { it.supportedProjectTypes.contains("mod") }
+                    // filter stuff out
+                    val filteredCategories by remember(categories, currentType) {
+                        derivedStateOf {
+                            categories
+                                .filter { it.projectType == currentType }
+                                .groupBy { it.header }
+                        }
+                    }
+
+                    val filteredLoaders by remember(loaders, currentType, selectedTabIndex) {
+                        derivedStateOf {
+                            loaders
+                                .filter {
+                                    it.supportedProjectTypes.contains(if (selectedTabIndex == 5) "plugin" else if (selectedTabIndex == 2) "datapack" else currentType)
+                                }
+                        }
                     }
 
                     // Filter Chips
@@ -314,6 +352,7 @@ fun HomeScreen(
                             .horizontalScroll(rememberScrollState())
                             .padding(horizontal = 4.dp)
                     ) {
+                        // Game versiom, same for all.
                         FilterChip(
                             selected = gameVersions.isNotEmpty(),
                             modifier =
@@ -337,57 +376,80 @@ fun HomeScreen(
                             }
                         )
 
-                        FilterChip(
-                            selected = hasLoaders,
-                            modifier =
-                                Modifier
-                                    .padding(horizontal = 4.dp)
-                                    .align(alignment = Alignment.CenterVertically),
-                            onClick = { showLoadersBottomSheet = true },
-                            label = { Text("Loader") },
-                            trailingIcon = {
-                                Icon(
-                                    imageVector = Lucide.ChevronDown,
-                                    contentDescription = "Open",
-                                    modifier = Modifier.size(FilterChipDefaults.IconSize),
-                                )
+                        GameVersionFilterBottomSheet(
+                            show = showGameVersionsBottomSheet,
+                            onDismiss = { selection ->
+                                gameVersions = selection
+                                showGameVersionsBottomSheet = false
                             }
                         )
 
-                        FilterChip(
-                            selected = hasCategories,
-                            modifier =
-                                Modifier
-                                    .padding(horizontal = 4.dp)
-                                    .align(alignment = Alignment.CenterVertically),
-                            onClick = { /* TODO: Show dialog */ },
-                            label = { Text("Category") },
-                            trailingIcon = {
-                                Icon(
-                                    imageVector = Lucide.ChevronDown,
-                                    contentDescription = "Open",
-                                    modifier = Modifier.size(FilterChipDefaults.IconSize),
-                                )
-                            }
-                        )
+                        if (filteredLoaders.isNotEmpty()) {
+                            FilterChip(
+                                selected = false,
+                                modifier =
+                                    Modifier
+                                        .padding(horizontal = 4.dp)
+                                        .align(alignment = Alignment.CenterVertically),
+                                onClick = { showLoadersBottomSheet = true },
+                                label = {
+                                    Text(
+                                        "Loader"
+                                    )
+                                },
+                                trailingIcon = {
+                                    Icon(
+                                        imageVector = Lucide.ChevronDown,
+                                        contentDescription = "Open",
+                                        modifier = Modifier.size(FilterChipDefaults.IconSize),
+                                    )
+                                }
+                            )
 
-                        FilterChip(
-                            selected = hasEnvironment,
-                            modifier =
-                                Modifier
-                                    .padding(horizontal = 4.dp)
-                                    .align(alignment = Alignment.CenterVertically),
-                            onClick = { /* TODO: Show dialog */ },
-                            label = { Text("Environment") },
-                            trailingIcon = {
-                                Icon(
-                                    imageVector = Lucide.ChevronDown,
-                                    contentDescription = "Open",
-                                    modifier = Modifier.size(FilterChipDefaults.IconSize),
-                                )
-                            }
-                        )
+                            FilterBottomSheetWithIcons(
+                                title = "Loader",
+                                show = showLoadersBottomSheet,
+                                items = filteredLoaders,
+                                icon = { it.icon },
+                                label = { it.name },
+                                onDismiss = { showLoadersBottomSheet = false }
+                            )
+                        }
 
+                        filteredCategories.forEach { (header, items) ->
+                            var active by remember { mutableStateOf(false) }
+                            var open by remember { mutableStateOf(false) }
+
+                            val title = header.replaceFirstChar { if (it.isLowerCase()) it.titlecase(locale) else it.toString() }
+
+                            FilterChip(
+                                selected = active,
+                                modifier =
+                                    Modifier
+                                        .padding(horizontal = 4.dp)
+                                        .align(alignment = Alignment.CenterVertically),
+                                onClick = { open = true },
+                                label = { Text(title) },
+                                trailingIcon = {
+                                    Icon(
+                                        imageVector = Lucide.ChevronDown,
+                                        contentDescription = "Open",
+                                        modifier = Modifier.size(FilterChipDefaults.IconSize),
+                                    )
+                                }
+                            )
+
+                            FilterBottomSheetWithIcons(
+                                title = title,
+                                show = open,
+                                items = items,
+                                icon = { it.icon },
+                                label = { it.name },
+                                onDismiss = { open = false }
+                            )
+                        }
+
+                        // Is opensource, same for all
                         FilterChip(
                             selected = openSource,
                             modifier =
@@ -399,25 +461,10 @@ fun HomeScreen(
                         )
                     }
 
+                    // The search!
+
                     Text(
                         text = "HELLOW ORLD: ${textFieldState.text}"
-                    )
-
-                    GameVersionFilterBottomSheet(
-                        show = showGameVersionsBottomSheet,
-                        onDismiss = { selection ->
-                            gameVersions = selection
-                            showGameVersionsBottomSheet = false
-                        }
-                    )
-
-                    FilterBottomSheetWithIcons(
-                        title = "Loader",
-                        show = showLoadersBottomSheet,
-                        items = loaders,
-                        icon = { it.icon },
-                        label = { it.name },
-                        onDismiss = { showLoadersBottomSheet = false }
                     )
                 }
 
