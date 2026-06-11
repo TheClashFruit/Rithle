@@ -9,6 +9,20 @@ Android app for Modrinth written in Kotlin.
 ![GitHub](https://img.shields.io/github/license/TheClashFruit/Rithle)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/w/TheClashFruit/Rithle)
 
+## Screenshots
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://cdn.theclashfruit.me/apps/me.theclashfruit.rithle/screenshots-dark.png">
+  <source media="(prefers-color-scheme: light)" srcset="https://cdn.theclashfruit.me/apps/me.theclashfruit.rithle/screenshots-light.png">
+
+  <img alt="Screenshots" src="https://cdn.theclashfruit.me/apps/me.theclashfruit.rithle/screenshots-light.png">
+</picture>
+
+## Contributing
+
+I'm open to contributions but please try to adhere to [CONTRIBUTING.md](CONTRIBUTING.md), and huge
+thanks if you end up contributing.
+
 ## License
 
 ```
