@@ -5,9 +5,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.LoadingIndicator
 import androidx.compose.runtime.Composable
@@ -44,14 +46,14 @@ fun ProjectCardList(
     var isLoading by remember { mutableStateOf(false) }
     var hasMore by remember { mutableStateOf(true) }
 
-    val listState = rememberLazyListState()
+    val gridState = rememberLazyGridState()
     val coroutineScope = rememberCoroutineScope()
 
     // Trigger when 3 items from the end
     val endReached by remember {
         derivedStateOf {
-            val last = listState.layoutInfo.visibleItemsInfo.lastOrNull()
-            last != null && last.index >= listState.layoutInfo.totalItemsCount - 3
+            val last = gridState.layoutInfo.visibleItemsInfo.lastOrNull()
+            last != null && last.index >= gridState.layoutInfo.totalItemsCount - 3
         }
     }
 
@@ -76,10 +78,8 @@ fun ProjectCardList(
         projects = emptyList()
         offset = 0
         hasMore = true
-        isLoading = false
-
-        // call inline instead of loadMore() so it sees the reset values
         isLoading = true
+
         val result = modrinth.search(
             facets = facets.build(),
             offset = 0,
@@ -96,18 +96,26 @@ fun ProjectCardList(
         if (endReached) loadMore()
     }
 
-    LazyColumn(
-        state = listState,
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+    LazyVerticalGrid(
+        state = gridState,
+        columns = GridCells.Adaptive(minSize = 350.dp),
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
         contentPadding = PaddingValues(16.dp)
     ) {
         items(projects, key = { it.slug }) { project ->
-            ProjectCard(project = project, onClick = { navController.navigate("/project/${project.projectId}") })
+            ProjectCard(
+                project = project,
+                onClick = { navController.navigate("/project/${project.projectId}") }
+            )
         }
+
         if (isLoading) {
-            item {
+            item(span = { GridItemSpan(maxLineSpan) }) {
                 Box(
-                    modifier = Modifier.fillMaxWidth().padding(16.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     LoadingIndicator()
