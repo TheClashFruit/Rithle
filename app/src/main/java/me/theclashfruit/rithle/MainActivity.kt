@@ -56,6 +56,7 @@ import kotlinx.coroutines.launch
 import me.theclashfruit.rithle.ui.pages.HomeScreen
 import me.theclashfruit.rithle.ui.pages.LoadingScreen
 import me.theclashfruit.rithle.ui.pages.NotificationsScreen
+import me.theclashfruit.rithle.ui.pages.ProjectScreen
 import me.theclashfruit.rithle.ui.pages.SettingsScreen
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -101,6 +102,26 @@ class MainActivity : ComponentActivity() {
                     composable("/settings") {
                         SettingsScreen(
                             navController = navController
+                        )
+                    }
+
+                    composable(
+                        route = "/project/{id}",
+                        deepLinks = listOf(
+                            navDeepLink { uriPattern = "https://modrinth.com/{type}/{id}" },
+                            navDeepLink { uriPattern = "https://www.modrinth.com/{type}/{id}" },
+                            navDeepLink { uriPattern = "http://modrinth.com/{type}/{id}" },
+                            navDeepLink { uriPattern = "http://www.modrinth.com/{type}/{id}" }
+                        ),
+                        arguments = listOf(
+                            navArgument("id") { nullable = false }
+                        )
+                    ) { backStackEntry ->
+                        val id = backStackEntry.arguments?.getString("id")!!
+
+                        ProjectScreen(
+                            navController = navController,
+                            project = id
                         )
                     }
 

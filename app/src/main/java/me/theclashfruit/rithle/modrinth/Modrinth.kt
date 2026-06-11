@@ -207,6 +207,14 @@ class Modrinth(private val staging: Boolean = false) {
         return response.body<Search<ProjectResult>>()
     }
 
+    suspend fun project(
+        slug: String
+    ): Project {
+        val response: HttpResponse = httpClient.get("$url/v2/project/$slug")
+
+        return response.body<Project>()
+    }
+
     suspend fun user(): User {
         val response: HttpResponse = httpClient.get("${url}/v2/user")
 

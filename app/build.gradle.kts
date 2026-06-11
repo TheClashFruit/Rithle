@@ -91,6 +91,10 @@ dependencies {
 
     implementation(libs.icons.lucide.cmp)
 
+    implementation("com.mikepenz:multiplatform-markdown-renderer-android:0.41.0")
+    implementation("com.mikepenz:multiplatform-markdown-renderer-m3:0.41.0")
+    implementation("com.mikepenz:multiplatform-markdown-renderer-coil3:0.41.0")
+
     implementation(libs.ktor.client.core)
     implementation(libs.ktor.client.android)
     implementation(libs.ktor.client.logging)
