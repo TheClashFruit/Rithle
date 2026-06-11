@@ -96,6 +96,7 @@ dependencies {
     implementation("com.mikepenz:multiplatform-markdown-renderer-coil3:0.41.0")
 
     implementation("androidx.datastore:datastore-preferences:1.2.1")
+    implementation("androidx.browser:browser:1.10.0")
 
     implementation(libs.ktor.client.core)
     implementation(libs.ktor.client.android)

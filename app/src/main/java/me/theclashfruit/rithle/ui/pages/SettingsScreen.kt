@@ -37,6 +37,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -59,6 +60,7 @@ import me.theclashfruit.rithle.BuildConfig
 import me.theclashfruit.rithle.modrinth.Modrinth
 import me.theclashfruit.rithle.modrinth.enums.Scope
 import me.theclashfruit.rithle.modrinth.serializables.User
+import me.theclashfruit.rithle.util.launchCustomTabs
 import java.time.Instant
 
 fun timeAgo(iso: String): String {
@@ -83,7 +85,7 @@ fun SettingsScreen(
 
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
 
-    val uriHandler = LocalUriHandler.current
+    val ctx = LocalContext.current
 
     Scaffold(
         modifier = Modifier
@@ -181,7 +183,7 @@ fun SettingsScreen(
                     subtitle = "Login with Modrinth.",
                     onClick = {
                         val url = oauth.authorizationUrl("rithle://oauth/callback", Scope.entries, "/settings")
-                        uriHandler.openUri(url)
+                        ctx.launchCustomTabs(url)
                     }
                 )
 
@@ -352,12 +354,12 @@ fun SettingsCardWithExternalLink(
     subtitle: String = "",
     uri: String
 ) {
-    val uriHandler = LocalUriHandler.current
+    val ctx = LocalContext.current
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { uriHandler.openUri(uri) }
+            .clickable { ctx.launchCustomTabs(uri) }
     ) {
         Row(
             modifier = Modifier.padding(16.dp),

@@ -76,6 +76,7 @@ import me.theclashfruit.rithle.ui.composables.GameVersionFilterBottomSheet
 import me.theclashfruit.rithle.ui.composables.ProjectCardList
 import me.theclashfruit.rithle.util.Facet
 import me.theclashfruit.rithle.util.TokenRepository
+import me.theclashfruit.rithle.util.launchCustomTabs
 import kotlin.math.abs
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
@@ -226,7 +227,7 @@ fun HomeScreen(
                                             isAccountMenuExpanded = false
 
                                             val url = oauth.authorizationUrl("rithle://oauth/callback", Scope.entries, "/")
-                                            uriHandler.openUri(url)
+                                            ctx.launchCustomTabs(url)
                                         }
                                     )
 

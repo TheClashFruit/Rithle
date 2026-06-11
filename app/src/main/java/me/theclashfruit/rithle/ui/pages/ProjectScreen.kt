@@ -32,6 +32,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -46,18 +47,25 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.platform.UriHandler
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.navigation.NavHostController
 import coil3.compose.AsyncImage
 import com.composables.icons.lucide.ArrowLeft
 import com.composables.icons.lucide.Box
 import com.composables.icons.lucide.Lucide
 import com.mikepenz.markdown.coil3.Coil3ImageTransformerImpl
+import com.mikepenz.markdown.compose.components.markdownComponents
 import com.mikepenz.markdown.m3.Markdown
+import com.mikepenz.markdown.model.ReferenceLinkHandler
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import me.theclashfruit.rithle.modrinth.Modrinth
 import me.theclashfruit.rithle.modrinth.serializables.Project
+import me.theclashfruit.rithle.util.launchCustomTabs
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -160,14 +168,14 @@ fun ProjectScreen(
             ) { page ->
                 if (tabs.size == 3)
                     when (page) {
-                        0 -> DescriptionPage(data!!)
+                        0 -> DescriptionPage(data!!, navController)
                         1 -> ChangelogPage(data!!)
                         2 -> VersionsPage(data!!)
                     }
 
                 if (tabs.size == 4 && tabs.contains("Gallery"))
                     when (page) {
-                        0 -> DescriptionPage(data!!)
+                        0 -> DescriptionPage(data!!, navController)
                         1 -> GalleryPage(data!!)
                         2 -> ChangelogPage(data!!)
                         3 -> VersionsPage(data!!)
@@ -175,7 +183,7 @@ fun ProjectScreen(
 
                 if (tabs.size == 4 && !tabs.contains("Gallery"))
                     when (page) {
-                        0 -> DescriptionPage(data!!)
+                        0 -> DescriptionPage(data!!, navController)
                         1 -> ChangelogPage(data!!)
                         2 -> VersionsPage(data!!)
                         3 -> ModerationPage(data!!)
@@ -183,7 +191,7 @@ fun ProjectScreen(
 
                 if (tabs.size == 5)
                     when (page) {
-                        0 -> DescriptionPage(data!!)
+                        0 -> DescriptionPage(data!!, navController)
                         1 -> GalleryPage(data!!)
                         2 -> ChangelogPage(data!!)
                         3 -> VersionsPage(data!!)
@@ -195,8 +203,11 @@ fun ProjectScreen(
 
 @Composable
 fun DescriptionPage(
-    data: Project
+    data: Project,
+    navController: NavHostController
 ) {
+    val ctx = LocalContext.current
+
     val color = if (data.color != null)
         Color((data.color ?: 0) or 0xFF000000.toInt())
     else
@@ -231,10 +242,24 @@ fun DescriptionPage(
             )
             .verticalScroll(rememberScrollState())
     ) {
-        Markdown(
-            content = data!!.body,
-            imageTransformer = Coil3ImageTransformerImpl
-        )
+        CompositionLocalProvider(
+            LocalUriHandler provides object : UriHandler {
+                override fun openUri(url: String) {
+                    val uri = url.toUri()
+
+                    if (uri.host == "modrinth.com")
+                        if (uri.pathSegments.first().contains(Regex("""/(mod|modpack|resourcepack|datapack|shader|plugin|project)/.*""")))
+                            navController.navigate("/project/${uri.pathSegments.last()}")
+
+                    ctx.launchCustomTabs(url)
+                }
+            }
+        ) {
+            Markdown(
+                content = data.body,
+                imageTransformer = Coil3ImageTransformerImpl
+            )
+        }
     }
 }
 

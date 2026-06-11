@@ -47,13 +47,7 @@
                 <data android:host="modrinth.com" />
                 <data android:host="www.modrinth.com" />
 
-                <data android:pathPattern="/mod/.*" />
-                <data android:pathPattern="/modpack/.*" />
-                <data android:pathPattern="/resourcepack/.*" />
-                <data android:pathPattern="/datapack/.*" />
-                <data android:pathPattern="/shader/.*" />
-                <data android:pathPattern="/plugin/.*" />
-                <data android:pathPattern="/project/.*" />
+
             </intent-filter>
         </activity>
     </application>
