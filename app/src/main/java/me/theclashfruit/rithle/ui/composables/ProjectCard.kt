@@ -36,7 +36,10 @@ import com.composables.icons.lucide.History
 import com.composables.icons.lucide.Lucide
 import me.theclashfruit.rithle.modrinth.serializables.ProjectResult
 import me.theclashfruit.rithle.ui.theme.RithleTheme
+import me.theclashfruit.rithle.util.formatCount
+import me.theclashfruit.rithle.util.timeAgo
 import java.time.Instant
+import java.time.OffsetDateTime
 import java.time.temporal.ChronoUnit
 import java.util.Date
 import java.util.Locale
@@ -179,18 +182,4 @@ fun ProjectCard(
             }
         }
     }
-}
-
-fun formatCount(n: Int): String =
-    CompactDecimalFormat
-        .getInstance(Locale.getDefault(), CompactDecimalFormat.CompactStyle.SHORT)
-        .format(n)
-
-fun timeAgo(iso: String): String {
-    val millis = Instant.parse(iso).toEpochMilli()
-    return DateUtils.getRelativeTimeSpanString(
-        millis,
-        System.currentTimeMillis(),
-        DateUtils.MINUTE_IN_MILLIS
-    ).toString()
 }

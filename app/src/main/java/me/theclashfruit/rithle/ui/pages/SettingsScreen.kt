@@ -61,16 +61,8 @@ import me.theclashfruit.rithle.modrinth.Modrinth
 import me.theclashfruit.rithle.modrinth.enums.Scope
 import me.theclashfruit.rithle.modrinth.serializables.User
 import me.theclashfruit.rithle.util.launchCustomTabs
+import me.theclashfruit.rithle.util.timeAgo
 import java.time.Instant
-
-fun timeAgo(iso: String): String {
-    val millis = Instant.parse(iso).toEpochMilli()
-    return DateUtils.getRelativeTimeSpanString(
-        millis,
-        System.currentTimeMillis(),
-        DateUtils.MINUTE_IN_MILLIS
-    ).toString()
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
