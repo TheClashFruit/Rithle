@@ -1,9 +1,11 @@
 package me.theclashfruit.rithle.ui.pages
 
+import android.text.format.DateUtils
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -24,8 +26,10 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -36,6 +40,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import coil3.compose.AsyncImage
 import com.composables.icons.lucide.ArrowLeft
 import com.composables.icons.lucide.Book
 import com.composables.icons.lucide.Bug
@@ -46,10 +51,24 @@ import com.composables.icons.lucide.ExternalLink
 import com.composables.icons.lucide.Github
 import com.composables.icons.lucide.History
 import com.composables.icons.lucide.Languages
+import com.composables.icons.lucide.LogIn
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Moon
+import com.composables.icons.lucide.User
 import me.theclashfruit.rithle.BuildConfig
 import me.theclashfruit.rithle.modrinth.Modrinth
+import me.theclashfruit.rithle.modrinth.enums.Scope
+import me.theclashfruit.rithle.modrinth.serializables.User
+import java.time.Instant
+
+fun timeAgo(iso: String): String {
+    val millis = Instant.parse(iso).toEpochMilli()
+    return DateUtils.getRelativeTimeSpanString(
+        millis,
+        System.currentTimeMillis(),
+        DateUtils.MINUTE_IN_MILLIS
+    ).toString()
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -57,11 +76,14 @@ fun SettingsScreen(
     navController: NavHostController
 ) {
     val modrinth = Modrinth.getInstance()
+    val oauth = modrinth.OAuth(BuildConfig.CLIENT_ID, BuildConfig.CLIENT_SECRET)
 
     val extractModpacks = remember { mutableStateOf(false) }
-    var secretClicks by remember { mutableStateOf(0) }
+    var secretClicks by remember { mutableIntStateOf(0) }
 
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
+
+    val uriHandler = LocalUriHandler.current
 
     Scaffold(
         modifier = Modifier
@@ -90,10 +112,78 @@ fun SettingsScreen(
         ) {
             // TODO: Account section
 
-            if (modrinth.authenticated)
-                Card() { }
-            else
-                Card() { }
+            if (modrinth.authenticated) {
+                var user by remember { mutableStateOf<User?>(null) }
+
+                LaunchedEffect(modrinth.authenticated) {
+                    user = modrinth.user()
+                }
+
+                if (user != null)
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+
+                            }
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(16.dp),
+                            horizontalArrangement = Arrangement.spacedBy(16.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Surface(
+                                modifier = Modifier.size(48.dp),
+                                shape = RoundedCornerShape(100),
+                                color = MaterialTheme.colorScheme.primaryContainer
+                            ) {
+                                if (!user!!.avatarUrl.isNullOrEmpty())
+                                    AsyncImage(
+                                        model = user!!.avatarUrl,
+                                        contentDescription = "${user!!.username}'s Avatar",
+                                        modifier = Modifier.fillMaxSize()
+                                    )
+                                else
+                                    Icon(
+                                        modifier = Modifier
+                                            .size(24.dp)
+                                            .padding(12.dp),
+                                        imageVector = Lucide.User,
+                                        contentDescription = null
+                                    )
+                            }
+
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = user!!.username,
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+
+                                Text(
+                                    text = "Joined ${timeAgo(user!!.created)}.",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+
+                            Icon(
+                                imageVector = Lucide.ChevronRight,
+                                contentDescription = null,
+                                modifier = Modifier.size(18.dp),
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+            } else
+                SettingsCard(
+                    icon = Lucide.LogIn,
+                    title = "You're not logged in.",
+                    subtitle = "Login with Modrinth.",
+                    onClick = {
+                        val url = oauth.authorizationUrl("rithle://oauth/callback", Scope.entries, "/settings")
+                        uriHandler.openUri(url)
+                    }
+                )
 
             SettingsSection(label = "Appearance") {
                 SettingsCard(

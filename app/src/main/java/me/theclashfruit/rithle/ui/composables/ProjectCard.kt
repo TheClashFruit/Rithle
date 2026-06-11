@@ -84,7 +84,7 @@ fun ProjectCard(
                         .clip(CardDefaults.shape),
                     color = if (project.iconUrl != null) CardDefaults.cardColors().containerColor else color
                 ) {
-                    if (project.iconUrl != null)
+                    if (!project.iconUrl.isNullOrEmpty())
                         AsyncImage(
                             model = project.iconUrl,
                             contentDescription = "${project.title}'s Icon",

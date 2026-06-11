@@ -1,5 +1,6 @@
 package me.theclashfruit.rithle.ui.pages
 
+import android.content.Context
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -74,15 +75,19 @@ import me.theclashfruit.rithle.ui.composables.FilterBottomSheetWithIcons
 import me.theclashfruit.rithle.ui.composables.GameVersionFilterBottomSheet
 import me.theclashfruit.rithle.ui.composables.ProjectCardList
 import me.theclashfruit.rithle.util.Facet
+import me.theclashfruit.rithle.util.TokenRepository
 import kotlin.math.abs
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun HomeScreen(
-    navController: NavHostController
+    navController: NavHostController,
+    ctx: Context
 ) {
     val modrinth = Modrinth.getInstance()
     val oauth = modrinth.OAuth(BuildConfig.CLIENT_ID, BuildConfig.CLIENT_SECRET)
+
+    val repo = TokenRepository(ctx)
 
     val locale = LocalLocale.current.platformLocale
     val coroutineScope = rememberCoroutineScope()
@@ -220,7 +225,7 @@ fun HomeScreen(
                                         onClick = {
                                             isAccountMenuExpanded = false
 
-                                            val url = oauth.authorizationUrl("rithle://oauth/callback", Scope.entries, ":3")
+                                            val url = oauth.authorizationUrl("rithle://oauth/callback", Scope.entries, "/")
                                             uriHandler.openUri(url)
                                         }
                                     )
@@ -255,6 +260,11 @@ fun HomeScreen(
                                         text = { Text("Log Out") },
                                         leadingIcon = { Icon(Lucide.LogOut, contentDescription = null) },
                                         onClick = {
+                                            scope.launch {
+                                                repo.clear()
+                                                modrinth.userToken = null
+                                            }
+
                                             isAccountMenuExpanded = false
                                         }
                                     )
