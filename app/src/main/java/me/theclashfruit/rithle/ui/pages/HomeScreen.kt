@@ -4,13 +4,12 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeContent
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.text.input.rememberTextFieldState
@@ -31,6 +30,7 @@ import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.SearchBarValue
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberContainedSearchBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -43,11 +43,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.lerp
 import androidx.navigation.NavHostController
 import com.composables.icons.lucide.ArrowLeft
 import com.composables.icons.lucide.Bell
@@ -72,6 +74,7 @@ import me.theclashfruit.rithle.ui.composables.FilterBottomSheetWithIcons
 import me.theclashfruit.rithle.ui.composables.GameVersionFilterBottomSheet
 import me.theclashfruit.rithle.ui.composables.ProjectCardList
 import me.theclashfruit.rithle.util.Facet
+import kotlin.math.abs
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -82,6 +85,7 @@ fun HomeScreen(
     val oauth = modrinth.OAuth(BuildConfig.CLIENT_ID, BuildConfig.CLIENT_SECRET)
 
     val locale = LocalLocale.current.platformLocale
+    val coroutineScope = rememberCoroutineScope()
 
     var categories by remember { mutableStateOf<List<Category>>(listOf()) }
     var loaders by remember { mutableStateOf<List<Loader>>(listOf()) }
@@ -102,6 +106,11 @@ fun HomeScreen(
         4 -> "shader"
         5 -> "mod" // plugins are mods on modrinth
         else -> "n/a"
+    }
+
+    val pagerState = rememberPagerState(pageCount = { tabs.size })
+    LaunchedEffect(pagerState.currentPage) {
+        selectedTabIndex = pagerState.currentPage
     }
 
     var isAccountMenuExpanded by remember { mutableStateOf(false) }
@@ -255,56 +264,110 @@ fun HomeScreen(
                     }
                 )
 
-                ExpandedFullScreenContainedSearchBar(
-                    state = searchBarState,
-                    inputField = inputField,
-                    colors = appBarWithSearchColors.searchBarColors,
+                PrimaryScrollableTabRow(
+                    selectedTabIndex = selectedTabIndex
                 ) {
-                    var showGameVersionsBottomSheet by remember { mutableStateOf(false) }
-                    var showLoadersBottomSheet by remember { mutableStateOf(false) }
+                    tabs.forEachIndexed { index, title ->
+                        Tab(
+                            selected = selectedTabIndex == index,
+                            onClick = {
+                                selectedTabIndex = index
 
-                    var gameVersions by remember { mutableStateOf<List<GameVersion>>(listOf()) }
-                    var selectedLoaders by remember { mutableStateOf<List<Loader>>(listOf()) }
-                    var selectedCategories by remember { mutableStateOf<List<Category>>(listOf()) }
-                    var openSource by remember { mutableStateOf(false) }
-
-                    // filter stuff out
-                    val filteredCategories by remember(categories, currentType) {
-                        derivedStateOf {
-                            categories
-                                .filter { it.projectType == currentType }
-                                .groupBy { it.header }
-                        }
-                    }
-
-                    val filteredLoaders by remember(loaders, currentType, selectedTabIndex) {
-                        derivedStateOf {
-                            loaders
-                                .filter {
-                                    it.supportedProjectTypes.contains(if (selectedTabIndex == 5) "plugin" else if (selectedTabIndex == 2) "datapack" else currentType)
+                                coroutineScope.launch {
+                                    pagerState.animateScrollToPage(index)
                                 }
-                        }
+                            },
+                            text = { Text(text = title) }
+                        )
                     }
+                }
+            }
 
-                    // Filter Chips
-                    Row(
-                        modifier = Modifier
-                            .horizontalScroll(rememberScrollState())
-                            .padding(horizontal = 4.dp)
-                    ) {
-                        // Game versiom, same for all.
+            ExpandedFullScreenContainedSearchBar(
+                state = searchBarState,
+                inputField = inputField,
+                colors = appBarWithSearchColors.searchBarColors,
+            ) {
+                var showGameVersionsBottomSheet by remember { mutableStateOf(false) }
+                var showLoadersBottomSheet by remember { mutableStateOf(false) }
+
+                var gameVersions by remember { mutableStateOf<List<GameVersion>>(listOf()) }
+                var selectedLoaders by remember { mutableStateOf<List<Loader>>(listOf()) }
+                var selectedCategories by remember { mutableStateOf<List<Category>>(listOf()) }
+                var openSource by remember { mutableStateOf(false) }
+
+                // filter stuff out
+                val filteredCategories by remember(categories, currentType) {
+                    derivedStateOf {
+                        categories
+                            .filter { it.projectType == currentType }
+                            .groupBy { it.header }
+                    }
+                }
+
+                val filteredLoaders by remember(loaders, currentType, selectedTabIndex) {
+                    derivedStateOf {
+                        loaders
+                            .filter {
+                                it.supportedProjectTypes.contains(if (selectedTabIndex == 5) "plugin" else if (selectedTabIndex == 2) "datapack" else currentType)
+                            }
+                    }
+                }
+
+                // Filter Chips
+                Row(
+                    modifier = Modifier
+                        .horizontalScroll(rememberScrollState())
+                        .padding(horizontal = 4.dp)
+                ) {
+                    // Game versiom, same for all.
+                    FilterChip(
+                        selected = gameVersions.isNotEmpty(),
+                        modifier =
+                            Modifier
+                                .padding(horizontal = 4.dp)
+                                .align(alignment = Alignment.CenterVertically),
+                        onClick = { showGameVersionsBottomSheet = true },
+                        label = {
+                            Text(
+                                if (gameVersions.size > 1) "${gameVersions[0].version} +${gameVersions.size - 1}"
+                                else if (gameVersions.size == 1) gameVersions[0].version
+                                else "Game Version"
+                            )
+                        },
+                        trailingIcon = {
+                            Icon(
+                                imageVector = Lucide.ChevronDown,
+                                contentDescription = "Open",
+                                modifier = Modifier.size(FilterChipDefaults.IconSize),
+                            )
+                        }
+                    )
+
+                    GameVersionFilterBottomSheet(
+                        show = showGameVersionsBottomSheet,
+                        selection = gameVersions,
+                        onChange = { selection ->
+                            gameVersions = selection
+                        },
+                        onDismiss = {
+                            showGameVersionsBottomSheet = false
+                        }
+                    )
+
+                    if (filteredLoaders.isNotEmpty() && filteredLoaders.size > 1) {
                         FilterChip(
-                            selected = gameVersions.isNotEmpty(),
+                            selected = selectedLoaders.isNotEmpty(),
                             modifier =
                                 Modifier
                                     .padding(horizontal = 4.dp)
                                     .align(alignment = Alignment.CenterVertically),
-                            onClick = { showGameVersionsBottomSheet = true },
+                            onClick = { showLoadersBottomSheet = true },
                             label = {
                                 Text(
-                                    if (gameVersions.size > 1) "${gameVersions[0].version} +${gameVersions.size - 1}"
-                                    else if (gameVersions.size == 1) gameVersions[0].version
-                                    else "Game Version"
+                                    if (selectedLoaders.size > 1) "${selectedLoaders[0].name} +${selectedLoaders.size - 1}"
+                                    else if (selectedLoaders.size == 1) selectedLoaders[0].name
+                                    else "Loader"
                                 )
                             },
                             trailingIcon = {
@@ -316,158 +379,112 @@ fun HomeScreen(
                             }
                         )
 
-                        GameVersionFilterBottomSheet(
-                            show = showGameVersionsBottomSheet,
-                            selection = gameVersions,
-                            onChange = { selection ->
-                                gameVersions = selection
-                            },
-                            onDismiss = {
-                                showGameVersionsBottomSheet = false
-                            }
+                        FilterBottomSheetWithIcons(
+                            title = "Loader",
+                            show = showLoadersBottomSheet,
+                            items = filteredLoaders,
+                            selection = selectedLoaders,
+                            icon = { it.icon },
+                            label = { it.name },
+                            onChange = { selectedLoaders = it },
+                            onDismiss = { showLoadersBottomSheet = false },
                         )
+                    }
 
-                        if (filteredLoaders.isNotEmpty() && filteredLoaders.size > 1) {
-                            FilterChip(
-                                selected = selectedLoaders.isNotEmpty(),
-                                modifier =
-                                    Modifier
-                                        .padding(horizontal = 4.dp)
-                                        .align(alignment = Alignment.CenterVertically),
-                                onClick = { showLoadersBottomSheet = true },
-                                label = {
-                                    Text(
-                                        if (selectedLoaders.size > 1) "${selectedLoaders[0].name} +${selectedLoaders.size - 1}"
-                                        else if (selectedLoaders.size == 1) selectedLoaders[0].name
-                                        else "Loader"
-                                    )
-                                },
-                                trailingIcon = {
-                                    Icon(
-                                        imageVector = Lucide.ChevronDown,
-                                        contentDescription = "Open",
-                                        modifier = Modifier.size(FilterChipDefaults.IconSize),
-                                    )
-                                }
-                            )
+                    filteredCategories.forEach { (header, items) ->
+                        var open by remember { mutableStateOf(false) }
+                        var selection by remember { mutableStateOf<List<Category>>(listOf()) }
 
-                            FilterBottomSheetWithIcons(
-                                title = "Loader",
-                                show = showLoadersBottomSheet,
-                                items = filteredLoaders,
-                                selection = selectedLoaders,
-                                icon = { it.icon },
-                                label = { it.name },
-                                onChange = { selectedLoaders = it },
-                                onDismiss = { showLoadersBottomSheet = false },
-                            )
+                        LaunchedEffect(selection) {
+                            selectedCategories = (selectedCategories - items.toSet()) + selection
                         }
 
-                        filteredCategories.forEach { (header, items) ->
-                            var open by remember { mutableStateOf(false) }
-                            var selection by remember { mutableStateOf<List<Category>>(listOf()) }
+                        val title = header.replaceFirstChar { if (it.isLowerCase()) it.titlecase(locale) else it.toString() }
 
-                            LaunchedEffect(selection) {
-                                selectedCategories = (selectedCategories - items.toSet()) + selection
-                            }
-
-                            val title = header.replaceFirstChar { if (it.isLowerCase()) it.titlecase(locale) else it.toString() }
-
-                            FilterChip(
-                                selected = selection.isNotEmpty(),
-                                modifier =
-                                    Modifier
-                                        .padding(horizontal = 4.dp)
-                                        .align(alignment = Alignment.CenterVertically),
-                                onClick = { open = true },
-                                label = { Text(
-                                    if (selection.size > 1) "${selection[0].name} +${selection.size - 1}"
-                                    else if (selection.size == 1) selection[0].name
-                                    else title
-                                ) },
-                                trailingIcon = {
-                                    Icon(
-                                        imageVector = Lucide.ChevronDown,
-                                        contentDescription = "Open",
-                                        modifier = Modifier.size(FilterChipDefaults.IconSize),
-                                    )
-                                }
-                            )
-
-                            FilterBottomSheetWithIcons(
-                                title = title,
-                                show = open,
-                                items = items,
-                                selection = selection,
-                                icon = { it.icon },
-                                label = { it.name },
-                                onChange = { selection = it },
-                                onDismiss = { open = false }
-                            )
-                        }
-
-                        // Is opensource, same for all
                         FilterChip(
-                            selected = openSource,
+                            selected = selection.isNotEmpty(),
                             modifier =
                                 Modifier
                                     .padding(horizontal = 4.dp)
                                     .align(alignment = Alignment.CenterVertically),
-                            onClick = { openSource = !openSource },
-                            label = { Text("Open Source") }
+                            onClick = { open = true },
+                            label = { Text(
+                                if (selection.size > 1) "${selection[0].name} +${selection.size - 1}"
+                                else if (selection.size == 1) selection[0].name
+                                else title
+                            ) },
+                            trailingIcon = {
+                                Icon(
+                                    imageVector = Lucide.ChevronDown,
+                                    contentDescription = "Open",
+                                    modifier = Modifier.size(FilterChipDefaults.IconSize),
+                                )
+                            }
+                        )
+
+                        FilterBottomSheetWithIcons(
+                            title = title,
+                            show = open,
+                            items = items,
+                            selection = selection,
+                            icon = { it.icon },
+                            label = { it.name },
+                            onChange = { selection = it },
+                            onDismiss = { open = false }
                         )
                     }
 
-                    // The search!
-                    ProjectCardList(
-                        query = textFieldState.text.toString(),
-                        facets = Facet
-                            .builder()
-                            .and(Facet.ProjectType, when (selectedTabIndex) {
-                                0 -> "mod"
-                                1 -> "resourcepack"
-                                2 -> "datapack"
-                                3 -> "modpack"
-                                4 -> "shader"
-                                5 -> "plugin"
-                                else -> "n/a"
-                            })
-                            .apply {
-                                if (selectedCategories.isNotEmpty())
-                                    or(Facet.Category, *selectedCategories.map { it.name }.toTypedArray())
-                                if (selectedLoaders.isNotEmpty())
-                                    or(Facet.Category, *selectedLoaders.map { it.name }.toTypedArray())
-
-                                if (openSource)
-                                    and(Facet.OpenSource, true)
-                            },
+                    // Is opensource, same for all
+                    FilterChip(
+                        selected = openSource,
+                        modifier =
+                            Modifier
+                                .padding(horizontal = 4.dp)
+                                .align(alignment = Alignment.CenterVertically),
+                        onClick = { openSource = !openSource },
+                        label = { Text("Open Source") }
                     )
                 }
 
-                PrimaryScrollableTabRow(
-                    selectedTabIndex = selectedTabIndex,
-                ) {
-                    tabs.forEachIndexed { index, title ->
-                        Tab(
-                            selected = selectedTabIndex == index,
-                            onClick = { selectedTabIndex = index },
-                            text = { Text(text = title) }
-                        )
-                    }
-                }
-            }
+                // The search!
+                ProjectCardList(
+                    navController = navController,
+                    query = if (textFieldState.text.isNotEmpty()) textFieldState.text.toString() else null,
+                    facets = Facet
+                        .builder()
+                        .and(Facet.ProjectType, when (selectedTabIndex) {
+                            0 -> "mod"
+                            1 -> "resourcepack"
+                            2 -> "datapack"
+                            3 -> "modpack"
+                            4 -> "shader"
+                            5 -> "plugin"
+                            else -> "n/a"
+                        })
+                        .apply {
+                            if (selectedCategories.isNotEmpty())
+                                or(Facet.Category, *selectedCategories.map { it.name }.toTypedArray())
+                            if (selectedLoaders.isNotEmpty())
+                                or(Facet.Category, *selectedLoaders.map { it.name }.toTypedArray())
 
+                            if (openSource)
+                                and(Facet.OpenSource, true)
+                        },
+                )
+            }
         }
     ) { innerPadding ->
-        Box(
+        HorizontalPager(
+            state = pagerState,
             modifier = Modifier
-                .padding(innerPadding)
                 .fillMaxSize()
-        ) {
+                .padding(innerPadding)
+        ) { page ->
             ProjectCardList(
+                navController = navController,
                 facets = Facet
                     .builder()
-                    .and(Facet.ProjectType, when (selectedTabIndex) {
+                    .and(Facet.ProjectType, when (page) {
                         0 -> "mod"
                         1 -> "resourcepack"
                         2 -> "datapack"

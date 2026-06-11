@@ -22,6 +22,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import kotlinx.coroutines.launch
 import me.theclashfruit.rithle.modrinth.Modrinth
 import me.theclashfruit.rithle.modrinth.serializables.ProjectResult
@@ -32,7 +33,8 @@ import me.theclashfruit.rithle.util.Facet
 fun ProjectCardList(
     query: String? = null,
     facets: Facet.Builder,
-    limit: Int = 20
+    limit: Int = 20,
+    navController: NavHostController
 ) {
     val modrinth = Modrinth.getInstance()
 
@@ -81,7 +83,8 @@ fun ProjectCardList(
         val result = modrinth.search(
             facets = facets.build(),
             offset = 0,
-            limit = limit
+            limit = limit,
+            query = query
         )
         projects = result.hits
         offset = limit
@@ -99,7 +102,7 @@ fun ProjectCardList(
         contentPadding = PaddingValues(16.dp)
     ) {
         items(projects, key = { it.slug }) { project ->
-            ProjectCard(project = project, onClick = {})
+            ProjectCard(project = project, onClick = { navController.navigate("/project/${project.projectId}") })
         }
         if (isLoading) {
             item {

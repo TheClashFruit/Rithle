@@ -47,7 +47,7 @@ fun ProjectCard(
     onClick: () -> Unit
 ) {
     val color = if (project.color != null)
-        Color(project.color or 0xFF000000.toInt())
+        Color((project.color ?: 0) or 0xFF000000.toInt())
     else
         MaterialTheme.colorScheme.primaryContainer
 
