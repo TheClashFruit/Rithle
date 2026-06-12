@@ -231,9 +231,25 @@ class Modrinth(private val staging: Boolean = false) {
     }
 
     suspend fun user(): User {
-        val response: HttpResponse = httpClient.get("${url}/v2/user")
+        val response: HttpResponse = httpClient.get("${url}/v3/user")
 
         return response.body<User>()
+    }
+
+    suspend fun user(
+        id: String
+    ): User {
+        val response: HttpResponse = httpClient.get("${url}/v3/user/$id")
+
+        return response.body<User>()
+    }
+
+    suspend fun userProject(
+        id: String
+    ): List<Project> {
+        val response: HttpResponse = httpClient.get("${url}/v2/user/$id/projects")
+
+        return response.body<List<Project>>()
     }
 
     // OAuth stuff

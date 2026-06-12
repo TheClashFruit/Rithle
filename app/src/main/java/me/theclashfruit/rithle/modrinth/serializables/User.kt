@@ -7,7 +7,6 @@ import kotlinx.serialization.Serializable
 data class User(
     val id: String,
     val username: String,
-    val name: String?,
     val email: String?,
     val bio: String?,
     @SerialName("payout_data")
@@ -17,6 +16,7 @@ data class User(
     val created: String,
     val role: String,
     val badges: Int? = null,
+    val campaigns: Campaigns,
     @SerialName("auth_providers")
     val authProviders: List<String>? = null,
     @SerialName("email_verified")
@@ -28,6 +28,22 @@ data class User(
     @SerialName("github_id")
     @Deprecated("This is no longer public for security reasons and is always null.")
     val githubId: Int? = null
+)
+
+@Serializable
+data class Campaigns(
+    @SerialName("pride_26")
+    val pride26: Pride26
+)
+
+@Serializable
+data class Pride26(
+    @SerialName("last_donated_at")
+    val lastDonatedAt: String,
+    @SerialName("has_badge")
+    val hasBadge: Boolean,
+    @SerialName("has_midas")
+    val hasMidas: Boolean,
 )
 
 @Serializable

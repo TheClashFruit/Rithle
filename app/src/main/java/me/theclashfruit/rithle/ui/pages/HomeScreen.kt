@@ -217,6 +217,8 @@ fun HomeScreen(
                                         leadingIcon = { Icon(Lucide.User, contentDescription = null) },
                                         onClick = {
                                             isAccountMenuExpanded = false
+
+                                            navController.navigate("/user")
                                         }
                                     )
                                 else

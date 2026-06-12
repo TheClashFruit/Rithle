@@ -2,6 +2,8 @@ package me.theclashfruit.rithle.modrinth.serializables
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import me.theclashfruit.rithle.modrinth.enums.MonetizationStatus
+import me.theclashfruit.rithle.modrinth.enums.Side
 
 @Serializable
 data class Search<T>(
@@ -14,7 +16,7 @@ data class Search<T>(
 
 @Serializable
 data class ProjectResult(
-    @SerialName("project_id")   val projectId: String,
+    @SerialName("project_id") val projectId: String,
     @SerialName("project_type") val projectType: String,
 
     val slug: String,
@@ -23,17 +25,17 @@ data class ProjectResult(
     val description: String,
     val categories: List<String>? = null,
 
-    @SerialName("client_side") val clientSide: String,
-    @SerialName("server_side") val serverSide: String,
+    @SerialName("client_side") val clientSide: Side,
+    @SerialName("server_side") val serverSide: Side,
 
     val downloads: Int,
 
-    @SerialName("icon_url")  val iconUrl: String? = null,
+    @SerialName("icon_url") val iconUrl: String? = null,
     val color: Int? = null,
 
     @SerialName("thread_id") val threadId: String? = null,
 
-    @SerialName("monetization_status") val monetizationStatus: String? = null,
+    @SerialName("monetization_status") val monetizationStatus: MonetizationStatus? = null,
 
     @SerialName("date_created") val dateCreated: String,
     @SerialName("date_modified") val dateModified: String,

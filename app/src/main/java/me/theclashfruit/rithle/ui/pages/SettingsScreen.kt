@@ -46,6 +46,7 @@ import com.composables.icons.lucide.ArrowLeft
 import com.composables.icons.lucide.Book
 import com.composables.icons.lucide.Bug
 import com.composables.icons.lucide.ChevronRight
+import com.composables.icons.lucide.Coffee
 import com.composables.icons.lucide.Cuboid
 import com.composables.icons.lucide.Download
 import com.composables.icons.lucide.ExternalLink
@@ -118,7 +119,7 @@ fun SettingsScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable {
-
+                                navController.navigate("/user")
                             }
                     ) {
                         Row(
@@ -231,6 +232,12 @@ fun SettingsScreen(
                     icon = Lucide.Github,
                     title = "Source Code",
                     uri = "https://github.com/TheClashFruit/Rithle"
+                )
+
+                SettingsCardWithExternalLink(
+                    icon = Lucide.Coffee,
+                    title = "Support the Project",
+                    uri = "https://ko-fi.com/TheClashFruit"
                 )
             }
 

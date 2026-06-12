@@ -20,6 +20,7 @@ import me.theclashfruit.rithle.ui.pages.LoadingScreen
 import me.theclashfruit.rithle.ui.pages.NotificationsScreen
 import me.theclashfruit.rithle.ui.pages.ProjectScreen
 import me.theclashfruit.rithle.ui.pages.SettingsScreen
+import me.theclashfruit.rithle.ui.pages.UserScreen
 import me.theclashfruit.rithle.ui.theme.RithleTheme
 import me.theclashfruit.rithle.util.TokenRepository
 import kotlin.time.Duration.Companion.milliseconds
@@ -74,6 +75,17 @@ class MainActivity : ComponentActivity() {
                         SettingsScreen(
                             navController = navController
                         )
+                    }
+
+                    composable(
+                        route = "/user?id={id}",
+                        arguments = listOf(
+                            navArgument("id") { nullable = true }
+                        )
+                    ) { backStackEntry ->
+                        val id = backStackEntry.arguments?.getString("id")
+
+                        UserScreen(id, navController)
                     }
 
                     composable(
