@@ -39,6 +39,7 @@ import me.theclashfruit.rithle.modrinth.enums.Scope
 import me.theclashfruit.rithle.modrinth.serializables.Category
 import me.theclashfruit.rithle.modrinth.serializables.GameVersion
 import me.theclashfruit.rithle.modrinth.serializables.Loader
+import me.theclashfruit.rithle.modrinth.serializables.Notification
 import me.theclashfruit.rithle.modrinth.serializables.Project
 import me.theclashfruit.rithle.modrinth.serializables.ProjectMember
 import me.theclashfruit.rithle.modrinth.serializables.ProjectResult
@@ -47,6 +48,7 @@ import me.theclashfruit.rithle.modrinth.serializables.Search
 import me.theclashfruit.rithle.modrinth.serializables.TokenResponse
 import me.theclashfruit.rithle.modrinth.serializables.User
 import me.theclashfruit.rithle.modrinth.serializables.Version
+import org.json.JSONArray
 import java.util.Locale.getDefault
 
 class Modrinth {
@@ -208,6 +210,18 @@ class Modrinth {
         return response.body<Project>()
     }
 
+    suspend fun projects(
+        ids: List<String>
+    ): List<Project> {
+        val response: HttpResponse = httpClient.get("$url/v2/projects") {
+            url {
+                parameters.append("ids", JSONArray(ids).toString())
+            }
+        }
+
+        return response.body<List<Project>>()
+    }
+
     suspend fun projectVersion(
         slug: String,
         includeChangelog: Boolean = false
@@ -216,6 +230,18 @@ class Modrinth {
             url {
                 if (includeChangelog)
                     parameters.append("include_changelog", "true")
+            }
+        }
+
+        return response.body<List<Version>>()
+    }
+
+    suspend fun versions(
+        ids: List<String>
+    ): List<Version> {
+        val response: HttpResponse = httpClient.get("$url/v2/versions") {
+            url {
+                parameters.append("ids", JSONArray(ids).toString())
             }
         }
 
@@ -261,6 +287,14 @@ class Modrinth {
         val response: HttpResponse = httpClient.get("${url}/v2/user/$id/projects")
 
         return response.body<List<Project>>()
+    }
+
+    suspend fun userNotifications(
+        id: String
+    ): List<Notification> {
+        val response: HttpResponse = httpClient.get("${url}/v2/user/$id/notifications")
+
+        return response.body<List<Notification>>()
     }
 
     val analytics = Analytics()
