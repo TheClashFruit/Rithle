@@ -45,8 +45,12 @@ class MainActivity : ComponentActivity() {
             // Preload Meta (Tag)
             LaunchedEffect(true) {
                 val t = repo.getAccessTokenOnce()
-                if (t != null)
+                if (t != null) {
                     modrinth.userToken = t
+
+                    // mandatory for keeping the badges.
+                    modrinth.analytics.trackLogin()
+                }
 
                 modrinth.gameVersions()
                 modrinth.loaders()
@@ -127,15 +131,22 @@ class MainActivity : ComponentActivity() {
                         LoadingScreen()
 
                         LaunchedEffect(true) {
-                            val token = oauth.token(code, "rithle://oauth/callback")!!
+                            if (BuildConfig.API_MODRINTH_LOCAL_OAUTH) {
+                                val token = oauth.token(code, "rithle://oauth/callback")!!
 
-                            repo.saveToken(token.accessToken, token.expiresIn.toLong())
-                            modrinth.userToken = token.accessToken
+                                repo.saveToken(token.accessToken, token.expiresIn.toLong())
+                                modrinth.userToken = token.accessToken
+                            } else {
+                                val token = oauth.token(code)!!
+
+                                repo.saveToken(token.accessToken, token.expiresIn.toLong())
+                                modrinth.userToken = token.accessToken
+                            }
 
                             delay(1000.milliseconds)
 
                             navController.navigate(state) {
-                                popUpTo("oauth/callback?code={code}&state={state}") {
+                                popUpTo("oauth/callback?code=$code&state=$state") {
                                     inclusive = true
                                 }
                             }

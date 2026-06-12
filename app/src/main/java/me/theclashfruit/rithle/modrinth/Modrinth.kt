@@ -1,8 +1,6 @@
 package me.theclashfruit.rithle.modrinth
 
 import android.util.Log
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.text.toLowerCase
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.android.Android
@@ -22,21 +20,15 @@ import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
-import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
-import io.ktor.http.Headers
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.Parameters
 import io.ktor.http.URLBuilder
-import io.ktor.http.Url
 import io.ktor.http.contentType
 import io.ktor.http.isTextType
-import io.ktor.http.parameters
 import io.ktor.serialization.kotlinx.json.json
-import io.ktor.utils.io.ByteReadChannel
 import io.ktor.utils.io.readBuffer
-import io.ktor.utils.io.readRemaining
 import io.ktor.utils.io.readText
 import kotlinx.io.Buffer
 import kotlinx.io.writeString
@@ -50,16 +42,15 @@ import me.theclashfruit.rithle.modrinth.serializables.Loader
 import me.theclashfruit.rithle.modrinth.serializables.Project
 import me.theclashfruit.rithle.modrinth.serializables.ProjectMember
 import me.theclashfruit.rithle.modrinth.serializables.ProjectResult
+import me.theclashfruit.rithle.modrinth.serializables.RithleUser
 import me.theclashfruit.rithle.modrinth.serializables.Search
 import me.theclashfruit.rithle.modrinth.serializables.TokenResponse
 import me.theclashfruit.rithle.modrinth.serializables.User
 import me.theclashfruit.rithle.modrinth.serializables.Version
-import java.nio.file.Files.writeString
-import java.util.Locale
 import java.util.Locale.getDefault
 
-class Modrinth(private val staging: Boolean = false) {
-    private val url = if (staging) "https://staging-api.modrinth.com" else "https://api.modrinth.com"
+class Modrinth {
+    private val url = "https://api.modrinth.com"
 
     var userToken: String? = null
 
@@ -123,9 +114,9 @@ class Modrinth(private val staging: Boolean = false) {
         @Volatile
         private var instance: Modrinth? = null
 
-        fun getInstance(staging: Boolean = false): Modrinth =
+        fun getInstance(): Modrinth =
             instance ?: synchronized(this) {
-                instance ?: Modrinth(staging).also { instance = it }
+                instance ?: Modrinth().also { instance = it }
             }
     }
 
@@ -253,12 +244,34 @@ class Modrinth(private val staging: Boolean = false) {
         return response.body<User>()
     }
 
+    suspend fun rithleUser(
+        id: String
+    ): RithleUser? {
+        val response: HttpResponse = httpClient.get("${BuildConfig.API_RITHLE}/user/$id")
+
+        if (response.status != HttpStatusCode.OK)
+            return null
+
+        return response.body<RithleUser>()
+    }
+
     suspend fun userProject(
         id: String
     ): List<Project> {
         val response: HttpResponse = httpClient.get("${url}/v2/user/$id/projects")
 
         return response.body<List<Project>>()
+    }
+
+    val analytics = Analytics()
+
+    inner class Analytics {
+        suspend fun trackLogin() {
+            val response: HttpResponse = httpClient.post("${BuildConfig.API_RITHLE}/analytics/login")
+
+            if (response.status != HttpStatusCode.OK)
+                Log.e("Analytics", "Failed to track login.")
+        }
     }
 
     // OAuth stuff
@@ -300,6 +313,24 @@ class Modrinth(private val staging: Boolean = false) {
                         append("redirect_uri", redirect)
                         append("client_id", client)
                         append("grant_type", "authorization_code")
+                    })
+                )
+            }
+
+            if (response.status == HttpStatusCode.Unauthorized) return null
+
+            return response.body<TokenResponse>()
+        }
+
+        suspend fun token(
+            code: String
+        ): TokenResponse? {
+            val response: HttpResponse = httpClient.post("${BuildConfig.API_RITHLE}/oauth/token") {
+                contentType(ContentType.Application.FormUrlEncoded)
+
+                setBody(
+                    FormDataContent(Parameters.build {
+                        append("code", code)
                     })
                 )
             }

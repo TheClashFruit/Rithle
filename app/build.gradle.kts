@@ -1,3 +1,5 @@
+import com.android.build.gradle.options.parseBoolean
+import java.lang.Boolean.parseBoolean
 import java.util.Properties
 
 plugins {
@@ -38,7 +40,11 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        buildConfigField("String", "CLIENT_ID", "\"${localProps.getProperty("client.id") ?: System.getenv("CLIENT_ID") ?: ""}\"")
+        buildConfigField("String", "API_MODRINTH", "\"${project.findProperty("api.modrinth") ?: ""}\"")
+        buildConfigField("Boolean", "API_MODRINTH_LOCAL_OAUTH", "${project.findProperty("api.modrinth.localOAuth") ?: "false"}")
+        buildConfigField("String", "API_RITHLE", "\"${project.findProperty("api.rithle") ?: ""}\"")
+
+        buildConfigField("String", "CLIENT_ID", "\"${localProps.getProperty("client.id") ?: System.getenv("CLIENT_ID") ?: project.findProperty("api.modrinth.oauth.clientId") ?: ""}\"")
         buildConfigField("String", "CLIENT_SECRET", "\"${localProps.getProperty("client.secret") ?: System.getenv("CLIENT_ID") ?: ""}\"")
 
         buildConfigField("String", "GIT_HASH", "\"${gitHash()}\"")

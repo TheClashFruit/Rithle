@@ -175,7 +175,7 @@ fun SettingsScreen(
                     title = "You're not logged in.",
                     subtitle = "Login with Modrinth.",
                     onClick = {
-                        val url = oauth.authorizationUrl("rithle://oauth/callback", Scope.entries, "/settings")
+                        val url = oauth.authorizationUrl(if (BuildConfig.API_MODRINTH_LOCAL_OAUTH) "rithle://oauth/callback" else "${BuildConfig.API_RITHLE}/oauth/callback", Scope.entries, "app:/settings")
                         ctx.launchCustomTabs(url)
                     }
                 )

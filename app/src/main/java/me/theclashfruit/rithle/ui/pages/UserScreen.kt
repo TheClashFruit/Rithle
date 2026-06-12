@@ -25,6 +25,7 @@ import com.composables.icons.lucide.Lucide
 import me.theclashfruit.rithle.modrinth.Modrinth
 import me.theclashfruit.rithle.modrinth.serializables.Project
 import me.theclashfruit.rithle.modrinth.serializables.ProjectResult
+import me.theclashfruit.rithle.modrinth.serializables.RithleUser
 import me.theclashfruit.rithle.modrinth.serializables.User
 import me.theclashfruit.rithle.ui.composables.ProjectCard
 import me.theclashfruit.rithle.util.formatCount
@@ -41,6 +42,7 @@ fun UserScreen(
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
 
     var user by remember { mutableStateOf<User?>(null) }
+    var rthlUser by remember { mutableStateOf<RithleUser?>(null) }
     var projects by remember { mutableStateOf<List<Project>?>(null) }
 
     val gridState = rememberLazyGridState()
@@ -51,8 +53,10 @@ fun UserScreen(
         else
             modrinth.user()
 
-        if (user != null)
+        if (user != null) {
             projects = modrinth.userProject(user!!.id).sortedByDescending { it.downloads }
+            rthlUser = modrinth.rithleUser(user!!.id)
+        }
     }
 
     Scaffold(
@@ -142,9 +146,46 @@ fun UserScreen(
                                             imageVector = if (currentUser.role == "admin") Lucide.Shield else Lucide.Section,
                                             contentDescription = currentUser.role,
                                             modifier = Modifier.padding(start = 8.dp).size(20.dp),
+                                            tint = MaterialTheme.colorScheme.secondary
+                                        )
+                                    }
+                                }
+
+                                if (rthlUser != null) {
+                                    TooltipBox(
+                                        positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+                                        tooltip = {
+                                            PlainTooltip {
+                                                Text("Rithle user since ${timeAgo(rthlUser!!.created)}.")
+                                            }
+                                        },
+                                        state = rememberTooltipState()
+                                    ) {
+                                        Icon(
+                                            imageVector = Lucide.Wrench,
+                                            contentDescription = "Rithle user since ${timeAgo(rthlUser!!.created)}.",
+                                            modifier = Modifier.padding(start = 8.dp).size(20.dp),
                                             tint = MaterialTheme.colorScheme.primary
                                         )
                                     }
+
+                                    if (rthlUser!!.donated)
+                                        TooltipBox(
+                                            positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+                                            tooltip = {
+                                                PlainTooltip {
+                                                    Text("Rithle supporter.")
+                                                }
+                                            },
+                                            state = rememberTooltipState()
+                                        ) {
+                                            Icon(
+                                                imageVector = Lucide.Coffee,
+                                                contentDescription = "Rithle supporter.",
+                                                modifier = Modifier.padding(start = 8.dp).size(20.dp),
+                                                tint = MaterialTheme.colorScheme.primary
+                                            )
+                                        }
                                 }
                             }
 
