@@ -33,7 +33,7 @@ data class User(
 @Serializable
 data class Campaigns(
     @SerialName("pride_26")
-    val pride26: Pride26
+    val pride26: Pride26?
 )
 
 @Serializable

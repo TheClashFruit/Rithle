@@ -47,6 +47,7 @@ import java.util.Locale
 @Composable
 fun ProjectCard(
     project: ProjectResult,
+    showAuthor: Boolean = true,
     onClick: () -> Unit
 ) {
     val color = if (project.color != null)
@@ -107,11 +108,12 @@ fun ProjectCard(
                         style = MaterialTheme.typography.titleMedium
                     )
 
-                    Text(
-                        text = "by ${project.author}",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
+                    if (showAuthor)
+                        Text(
+                            text = "by ${project.author}",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
 
                     Text(
                         text = project.description,

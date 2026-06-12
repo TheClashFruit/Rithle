@@ -195,6 +195,7 @@ fun UserScreen(
                 if (projects != null)
                     items(projects!!, key = { it.slug }) { project ->
                         ProjectCard(
+                            showAuthor = false,
                             project = ProjectResult(
                                 projectId = project.id,
                                 projectType = project.projectType,

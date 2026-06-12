@@ -48,6 +48,7 @@ import me.theclashfruit.rithle.modrinth.serializables.Category
 import me.theclashfruit.rithle.modrinth.serializables.GameVersion
 import me.theclashfruit.rithle.modrinth.serializables.Loader
 import me.theclashfruit.rithle.modrinth.serializables.Project
+import me.theclashfruit.rithle.modrinth.serializables.ProjectMember
 import me.theclashfruit.rithle.modrinth.serializables.ProjectResult
 import me.theclashfruit.rithle.modrinth.serializables.Search
 import me.theclashfruit.rithle.modrinth.serializables.TokenResponse
@@ -228,6 +229,14 @@ class Modrinth(private val staging: Boolean = false) {
         }
 
         return response.body<List<Version>>()
+    }
+
+    suspend fun projectMembers(
+        slug: String,
+    ): List<ProjectMember> {
+        val response: HttpResponse = httpClient.get("$url/v3/project/$slug/members")
+
+        return response.body<List<ProjectMember>>()
     }
 
     suspend fun user(): User {
