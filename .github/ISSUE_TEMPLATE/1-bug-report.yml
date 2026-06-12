@@ -1,0 +1,60 @@
+name: 🐛 Bug Report
+description: Report an issue with Rithle.
+
+labels: [bug]
+
+body:
+  - type: checkboxes
+    attributes:
+      label: "Please confirm the following:"
+      options:
+        - label: I have checked for existing issues with similar problems.
+          required: true
+  - type: input
+    id: version
+    attributes:
+      label: What version of Rithle are you using?
+    validations:
+      required: true
+  - type: input
+    id: phone
+    attributes:
+      label: What phone are you using?
+      description: Please include the full model name.
+    validations:
+      required: true
+  - type: input
+    id: android
+    attributes:
+      label: What Android version are you using?
+      description: Please also include the rom's name if it's not what your phone came with.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Describe the issue
+      description: A clear and concise description of what the bug is.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Steps to reproduce the issue.
+      placeholder: |
+        1. Go to '...'
+        2. Click on '....'
+        3. Scroll down to '....'
+        4. See error
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Expected behavior
+      description: A clear and concise description of what you expected to happen
+    validations:
+      required: false
+  - type: textarea
+    attributes:
+      label: Additional context.
+      description: Add any other context about the problem here such as logs.
+    validations:
+      required: false
