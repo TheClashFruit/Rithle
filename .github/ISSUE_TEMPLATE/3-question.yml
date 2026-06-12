@@ -14,7 +14,7 @@ body:
           required: true
   - type: textarea
     attributes:
-      label: Describe the your question
+      label: Describe your question
       description: A clear and concise description of your question.
     validations:
       required: true
