@@ -9,9 +9,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.AppBarRow
@@ -25,10 +27,12 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeFlexibleTopAppBar
 import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
@@ -77,6 +81,7 @@ import kotlinx.coroutines.launch
 import me.theclashfruit.rithle.modrinth.Modrinth
 import me.theclashfruit.rithle.modrinth.serializables.Gallery
 import me.theclashfruit.rithle.modrinth.serializables.Project
+import me.theclashfruit.rithle.modrinth.serializables.Version
 import me.theclashfruit.rithle.util.launchCustomTabs
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
@@ -87,11 +92,14 @@ fun ProjectScreen(
 ) {
     val modrinth = Modrinth.getInstance();
     var data by remember { mutableStateOf<Project?>(null) }
+    var versionData by remember { mutableStateOf<List<Version>?>(null) }
 
     LaunchedEffect(project) {
         data = modrinth.project(project)
+        versionData = modrinth.projectVersion(project, true)
     }
 
+    val ctx = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
 
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
@@ -134,7 +142,7 @@ fun ProjectScreen(
                         }
                     },
                     actions = {
-                        AppBarRow(maxItemCount = 4) {
+                        AppBarRow(maxItemCount = 3) {
                             clickableItem(
                                 label = "Download",
                                 icon = { Icon(Lucide.Download, contentDescription = "Download") },
@@ -145,6 +153,7 @@ fun ProjectScreen(
                                 icon = { Icon(Lucide.Heart, contentDescription = "Follow") },
                                 onClick = { /* Handle Follow */ }
                             )
+                            /*
                             clickableItem(
                                 label = "Save",
                                 icon = { Icon(Lucide.Bookmark, contentDescription = "Save") },
@@ -155,6 +164,7 @@ fun ProjectScreen(
                                 icon = { Icon(Lucide.Flag, contentDescription = "Report") },
                                 onClick = { /* Handle Report */ }
                             )
+                            */
                             clickableItem(
                                 label = "Copy ID",
                                 icon = { Icon(Lucide.Clipboard, contentDescription = "Copy ID") },
@@ -196,7 +206,7 @@ fun ProjectScreen(
             }
         }
     ) { innerPadding ->
-        if (data == null)
+        if (data == null || versionData == null)
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -212,37 +222,51 @@ fun ProjectScreen(
                     .fillMaxSize()
                     .padding(innerPadding)
             ) { page ->
-                if (tabs.size == 3)
-                    when (page) {
-                        0 -> DescriptionPage(data!!, navController)
-                        1 -> ChangelogPage(data!!)
-                        2 -> VersionsPage(data!!)
-                    }
+                CompositionLocalProvider(
+                    LocalUriHandler provides object : UriHandler {
+                        override fun openUri(url: String) {
+                            val uri = url.toUri()
 
-                if (tabs.size == 4 && tabs.contains("Gallery"))
-                    when (page) {
-                        0 -> DescriptionPage(data!!, navController)
-                        1 -> GalleryPage(data!!)
-                        2 -> ChangelogPage(data!!)
-                        3 -> VersionsPage(data!!)
-                    }
+                            if (uri.host == "modrinth.com")
+                                if (uri.pathSegments.first().contains(Regex("""/(mod|modpack|resourcepack|datapack|shader|plugin|project)/.*""")))
+                                    navController.navigate("/project/${uri.pathSegments.last()}")
 
-                if (tabs.size == 4 && !tabs.contains("Gallery"))
-                    when (page) {
-                        0 -> DescriptionPage(data!!, navController)
-                        1 -> ChangelogPage(data!!)
-                        2 -> VersionsPage(data!!)
-                        3 -> ModerationPage(data!!)
+                            ctx.launchCustomTabs(url)
+                        }
                     }
+                ) {
+                    if (tabs.size == 3)
+                        when (page) {
+                            0 -> DescriptionPage(data!!, navController)
+                            1 -> ChangelogPage(versionData!!)
+                            2 -> VersionsPage(versionData!!)
+                        }
 
-                if (tabs.size == 5)
-                    when (page) {
-                        0 -> DescriptionPage(data!!, navController)
-                        1 -> GalleryPage(data!!)
-                        2 -> ChangelogPage(data!!)
-                        3 -> VersionsPage(data!!)
-                        4 -> ModerationPage(data!!)
-                    }
+                    if (tabs.size == 4 && tabs.contains("Gallery"))
+                        when (page) {
+                            0 -> DescriptionPage(data!!, navController)
+                            1 -> GalleryPage(data!!)
+                            2 -> ChangelogPage(versionData!!)
+                            3 -> VersionsPage(versionData!!)
+                        }
+
+                    if (tabs.size == 4 && !tabs.contains("Gallery"))
+                        when (page) {
+                            0 -> DescriptionPage(data!!, navController)
+                            1 -> ChangelogPage(versionData!!)
+                            2 -> VersionsPage(versionData!!)
+                            3 -> ModerationPage(data!!)
+                        }
+
+                    if (tabs.size == 5)
+                        when (page) {
+                            0 -> DescriptionPage(data!!, navController)
+                            1 -> GalleryPage(data!!)
+                            2 -> ChangelogPage(versionData!!)
+                            3 -> VersionsPage(versionData!!)
+                            4 -> ModerationPage(data!!)
+                        }
+                }
             }
     }
 }
@@ -252,8 +276,6 @@ fun DescriptionPage(
     data: Project,
     navController: NavHostController
 ) {
-    val ctx = LocalContext.current
-
     val color = if (data.color != null)
         Color((data.color ?: 0) or 0xFF000000.toInt())
     else
@@ -285,80 +307,66 @@ fun DescriptionPage(
         modifier = Modifier
             .fillMaxSize()
     ) {
-        CompositionLocalProvider(
-            LocalUriHandler provides object : UriHandler {
-                override fun openUri(url: String) {
-                    val uri = url.toUri()
-
-                    if (uri.host == "modrinth.com")
-                        if (uri.pathSegments.first().contains(Regex("""/(mod|modpack|resourcepack|datapack|shader|plugin|project)/.*""")))
-                            navController.navigate("/project/${uri.pathSegments.last()}")
-
-                    ctx.launchCustomTabs(url)
-                }
-            }
-        ) {
-            Markdown(
-                modifier = Modifier.fillMaxSize(),
-                content = data.body,
-                imageTransformer = Coil3ImageTransformerImpl,
-                success = { state, components, modifier ->
-                    LazyMarkdownSuccess(state, components, modifier, contentPadding = PaddingValues(16.dp))
-                },
-                typography = markdownTypography(
-                    h1 = MaterialTheme.typography.headlineLarge.copy(
-                        fontWeight = FontWeight.Bold,
-                        lineHeight = 40.sp
-                    ),
-                    h2 = MaterialTheme.typography.headlineMedium.copy(
+        Markdown(
+            modifier = Modifier.fillMaxSize(),
+            content = data.body,
+            imageTransformer = Coil3ImageTransformerImpl,
+            success = { state, components, modifier ->
+                LazyMarkdownSuccess(state, components, modifier, contentPadding = PaddingValues(16.dp))
+            },
+            typography = markdownTypography(
+                h1 = MaterialTheme.typography.headlineLarge.copy(
+                    fontWeight = FontWeight.Bold,
+                    lineHeight = 40.sp
+                ),
+                h2 = MaterialTheme.typography.headlineMedium.copy(
+                    fontWeight = FontWeight.SemiBold,
+                    lineHeight = 36.sp
+                ),
+                h3 = MaterialTheme.typography.titleLarge.copy(
+                    fontWeight = FontWeight.SemiBold,
+                    lineHeight = 28.sp
+                ),
+                h4 = MaterialTheme.typography.titleMedium.copy(
+                    fontWeight = FontWeight.Medium,
+                    lineHeight = 24.sp
+                ),
+                h5 = MaterialTheme.typography.titleSmall.copy(
+                    fontWeight = FontWeight.Medium,
+                    lineHeight = 20.sp
+                ),
+                h6 = MaterialTheme.typography.bodyLarge.copy(
+                    fontWeight = FontWeight.Bold,
+                    lineHeight = 24.sp
+                ),
+                text = MaterialTheme.typography.bodyLarge.copy(
+                    lineHeight = 26.sp,
+                    letterSpacing = 0.25.sp
+                ),
+                paragraph = MaterialTheme.typography.bodyLarge.copy(
+                    lineHeight = 26.sp
+                ),
+                code = MaterialTheme.typography.bodyMedium.copy(
+                    fontFamily = FontFamily.Monospace,
+                    lineHeight = 20.sp
+                ),
+                inlineCode = MaterialTheme.typography.bodyMedium.copy(
+                    fontFamily = FontFamily.Monospace,
+                    fontWeight = FontWeight.Medium
+                ),
+                quote = MaterialTheme.typography.bodyLarge.copy(
+                    fontStyle = FontStyle.Italic,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                ),
+                textLink = TextLinkStyles(
+                    style = SpanStyle(
+                        color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.SemiBold,
-                        lineHeight = 36.sp
-                    ),
-                    h3 = MaterialTheme.typography.titleLarge.copy(
-                        fontWeight = FontWeight.SemiBold,
-                        lineHeight = 28.sp
-                    ),
-                    h4 = MaterialTheme.typography.titleMedium.copy(
-                        fontWeight = FontWeight.Medium,
-                        lineHeight = 24.sp
-                    ),
-                    h5 = MaterialTheme.typography.titleSmall.copy(
-                        fontWeight = FontWeight.Medium,
-                        lineHeight = 20.sp
-                    ),
-                    h6 = MaterialTheme.typography.bodyLarge.copy(
-                        fontWeight = FontWeight.Bold,
-                        lineHeight = 24.sp
-                    ),
-                    text = MaterialTheme.typography.bodyLarge.copy(
-                        lineHeight = 26.sp,
-                        letterSpacing = 0.25.sp
-                    ),
-                    paragraph = MaterialTheme.typography.bodyLarge.copy(
-                        lineHeight = 26.sp
-                    ),
-                    code = MaterialTheme.typography.bodyMedium.copy(
-                        fontFamily = FontFamily.Monospace,
-                        lineHeight = 20.sp
-                    ),
-                    inlineCode = MaterialTheme.typography.bodyMedium.copy(
-                        fontFamily = FontFamily.Monospace,
-                        fontWeight = FontWeight.Medium
-                    ),
-                    quote = MaterialTheme.typography.bodyLarge.copy(
-                        fontStyle = FontStyle.Italic,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    ),
-                    textLink = TextLinkStyles(
-                        style = SpanStyle(
-                            color = MaterialTheme.colorScheme.primary,
-                            fontWeight = FontWeight.SemiBold,
-                            textDecoration = TextDecoration.Underline
-                        )
+                        textDecoration = TextDecoration.Underline
                     )
                 )
             )
-        }
+        )
     }
 }
 
@@ -424,16 +432,135 @@ fun GalleryItemCard(
 
 @Composable
 fun ChangelogPage(
-    data: Project
+    data: List<Version>
 ) {
-    Text("Changelog")
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(24.dp)
+    ) {
+        items(data, key = { it.id }) { version ->
+            Column(modifier = Modifier.fillMaxWidth()) {
+                Text(
+                    text = version.name,
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary
+                )
+                Text(
+                    text = "Version ${version.versionNumber}",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.secondary
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Markdown(
+                    content = version.changelog ?: "_No changelog provided for this version._",
+                    imageTransformer = Coil3ImageTransformerImpl,
+                    typography = markdownTypography(
+                        h1 = MaterialTheme.typography.headlineLarge.copy(
+                            fontWeight = FontWeight.Bold,
+                            lineHeight = 40.sp
+                        ),
+                        h2 = MaterialTheme.typography.headlineMedium.copy(
+                            fontWeight = FontWeight.SemiBold,
+                            lineHeight = 36.sp
+                        ),
+                        h3 = MaterialTheme.typography.titleLarge.copy(
+                            fontWeight = FontWeight.SemiBold,
+                            lineHeight = 28.sp
+                        ),
+                        h4 = MaterialTheme.typography.titleMedium.copy(
+                            fontWeight = FontWeight.Medium,
+                            lineHeight = 24.sp
+                        ),
+                        h5 = MaterialTheme.typography.titleSmall.copy(
+                            fontWeight = FontWeight.Medium,
+                            lineHeight = 20.sp
+                        ),
+                        h6 = MaterialTheme.typography.bodyLarge.copy(
+                            fontWeight = FontWeight.Bold,
+                            lineHeight = 24.sp
+                        ),
+                        text = MaterialTheme.typography.bodyLarge.copy(
+                            lineHeight = 26.sp,
+                            letterSpacing = 0.25.sp
+                        ),
+                        paragraph = MaterialTheme.typography.bodyLarge.copy(
+                            lineHeight = 26.sp
+                        ),
+                        code = MaterialTheme.typography.bodyMedium.copy(
+                            fontFamily = FontFamily.Monospace,
+                            lineHeight = 20.sp
+                        ),
+                        inlineCode = MaterialTheme.typography.bodyMedium.copy(
+                            fontFamily = FontFamily.Monospace,
+                            fontWeight = FontWeight.Medium
+                        ),
+                        quote = MaterialTheme.typography.bodyLarge.copy(
+                            fontStyle = FontStyle.Italic,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        ),
+                        textLink = TextLinkStyles(
+                            style = SpanStyle(
+                                color = MaterialTheme.colorScheme.primary,
+                                fontWeight = FontWeight.SemiBold,
+                                textDecoration = TextDecoration.Underline
+                            )
+                        )
+                    )
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+            }
+        }
+    }
 }
 
 @Composable
 fun VersionsPage(
-    data: Project
+    data: List<Version>
 ) {
-    Text("Versions")
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        items(data, key = { it.id }) { version ->
+            ListItem(
+                overlineContent = {
+                    Text(
+                        text = "v${version.versionNumber}",
+                        maxLines = 1,
+                        overflow = TextOverflow.Clip
+                    )
+                },
+                headlineContent = {
+                    Text(
+                        text = version.name,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                },
+                supportingContent = {
+                    Text(
+                        "${version.loaders.joinToString(", ")} • ${
+                            version.gameVersions.joinToString(
+                                ", "
+                            )
+                        }"
+                    )
+                },
+                trailingContent = {
+                    IconButton(
+                        onClick = {}
+                    ) {
+                        Icon(Lucide.Download, contentDescription = null)
+                    }
+                }
+            )
+
+            HorizontalDivider()
+        }
+    }
 }
 
 @Composable

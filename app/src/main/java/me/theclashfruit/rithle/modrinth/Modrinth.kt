@@ -52,6 +52,7 @@ import me.theclashfruit.rithle.modrinth.serializables.ProjectResult
 import me.theclashfruit.rithle.modrinth.serializables.Search
 import me.theclashfruit.rithle.modrinth.serializables.TokenResponse
 import me.theclashfruit.rithle.modrinth.serializables.User
+import me.theclashfruit.rithle.modrinth.serializables.Version
 import java.nio.file.Files.writeString
 import java.util.Locale
 import java.util.Locale.getDefault
@@ -213,6 +214,20 @@ class Modrinth(private val staging: Boolean = false) {
         val response: HttpResponse = httpClient.get("$url/v2/project/$slug")
 
         return response.body<Project>()
+    }
+
+    suspend fun projectVersion(
+        slug: String,
+        includeChangelog: Boolean = false
+    ): List<Version> {
+        val response: HttpResponse = httpClient.get("$url/v2/project/$slug/version") {
+            url {
+                if (includeChangelog)
+                    parameters.append("include_changelog", "true")
+            }
+        }
+
+        return response.body<List<Version>>()
     }
 
     suspend fun user(): User {
