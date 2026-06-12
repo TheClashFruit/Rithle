@@ -193,8 +193,17 @@ fun <T> FilterBottomSheetWithIcons(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        SvgStringIcon(icon(item), contentDescription = null, modifier = Modifier.size(24.dp))
-                        Text(text = label(item), modifier = Modifier.weight(1f), style = MaterialTheme.typography.bodyLarge)
+                        SvgStringIcon(icon(item), contentDescription = null, modifier = Modifier.size(24.dp), tint = MaterialTheme.colorScheme.onSurface)
+
+                        Text(
+                            text = label(item)
+                                .split("-")
+                                .joinToString(" ") { txt -> txt.replaceFirstChar { it.uppercase() } },
+                            modifier = Modifier
+                                .weight(1f),
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+
                         Checkbox(checked = selected.contains(item), onCheckedChange = null)
                     }
                 }

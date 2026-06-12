@@ -708,7 +708,7 @@ fun AboutPage(
                 data.categories.forEach { category ->
                     SuggestionChip(
                         onClick = { /* Search for category */ },
-                        label = { Text(category.replaceFirstChar { it.uppercase() }) }
+                        label = { Text(category.split("-").map { txt -> txt.replaceFirstChar { it.uppercase() } }.joinToString(" ")) }
                     )
                 }
             }
