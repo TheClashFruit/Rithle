@@ -1,5 +1,7 @@
 package me.theclashfruit.rithle.ui.pages
 
+import androidx.compose.ui.res.stringResource
+import me.theclashfruit.rithle.R
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -65,12 +67,12 @@ fun UserScreen(
             .nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             LargeTopAppBar(
-                title = { Text(user?.username ?: "Profile") },
+                title = { Text(user?.username ?: stringResource(R.string.profile)) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
                             imageVector = Lucide.ArrowLeft,
-                            contentDescription = "Back"
+                            contentDescription = stringResource(R.string.back)
                         )
                     }
                 },
@@ -100,10 +102,10 @@ fun UserScreen(
                             shape = RoundedCornerShape(100),
                             color = MaterialTheme.colorScheme.primaryContainer
                         ) {
-                            if (!currentUser.avatarUrl.isNullOrEmpty())
+                            if (currentUser.avatarUrl.isNotEmpty())
                                 AsyncImage(
                                     model = user!!.avatarUrl,
-                                    contentDescription = "${user!!.username}'s Avatar",
+                                    contentDescription = stringResource(R.string.user_avatar_description, user!!.username),
                                     modifier = Modifier.fillMaxSize()
                                 )
                             else
@@ -156,14 +158,14 @@ fun UserScreen(
                                         positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
                                         tooltip = {
                                             PlainTooltip {
-                                                Text("Rithle user since ${timeAgo(rthlUser!!.created)}.")
+                                                Text(stringResource(R.string.rithle_user_since, timeAgo(rthlUser!!.created)))
                                             }
                                         },
                                         state = rememberTooltipState()
                                     ) {
                                         Icon(
                                             imageVector = Lucide.Wrench,
-                                            contentDescription = "Rithle user since ${timeAgo(rthlUser!!.created)}.",
+                                            contentDescription = stringResource(R.string.rithle_user_since, timeAgo(rthlUser!!.created)),
                                             modifier = Modifier.padding(start = 8.dp).size(20.dp),
                                             tint = MaterialTheme.colorScheme.primary
                                         )
@@ -174,14 +176,14 @@ fun UserScreen(
                                             positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
                                             tooltip = {
                                                 PlainTooltip {
-                                                    Text("Rithle supporter.")
+                                                    Text(stringResource(R.string.rithle_supporter))
                                                 }
                                             },
                                             state = rememberTooltipState()
                                         ) {
                                             Icon(
                                                 imageVector = Lucide.Coffee,
-                                                contentDescription = "Rithle supporter.",
+                                                contentDescription = stringResource(R.string.rithle_supporter),
                                                 modifier = Modifier.padding(start = 8.dp).size(20.dp),
                                                 tint = MaterialTheme.colorScheme.primary
                                             )
@@ -211,19 +213,19 @@ fun UserScreen(
                     ) {
                         UserStat(
                             icon = Lucide.Briefcase,
-                            label = "Projects",
+                            label = stringResource(R.string.projects),
                             value = formatCount(projects?.size ?: 0)
                         )
 
                         UserStat(
                             icon = Lucide.Download,
-                            label = "Downloads",
+                            label = stringResource(R.string.downloads),
                             value = formatCount(projects?.sumOf { it.downloads } ?: 0)
                         )
 
                         UserStat(
                             icon = Lucide.Calendar,
-                            label = "Joined",
+                            label = stringResource(R.string.joined),
                             value = timeAgo(user!!.created)
                         )
                     }

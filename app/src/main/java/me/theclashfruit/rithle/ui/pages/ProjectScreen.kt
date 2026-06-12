@@ -69,6 +69,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import androidx.navigation.NavHostController
+import androidx.compose.ui.res.stringResource
+import me.theclashfruit.rithle.R
 import coil3.compose.AsyncImage
 import com.composables.icons.lucide.ArrowLeft
 import com.composables.icons.lucide.Calendar
@@ -101,7 +103,7 @@ fun ProjectScreen(
     navController: NavHostController,
     project: String
 ) {
-    val modrinth = Modrinth.getInstance();
+    val modrinth = Modrinth.getInstance()
     var data by remember { mutableStateOf<Project?>(null) }
     var versionData by remember { mutableStateOf<List<Version>?>(null) }
 
@@ -118,12 +120,12 @@ fun ProjectScreen(
     var selectedTabIndex by remember { mutableIntStateOf(0) }
     val tabs = mutableListOf<String>()
 
-    tabs.add("Description")
+    tabs.add(stringResource(R.string.tab_description))
     if (data != null && data!!.gallery?.isNotEmpty() == true)
-        tabs.add("Gallery")
-    tabs.add("Changelog")
-    tabs.add("Versions")
-    tabs.add("About")
+        tabs.add(stringResource(R.string.tab_gallery))
+    tabs.add(stringResource(R.string.tab_changelog))
+    tabs.add(stringResource(R.string.tab_versions))
+    tabs.add(stringResource(R.string.tab_about))
 
     val pagerState = rememberPagerState(pageCount = { tabs.size })
     LaunchedEffect(pagerState.currentPage) {
@@ -143,48 +145,58 @@ fun ProjectScreen(
         topBar = {
             Column {
                 LargeFlexibleTopAppBar(
-                    title = { Text("Project") },
+                    title = { Text(stringResource(R.string.project)) },
                     subtitle = { if (data != null) Text(data!!.title) },
                     navigationIcon = {
                         IconButton(onClick = { navController.popBackStack() }) {
                             Icon(
                                 imageVector = Lucide.ArrowLeft,
-                                contentDescription = "Back"
+                                contentDescription = stringResource(R.string.back)
                             )
                         }
                     },
                     actions = {
+                        val downloadLabel = stringResource(R.string.download)
+                        val followLabel = stringResource(R.string.follow)
+                        val copyIdLabel = stringResource(R.string.copy_id)
+                        val copyPermanentLinkLabel = stringResource(R.string.copy_permanent_link)
+
                         AppBarRow(maxItemCount = 3) {
                             clickableItem(
-                                label = "Download",
-                                icon = { Icon(Lucide.Download, contentDescription = "Download") },
+                                label = downloadLabel,
+                                icon = { Icon(Lucide.Download, contentDescription = downloadLabel) },
                                 onClick = { /* Handle Download */ }
                             )
+
                             clickableItem(
-                                label = "Follow",
-                                icon = { Icon(Lucide.Heart, contentDescription = "Follow") },
+                                label = followLabel,
+                                icon = { Icon(Lucide.Heart, contentDescription = followLabel) },
                                 onClick = { /* Handle Follow */ }
                             )
+
                             /*
                             clickableItem(
                                 label = "Save",
                                 icon = { Icon(Lucide.Bookmark, contentDescription = "Save") },
                                 onClick = { /* Handle Save */ }
                             )
+
                             clickableItem(
                                 label = "Report",
                                 icon = { Icon(Lucide.Flag, contentDescription = "Report") },
                                 onClick = { /* Handle Report */ }
                             )
                             */
+
                             clickableItem(
-                                label = "Copy ID",
-                                icon = { Icon(Lucide.Clipboard, contentDescription = "Copy ID") },
+                                label = copyIdLabel,
+                                icon = { Icon(Lucide.Clipboard, contentDescription = copyIdLabel) },
                                 onClick = { /* Handle Copy ID */ }
                             )
+
                             clickableItem(
-                                label = "Copy permanent link",
-                                icon = { Icon(Lucide.Clipboard, contentDescription = "Copy permanent link") },
+                                label = copyPermanentLinkLabel,
+                                icon = { Icon(Lucide.Clipboard, contentDescription = copyPermanentLinkLabel) },
                                 onClick = { /* Handle Copy Link */ }
                             )
                         }
@@ -399,7 +411,7 @@ fun GalleryPage(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "No images available for this project.",
+                    text = stringResource(R.string.no_images_available),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -432,7 +444,7 @@ fun GalleryItemCard(
         Column {
             AsyncImage(
                 model = item.url,
-                contentDescription = item.title ?: "Gallery Image",
+                contentDescription = item.title ?: stringResource(R.string.gallery_image),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -460,13 +472,13 @@ fun ChangelogPage(
                     color = MaterialTheme.colorScheme.primary
                 )
                 Text(
-                    text = "Version ${version.versionNumber}",
+                    text = stringResource(R.string.version_prefix, version.versionNumber),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.secondary
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Markdown(
-                    content = version.changelog ?: "_No changelog provided for this version._",
+                    content = version.changelog ?: stringResource(R.string.no_changelog_provided),
                     imageTransformer = Coil3ImageTransformerImpl,
                     typography = markdownTypography(
                         h1 = MaterialTheme.typography.headlineLarge.copy(
@@ -540,7 +552,7 @@ fun VersionsPage(
             ListItem(
                 overlineContent = {
                     Text(
-                        text = "v${version.versionNumber}",
+                        text = stringResource(R.string.version_v_prefix, version.versionNumber),
                         maxLines = 1,
                         overflow = TextOverflow.Clip
                     )
@@ -601,7 +613,7 @@ fun AboutPage(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         item {
-            Text("Details", style = sectionTitleStyle, modifier = sectionModifier)
+            Text(stringResource(R.string.details), style = sectionTitleStyle, modifier = sectionModifier)
         }
 
         item {
@@ -609,32 +621,32 @@ fun AboutPage(
                 Column(modifier = Modifier.padding(8.dp)) {
                     if (data.license != null) {
                         ListItem(
-                            headlineContent = { Text("License") },
+                            headlineContent = { Text(stringResource(R.string.license)) },
                             supportingContent = { Text("${data.license.name} (${data.license.id})") },
                             leadingContent = { Icon(Lucide.Ribbon, null) }
                         )
                     }
 
                     ListItem(
-                        headlineContent = { Text("Published") },
+                        headlineContent = { Text(stringResource(R.string.published)) },
                         supportingContent = { Text(timeAgo(data.published)) },
                         leadingContent = { Icon(Lucide.Calendar, null) }
                     )
 
                     ListItem(
-                        headlineContent = { Text("Updated") },
+                        headlineContent = { Text(stringResource(R.string.updated)) },
                         supportingContent = { Text(timeAgo(data.updated)) },
                         leadingContent = { Icon(Lucide.Calendar, null) }
                     )
 
                     ListItem(
-                        headlineContent = { Text("Downloads") },
+                        headlineContent = { Text(stringResource(R.string.downloads)) },
                         supportingContent = { Text(formatCount(data.downloads)) },
                         leadingContent = { Icon(Lucide.Download, null) }
                     )
 
                     ListItem(
-                        headlineContent = { Text("Followers") },
+                        headlineContent = { Text(stringResource(R.string.followers)) },
                         supportingContent = { Text(formatCount(data.followers)) },
                         leadingContent = { Icon(Lucide.Heart, null) }
                     )
@@ -644,7 +656,7 @@ fun AboutPage(
 
         if (data.sourceUrl != null || data.issuesUrl != null || data.wikiUrl != null || data.discordUrl != null) {
             item {
-                Text("Links", style = sectionTitleStyle, modifier = sectionModifier)
+                Text(stringResource(R.string.links), style = sectionTitleStyle, modifier = sectionModifier)
             }
 
             item {
@@ -655,21 +667,21 @@ fun AboutPage(
                     if (data.sourceUrl != null) {
                         SuggestionChip(
                             onClick = { uriHandler.openUri(data.sourceUrl) },
-                            label = { Text("Source") },
+                            label = { Text(stringResource(R.string.source)) },
                             icon = { Icon(Lucide.Github, null, modifier = Modifier.size(18.dp)) }
                         )
                     }
                     if (data.issuesUrl != null) {
                         SuggestionChip(
                             onClick = { uriHandler.openUri(data.issuesUrl) },
-                            label = { Text("Issues") },
+                            label = { Text(stringResource(R.string.issues)) },
                             icon = { Icon(Lucide.Flag, null, modifier = Modifier.size(18.dp)) }
                         )
                     }
                     if (data.wikiUrl != null) {
                         SuggestionChip(
                             onClick = { uriHandler.openUri(data.wikiUrl) },
-                            label = { Text("Wiki") },
+                            label = { Text(stringResource(R.string.wiki)) },
                             icon = {
                                 Icon(
                                     Lucide.ExternalLink,
@@ -682,7 +694,7 @@ fun AboutPage(
                     if (data.discordUrl != null) {
                         SuggestionChip(
                             onClick = { uriHandler.openUri(data.discordUrl) },
-                            label = { Text("Discord") },
+                            label = { Text(stringResource(R.string.discord)) },
                             icon = {
                                 Icon(
                                     Lucide.ExternalLink,
@@ -697,7 +709,7 @@ fun AboutPage(
         }
 
         item {
-            Text("Categories", style = sectionTitleStyle, modifier = sectionModifier)
+            Text(stringResource(R.string.categories), style = sectionTitleStyle, modifier = sectionModifier)
         }
 
         item {
@@ -715,7 +727,7 @@ fun AboutPage(
         }
 
         item {
-            Text("Creators", style = sectionTitleStyle, modifier = sectionModifier)
+            Text(stringResource(R.string.creators), style = sectionTitleStyle, modifier = sectionModifier)
         }
 
         if (members != null) {

@@ -1,6 +1,5 @@
 package me.theclashfruit.rithle.ui.pages
 
-import android.text.format.DateUtils
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -23,7 +22,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -38,7 +36,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil3.compose.AsyncImage
@@ -58,12 +56,12 @@ import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Moon
 import com.composables.icons.lucide.User
 import me.theclashfruit.rithle.BuildConfig
+import me.theclashfruit.rithle.R
 import me.theclashfruit.rithle.modrinth.Modrinth
 import me.theclashfruit.rithle.modrinth.enums.Scope
 import me.theclashfruit.rithle.modrinth.serializables.User
 import me.theclashfruit.rithle.util.launchCustomTabs
 import me.theclashfruit.rithle.util.timeAgo
-import java.time.Instant
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -85,12 +83,12 @@ fun SettingsScreen(
             .nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             LargeTopAppBar(
-                title = { Text("Settings") },
+                title = { Text(stringResource(R.string.settings)) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
                             imageVector = Lucide.ArrowLeft,
-                            contentDescription = "Back"
+                            contentDescription = stringResource(R.string.back)
                         )
                     }
                 },
@@ -132,10 +130,10 @@ fun SettingsScreen(
                                 shape = RoundedCornerShape(100),
                                 color = MaterialTheme.colorScheme.primaryContainer
                             ) {
-                                if (!user!!.avatarUrl.isNullOrEmpty())
+                                if (user!!.avatarUrl.isNotEmpty())
                                     AsyncImage(
                                         model = user!!.avatarUrl,
-                                        contentDescription = "${user!!.username}'s Avatar",
+                                        contentDescription = stringResource(R.string.user_avatar_description, user!!.username),
                                         modifier = Modifier.fillMaxSize()
                                     )
                                 else
@@ -155,7 +153,7 @@ fun SettingsScreen(
                                 )
 
                                 Text(
-                                    text = "Joined ${timeAgo(user!!.created)}.",
+                                    text = stringResource(R.string.joined_date, timeAgo(user!!.created)),
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
@@ -172,51 +170,51 @@ fun SettingsScreen(
             } else
                 SettingsCard(
                     icon = Lucide.LogIn,
-                    title = "You're not logged in.",
-                    subtitle = "Login with Modrinth.",
+                    title = stringResource(R.string.not_logged_in),
+                    subtitle = stringResource(R.string.login_with_modrinth),
                     onClick = {
                         val url = oauth.authorizationUrl(if (BuildConfig.API_MODRINTH_LOCAL_OAUTH) "rithle://oauth/callback" else "${BuildConfig.API_RITHLE}/oauth/callback", Scope.entries, "app:/settings")
                         ctx.launchCustomTabs(url)
                     }
                 )
 
-            SettingsSection(label = "Appearance") {
+            SettingsSection(label = stringResource(R.string.appearance)) {
                 SettingsCard(
                     icon = Lucide.Moon,
-                    title = "Theme",
-                    subtitle = "System Default",
+                    title = stringResource(R.string.theme),
+                    subtitle = stringResource(R.string.system_default),
                     onClick = {}
                 )
 
                 SettingsCard(
                     icon = Lucide.Languages,
-                    title = "Language",
-                    subtitle = "System Default",
+                    title = stringResource(R.string.language),
+                    subtitle = stringResource(R.string.system_default),
                     onClick = {}
                 )
             }
 
-            SettingsSection(label = "Modpacks") {
+            SettingsSection(label = stringResource(R.string.modpacks)) {
                 SettingsCardWithSwitch(
                     icon = Lucide.Cuboid,
-                    title = "Extract Modpacks",
-                    subtitle = "Extract modpack contents after download",
+                    title = stringResource(R.string.extract_modpacks),
+                    subtitle = stringResource(R.string.extract_modpacks_subtitle),
                     enabled = extractModpacks
                 )
 
                 SettingsCard(
                     icon = Lucide.Download,
-                    title = "Modpack Location",
-                    subtitle = "/storage/emulated/0/downloads/Rithle",
+                    title = stringResource(R.string.modpack_location),
+                    subtitle = stringResource(R.string.default_modpack_location),
                     onClick = {}
                 )
             }
 
-            SettingsSection(label = "About") {
+            SettingsSection(label = stringResource(R.string.about)) {
                 SettingsCard(
                     icon = Lucide.History,
-                    title = "Version",
-                    subtitle = "v${BuildConfig.VERSION_NAME} (${BuildConfig.GIT_HASH})",
+                    title = stringResource(R.string.version),
+                    subtitle = stringResource(R.string.version_subtitle, BuildConfig.VERSION_NAME, BuildConfig.GIT_HASH),
                     onClick = {
                         secretClicks++
                     }
@@ -224,28 +222,28 @@ fun SettingsScreen(
 
                 SettingsCard(
                     icon = Lucide.Book,
-                    title = "Licenses",
+                    title = stringResource(R.string.licenses),
                     onClick = {}
                 )
 
                 SettingsCardWithExternalLink(
                     icon = Lucide.Github,
-                    title = "Source Code",
+                    title = stringResource(R.string.source_code),
                     uri = "https://github.com/TheClashFruit/Rithle"
                 )
 
                 SettingsCardWithExternalLink(
                     icon = Lucide.Coffee,
-                    title = "Support the Project",
+                    title = stringResource(R.string.support_project),
                     uri = "https://ko-fi.com/TheClashFruit"
                 )
             }
 
             if (BuildConfig.DEBUG || secretClicks > 5) {
-                SettingsSection(label = "Debug") {
+                SettingsSection(label = stringResource(R.string.debug)) {
                     SettingsCard(
                         icon = Lucide.Bug,
-                        title = "Export Debug Logs",
+                        title = stringResource(R.string.export_debug_logs),
                         onClick = {}
                     )
                 }

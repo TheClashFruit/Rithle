@@ -3,8 +3,6 @@ package me.theclashfruit.rithle.ui.pages
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -14,9 +12,11 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import com.composables.icons.lucide.ArrowLeft
 import com.composables.icons.lucide.Lucide
+import me.theclashfruit.rithle.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -28,12 +28,12 @@ fun NotificationsScreen(
             .fillMaxSize(),
         topBar = {
             TopAppBar(
-                title = { Text("Notifications") },
+                title = { Text(stringResource(R.string.notifications_title)) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
                             imageVector = Lucide.ArrowLeft,
-                            contentDescription = "Back"
+                            contentDescription = stringResource(R.string.back)
                         )
                     }
                 }
@@ -46,7 +46,7 @@ fun NotificationsScreen(
                 .padding(innerPadding),
             contentAlignment = Alignment.Center
         ) {
-            Text(text = "No notifications yet")
+            Text(text = stringResource(R.string.no_notifications_yet))
         }
     }
 }

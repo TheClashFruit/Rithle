@@ -2,7 +2,6 @@ package me.theclashfruit.rithle.ui.pages
 
 import android.content.Context
 import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -31,7 +30,6 @@ import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.SearchBarValue
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberContainedSearchBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -44,13 +42,12 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.lerp
 import androidx.navigation.NavHostController
 import com.composables.icons.lucide.ArrowLeft
 import com.composables.icons.lucide.Bell
@@ -66,6 +63,7 @@ import com.composables.icons.lucide.User
 import com.composables.icons.lucide.X
 import kotlinx.coroutines.launch
 import me.theclashfruit.rithle.BuildConfig
+import me.theclashfruit.rithle.R
 import me.theclashfruit.rithle.modrinth.Modrinth
 import me.theclashfruit.rithle.modrinth.enums.Scope
 import me.theclashfruit.rithle.modrinth.serializables.Category
@@ -77,7 +75,6 @@ import me.theclashfruit.rithle.ui.composables.ProjectCardList
 import me.theclashfruit.rithle.util.Facet
 import me.theclashfruit.rithle.util.TokenRepository
 import me.theclashfruit.rithle.util.launchCustomTabs
-import kotlin.math.abs
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -103,7 +100,14 @@ fun HomeScreen(
     val uriHandler = LocalUriHandler.current
 
     var selectedTabIndex by remember { mutableIntStateOf(0) }
-    val tabs = listOf("Mods", "Resource Packs", "Data Packs", "Modpacks", "Shaders", "Plugins")
+    val tabs = listOf(
+        stringResource(R.string.tab_mods),
+        stringResource(R.string.tab_resource_packs),
+        stringResource(R.string.tab_data_packs),
+        stringResource(R.string.tab_modpacks),
+        stringResource(R.string.tab_shaders),
+        stringResource(R.string.tab_plugins)
+    )
     val currentType = when (selectedTabIndex) {
         0 -> "mod"
         1 -> "resourcepack"
@@ -136,7 +140,7 @@ fun HomeScreen(
                 colors = appBarWithSearchColors.searchBarColors.inputFieldColors,
                 onSearch = { scope.launch { searchBarState.animateToCollapsed() } },
                 placeholder = {
-                    Text(modifier = Modifier.clearAndSetSemantics {}, text = "Search ${tabs[selectedTabIndex]}...")
+                    Text(modifier = Modifier.clearAndSetSemantics {}, text = stringResource(R.string.search_placeholder, tabs[selectedTabIndex]))
                 },
                 leadingIcon = {
                     if (searchBarState.currentValue == SearchBarValue.Expanded)
@@ -147,13 +151,13 @@ fun HomeScreen(
                         ) {
                             Icon(
                                 imageVector = Lucide.ArrowLeft,
-                                contentDescription = "Back"
+                                contentDescription = stringResource(R.string.back)
                             )
                         }
                     else
                         Icon(
                             imageVector = Lucide.Search,
-                            contentDescription = "Search"
+                            contentDescription = stringResource(R.string.search)
                         )
                 },
                 trailingIcon = {
@@ -165,7 +169,7 @@ fun HomeScreen(
                         ) {
                             Icon(
                                 imageVector = Lucide.X,
-                                contentDescription = "Clear"
+                                contentDescription = stringResource(R.string.clear)
                             )
                         }
                 }
@@ -193,7 +197,7 @@ fun HomeScreen(
                         ) {
                             Icon(
                                 imageVector = Lucide.Bell,
-                                contentDescription = "Notifications"
+                                contentDescription = stringResource(R.string.notifications_title)
                             )
                         }
 
@@ -204,7 +208,7 @@ fun HomeScreen(
                         ) {
                             Icon(
                                 imageVector = Lucide.User,
-                                contentDescription = "Account"
+                                contentDescription = stringResource(R.string.account)
                             )
 
                             DropdownMenu(
@@ -213,7 +217,7 @@ fun HomeScreen(
                             ) {
                                 if (modrinth.authenticated)
                                     DropdownMenuItem(
-                                        text = { Text("Profile") },
+                                        text = { Text(stringResource(R.string.profile)) },
                                         leadingIcon = { Icon(Lucide.User, contentDescription = null) },
                                         onClick = {
                                             isAccountMenuExpanded = false
@@ -223,7 +227,7 @@ fun HomeScreen(
                                     )
                                 else
                                     DropdownMenuItem(
-                                        text = { Text("Login") },
+                                        text = { Text(stringResource(R.string.login)) },
                                         leadingIcon = { Icon(Lucide.LogIn, contentDescription = null) },
                                         onClick = {
                                             isAccountMenuExpanded = false
@@ -236,7 +240,7 @@ fun HomeScreen(
                                 HorizontalDivider()
 
                                 DropdownMenuItem(
-                                    text = { Text("Settings") },
+                                    text = { Text(stringResource(R.string.settings)) },
                                     leadingIcon = { Icon(Lucide.Settings, contentDescription = null) },
                                     onClick = {
                                         isAccountMenuExpanded = false
@@ -246,7 +250,7 @@ fun HomeScreen(
                                 )
 
                                 DropdownMenuItem(
-                                    text = { Text("Report Issues") },
+                                    text = { Text(stringResource(R.string.report_issues)) },
                                     leadingIcon = { Icon(Lucide.MessageCircleWarning, contentDescription = null) },
                                     trailingIcon = { Icon(Lucide.ExternalLink, contentDescription = null) },
                                     onClick = {
@@ -260,7 +264,7 @@ fun HomeScreen(
                                     HorizontalDivider()
 
                                     DropdownMenuItem(
-                                        text = { Text("Log Out") },
+                                        text = { Text(stringResource(R.string.log_out)) },
                                         leadingIcon = { Icon(Lucide.LogOut, contentDescription = null) },
                                         onClick = {
                                             scope.launch {
@@ -345,13 +349,13 @@ fun HomeScreen(
                             Text(
                                 if (gameVersions.size > 1) "${gameVersions[0].version} +${gameVersions.size - 1}"
                                 else if (gameVersions.size == 1) gameVersions[0].version
-                                else "Game Version"
+                                else stringResource(R.string.game_version)
                             )
                         },
                         trailingIcon = {
                             Icon(
                                 imageVector = Lucide.ChevronDown,
-                                contentDescription = "Open",
+                                contentDescription = stringResource(R.string.open),
                                 modifier = Modifier.size(FilterChipDefaults.IconSize),
                             )
                         }
@@ -380,20 +384,20 @@ fun HomeScreen(
                                 Text(
                                     if (selectedLoaders.size > 1) "${selectedLoaders[0].name} +${selectedLoaders.size - 1}"
                                     else if (selectedLoaders.size == 1) selectedLoaders[0].name
-                                    else "Loader"
+                                    else stringResource(R.string.loader)
                                 )
                             },
                             trailingIcon = {
                                 Icon(
                                     imageVector = Lucide.ChevronDown,
-                                    contentDescription = "Open",
+                                    contentDescription = stringResource(R.string.open),
                                     modifier = Modifier.size(FilterChipDefaults.IconSize),
                                 )
                             }
                         )
 
                         FilterBottomSheetWithIcons(
-                            title = "Loader",
+                            title = stringResource(R.string.loader),
                             show = showLoadersBottomSheet,
                             items = filteredLoaders,
                             selection = selectedLoaders,
@@ -429,7 +433,7 @@ fun HomeScreen(
                             trailingIcon = {
                                 Icon(
                                     imageVector = Lucide.ChevronDown,
-                                    contentDescription = "Open",
+                                    contentDescription = stringResource(R.string.open),
                                     modifier = Modifier.size(FilterChipDefaults.IconSize),
                                 )
                             }
@@ -455,7 +459,7 @@ fun HomeScreen(
                                 .padding(horizontal = 4.dp)
                                 .align(alignment = Alignment.CenterVertically),
                         onClick = { openSource = !openSource },
-                        label = { Text("Open Source") }
+                        label = { Text(stringResource(R.string.open_source)) }
                     )
                 }
 

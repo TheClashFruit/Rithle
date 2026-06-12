@@ -1,23 +1,18 @@
 package me.theclashfruit.rithle.ui.composables
 
-import android.icu.text.CompactDecimalFormat
-import android.text.format.DateUtils
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.AssistChip
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
-import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,7 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.composables.icons.lucide.Box
@@ -34,15 +29,10 @@ import com.composables.icons.lucide.Download
 import com.composables.icons.lucide.Heart
 import com.composables.icons.lucide.History
 import com.composables.icons.lucide.Lucide
+import me.theclashfruit.rithle.R
 import me.theclashfruit.rithle.modrinth.serializables.ProjectResult
-import me.theclashfruit.rithle.ui.theme.RithleTheme
 import me.theclashfruit.rithle.util.formatCount
 import me.theclashfruit.rithle.util.timeAgo
-import java.time.Instant
-import java.time.OffsetDateTime
-import java.time.temporal.ChronoUnit
-import java.util.Date
-import java.util.Locale
 
 @Composable
 fun ProjectCard(
@@ -69,7 +59,7 @@ fun ProjectCard(
             if (project.featuredGallery != null)
                 AsyncImage(
                     model = project.featuredGallery,
-                    contentDescription = "${project.title}'s Banner",
+                    contentDescription = stringResource(R.string.project_banner_description, project.title),
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxSize()
                 )
@@ -91,7 +81,7 @@ fun ProjectCard(
                     if (!project.iconUrl.isNullOrEmpty())
                         AsyncImage(
                             model = project.iconUrl,
-                            contentDescription = "${project.title}'s Icon",
+                            contentDescription = stringResource(R.string.project_icon_description, project.title),
                             modifier = Modifier.fillMaxSize()
                         )
                     else
@@ -110,7 +100,7 @@ fun ProjectCard(
 
                     if (showAuthor)
                         Text(
-                            text = "by ${project.author}",
+                            text = stringResource(R.string.by_author, project.author),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -137,7 +127,7 @@ fun ProjectCard(
                     ) {
                         Icon(
                             imageVector = Lucide.Download,
-                            contentDescription = "Downloads",
+                            contentDescription = stringResource(R.string.downloads),
                             modifier = Modifier.size(16.dp),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -153,7 +143,7 @@ fun ProjectCard(
                     ) {
                         Icon(
                             imageVector = Lucide.Heart,
-                            contentDescription = "Followers",
+                            contentDescription = stringResource(R.string.followers),
                             modifier = Modifier.size(16.dp),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -171,7 +161,7 @@ fun ProjectCard(
                 ) {
                     Icon(
                         imageVector = Lucide.History,
-                        contentDescription = "Updated",
+                        contentDescription = stringResource(R.string.updated),
                         modifier = Modifier.size(16.dp),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
