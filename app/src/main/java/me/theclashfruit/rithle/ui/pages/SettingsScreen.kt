@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -21,6 +22,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
@@ -211,6 +213,8 @@ fun SettingsScreen(
             }
 
             SettingsSection(label = stringResource(R.string.about)) {
+                var licensesOpen = remember { mutableStateOf(false) }
+
                 SettingsCard(
                     icon = Lucide.History,
                     title = stringResource(R.string.version),
@@ -223,8 +227,65 @@ fun SettingsScreen(
                 SettingsCard(
                     icon = Lucide.Book,
                     title = stringResource(R.string.licenses),
-                    onClick = {}
+                    onClick = { licensesOpen.value = !licensesOpen.value }
                 )
+
+                when {
+                    licensesOpen.value ->
+                        AlertDialog(
+                            title = {
+                                Text(text = "Licenses")
+                            },
+                            text = {
+                                Column(
+                                    modifier = Modifier.verticalScroll(rememberScrollState()),
+                                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                                ) {
+                                    LicenseItem(
+                                        name = "Rithle",
+                                        license = "GNU General Public License v3.0"
+                                    )
+
+                                    LicenseItem(
+                                        name = "Compose Icons",
+                                        license = "MIT License"
+                                    )
+
+                                    LicenseItem(
+                                        name = "Lucide",
+                                        license = "ISC License"
+                                    )
+
+                                    LicenseItem(
+                                        name = "Coil3",
+                                        license = "Apache License 2.0"
+                                    )
+
+                                    LicenseItem(
+                                        name = "Kotlin Multiplatform Markdown Renderer",
+                                        license = "Apache License 2.0"
+                                    )
+
+                                    LicenseItem(
+                                        name = "Ktor",
+                                        license = "Apache License 2.0"
+                                    )
+                                }
+                            },
+                            onDismissRequest = {
+                                licensesOpen.value = false
+                            },
+                            confirmButton = {
+                                TextButton(
+                                    onClick = {
+                                        licensesOpen.value = false
+                                    }
+                                ) {
+                                    Text("Ok")
+                                }
+                            }
+                        )
+                }
 
                 SettingsCardWithExternalLink(
                     icon = Lucide.Github,
@@ -384,6 +445,20 @@ fun SettingsCardWithExternalLink(
                 tint = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
+    }
+}
+
+@Composable
+private fun LicenseItem(name: String, license: String) {
+    Column {
+        Text(
+            text = name,
+            style = MaterialTheme.typography.titleMedium
+        )
+        Text(
+            text = license,
+            style = MaterialTheme.typography.bodySmall
+        )
     }
 }
 
