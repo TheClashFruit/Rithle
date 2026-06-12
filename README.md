@@ -1,13 +1,23 @@
 # Rithle
 
-Android app for Modrinth written in Kotlin.
+<p>
+  <!--
+  <a href="">
+    <img alt="google-play" height="56" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy-minimal/available/google-play_vector.svg">
+  </a>
+  <a href="">
+    <img alt="f-droid" height="56" src="https://cdn.theclashfruit.me/devins-badges/assets/cozy-minimal/f-droid_vector.svg">
+  </a>
+  -->
+  <a href="https://github.com/TheClashFruit/Rithle/releases">
+    <img alt="github" height="56" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy-minimal/available/github_vector.svg" />
+  </a>
+  <a href="https://discord.gg/CWEApqJ6rc">
+    <img alt="Discord" height="56" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy-minimal/social/discord-singular_vector.svg">
+  </a>
+</p>
 
-![GitHub Workflow Status](https://github.com/TheClashFruit/Rithle/actions/workflows/android.yml/badge.svg)
-![GitHub issues](https://img.shields.io/github/issues-raw/TheClashFruit/Rithle?label=issues)
-![GitHub pull requests](https://img.shields.io/github/issues-pr-raw/TheClashFruit/Rithle?label=pull+requests)
-![GitHub all releases](https://img.shields.io/github/downloads/TheClashFruit/Rithle/total)
-![GitHub](https://img.shields.io/github/license/TheClashFruit/Rithle)
-![GitHub commit activity](https://img.shields.io/github/commit-activity/w/TheClashFruit/Rithle)
+An app for browsing Modrinth on your Android phone.
 
 ## Screenshots
 
@@ -20,8 +30,8 @@ Android app for Modrinth written in Kotlin.
 
 ## Contributing
 
-I'm open to contributions but please try to adhere to [CONTRIBUTING.md](CONTRIBUTING.md), and huge
-thanks if you end up contributing.
+If you'd like to help improve Rithle, please take a look at our [CONTRIBUTING.md](CONTRIBUTING.md)
+for some guidelines. A huge thank you for your support.
 
 ## License
 
