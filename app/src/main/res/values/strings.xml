@@ -62,7 +62,7 @@
     <string name="extract_modpacks">Extract Modpacks</string>
     <string name="extract_modpacks_subtitle">Extract modpack contents after download</string>
     <string name="modpack_location">Modpack Location</string>
-    <string name="default_modpack_location">/storage/emulated/0/downloads/Rithle</string>
+    <string name="default_modpack_location">No location selected yet.</string>
     <string name="about">About</string>
     <string name="version">Version</string>
     <string name="version_subtitle">v%1$s (%2$s)</string>
@@ -78,4 +78,7 @@
     <string name="rithle_supporter">Rithle supporter.</string>
     <string name="projects">Projects</string>
     <string name="joined">Joined</string>
+    <string name="cancel">Cancel</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
 </resources>

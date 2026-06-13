@@ -6,7 +6,10 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -22,7 +25,10 @@ import me.theclashfruit.rithle.ui.pages.ProjectScreen
 import me.theclashfruit.rithle.ui.pages.SettingsScreen
 import me.theclashfruit.rithle.ui.pages.UserScreen
 import me.theclashfruit.rithle.ui.theme.RithleTheme
+import me.theclashfruit.rithle.util.Settings
+import me.theclashfruit.rithle.util.SettingsStore
 import me.theclashfruit.rithle.util.TokenRepository
+import me.theclashfruit.rithle.util.settingsStore
 import kotlin.time.Duration.Companion.milliseconds
 
 class MainActivity : ComponentActivity() {
@@ -57,7 +63,16 @@ class MainActivity : ComponentActivity() {
                 modrinth.categories()
             }
 
-            RithleTheme {
+            val settingsStore = SettingsStore(this)
+            val settingsState by settingsStore.settingsFlow.collectAsStateWithLifecycle(initialValue = Settings())
+
+            val darkTheme = when (settingsState.theme) {
+                1 -> false
+                2 -> true
+                else -> isSystemInDarkTheme()
+            }
+
+            RithleTheme(darkTheme) {
                 NavHost(
                     navController = navController,
                     startDestination = "/"

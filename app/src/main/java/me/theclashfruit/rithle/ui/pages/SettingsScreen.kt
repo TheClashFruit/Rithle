@@ -1,5 +1,10 @@
 package me.theclashfruit.rithle.ui.pages
 
+import android.content.Intent
+import android.net.Uri
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,6 +23,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
@@ -27,19 +33,21 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import coil3.compose.AsyncImage
 import com.composables.icons.lucide.ArrowLeft
@@ -57,11 +65,17 @@ import com.composables.icons.lucide.LogIn
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Moon
 import com.composables.icons.lucide.User
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import me.theclashfruit.rithle.BuildConfig
 import me.theclashfruit.rithle.R
 import me.theclashfruit.rithle.modrinth.Modrinth
 import me.theclashfruit.rithle.modrinth.enums.Scope
 import me.theclashfruit.rithle.modrinth.serializables.User
+import me.theclashfruit.rithle.util.Settings
+import me.theclashfruit.rithle.util.SettingsStore
+import me.theclashfruit.rithle.util.exportLogcatToUri
+import me.theclashfruit.rithle.util.getFriendlyPath
 import me.theclashfruit.rithle.util.launchCustomTabs
 import me.theclashfruit.rithle.util.timeAgo
 
@@ -73,12 +87,43 @@ fun SettingsScreen(
     val modrinth = Modrinth.getInstance()
     val oauth = modrinth.OAuth(BuildConfig.CLIENT_ID, BuildConfig.CLIENT_SECRET)
 
-    val extractModpacks = remember { mutableStateOf(false) }
     var secretClicks by remember { mutableIntStateOf(0) }
 
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
 
+    val coroutineScope = rememberCoroutineScope()
     val ctx = LocalContext.current
+
+    val settingsStore = SettingsStore(ctx)
+    val settingsState by settingsStore.settingsFlow.collectAsStateWithLifecycle(initialValue = Settings())
+
+    val friendlyLocation = remember(settingsState.modpackLocation) {
+        getFriendlyPath(settingsState.modpackLocation)
+    }
+
+    val folderPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenDocumentTree()
+    ) { uri: Uri? ->
+        if (uri != null) {
+            val contentResolver = ctx.contentResolver
+            val takeFlags: Int = Intent.FLAG_GRANT_READ_URI_PERMISSION or
+                    Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+
+            try {
+                contentResolver.takePersistableUriPermission(uri, takeFlags)
+            } catch (e: SecurityException) {
+                e.printStackTrace()
+            }
+
+            coroutineScope.launch {
+                settingsStore.update {
+                    modpackLocation = uri.toString()
+                }
+            }
+        }
+    }
+
+    val localConfig = LocalConfiguration.current
 
     Scaffold(
         modifier = Modifier
@@ -181,18 +226,85 @@ fun SettingsScreen(
                 )
 
             SettingsSection(label = stringResource(R.string.appearance)) {
+                val themeOpen = remember { mutableStateOf(false) }
+                val options = listOf(
+                    0 to R.string.system_default,
+                    1 to R.string.theme_light,
+                    2 to R.string.theme_dark,
+                )
+
                 SettingsCard(
                     icon = Lucide.Moon,
                     title = stringResource(R.string.theme),
-                    subtitle = stringResource(R.string.system_default),
-                    onClick = {}
+                    subtitle = stringResource(options[settingsState.theme].component2()),
+                    onClick = {
+                        themeOpen.value = true
+                    }
                 )
+
+                when { themeOpen.value ->
+                    AlertDialog(
+                        onDismissRequest = { themeOpen.value = false },
+                        title = { Text(stringResource(R.string.theme)) },
+                        text = {
+                            Column {
+                                options.forEach { (value, labelRes) ->
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .clickable {
+                                                coroutineScope.launch {
+                                                    settingsStore.update {
+                                                        theme = value
+                                                    }
+
+                                                    themeOpen.value = false
+                                                }
+                                            }
+                                            .padding(vertical = 12.dp),
+                                    ) {
+                                        RadioButton(
+                                            selected = settingsState.theme == value,
+                                            onClick = {
+                                                coroutineScope.launch {
+                                                    settingsStore.update {
+                                                        theme = value
+                                                    }
+
+                                                    themeOpen.value = false
+                                                }
+                                            },
+                                        )
+
+                                        Text(stringResource(labelRes))
+                                    }
+                                }
+                            }
+                        },
+                        confirmButton = {
+                            TextButton(onClick = { themeOpen.value = false }) {
+                                Text(stringResource(R.string.cancel))
+                            }
+                        }
+                    )
+                }
 
                 SettingsCard(
                     icon = Lucide.Languages,
                     title = stringResource(R.string.language),
-                    subtitle = stringResource(R.string.system_default),
-                    onClick = {}
+                    subtitle = localConfig.locales[0].displayName, // stringResource(R.string.system_default),
+                    onClick = {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                            val intent = Intent(android.provider.Settings.ACTION_APP_LOCALE_SETTINGS).apply {
+                                data = Uri.fromParts("package", ctx.packageName, null)
+                            }
+
+                            ctx.startActivity(intent)
+                        } else {
+                            // TODO: Implement for android sdks < 33
+                        }
+                    }
                 )
             }
 
@@ -201,19 +313,28 @@ fun SettingsScreen(
                     icon = Lucide.Cuboid,
                     title = stringResource(R.string.extract_modpacks),
                     subtitle = stringResource(R.string.extract_modpacks_subtitle),
-                    enabled = extractModpacks
+                    enabled = settingsState.extractModpacks,
+                    onClick = { checked ->
+                        coroutineScope.launch {
+                            settingsStore.update {
+                                extractModpacks = checked
+                            }
+                        }
+                    }
                 )
 
                 SettingsCard(
                     icon = Lucide.Download,
                     title = stringResource(R.string.modpack_location),
-                    subtitle = stringResource(R.string.default_modpack_location),
-                    onClick = {}
+                    subtitle = friendlyLocation ?: stringResource(R.string.default_modpack_location),
+                    onClick = {
+                        folderPickerLauncher.launch(null)
+                    }
                 )
             }
 
             SettingsSection(label = stringResource(R.string.about)) {
-                var licensesOpen = remember { mutableStateOf(false) }
+                val licensesOpen = remember { mutableStateOf(false) }
 
                 SettingsCard(
                     icon = Lucide.History,
@@ -301,11 +422,23 @@ fun SettingsScreen(
             }
 
             if (BuildConfig.DEBUG || secretClicks > 5) {
+                val createDocumentLauncher = rememberLauncherForActivityResult(
+                    contract = ActivityResultContracts.CreateDocument("application/octet-stream")
+                ) { uri: Uri? ->
+                    uri?.let {
+                        coroutineScope.launch(Dispatchers.IO) {
+                            exportLogcatToUri(ctx, it)
+                        }
+                    }
+                }
+
                 SettingsSection(label = stringResource(R.string.debug)) {
                     SettingsCard(
                         icon = Lucide.Bug,
                         title = stringResource(R.string.export_debug_logs),
-                        onClick = {}
+                        onClick = {
+                            createDocumentLauncher.launch("latest.log")
+                        }
                     )
                 }
             }
@@ -369,14 +502,15 @@ fun SettingsCardWithSwitch(
     icon: ImageVector,
     title: String,
     subtitle: String = "",
-    enabled: MutableState<Boolean>
+    enabled: Boolean,
+    onClick: (Boolean) -> Unit
 ) {
-    var checked by enabled
-
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { checked = !checked }
+            .clickable {
+                onClick(!enabled)
+            }
     ) {
         Row(
             modifier = Modifier.padding(16.dp),
@@ -397,9 +531,12 @@ fun SettingsCardWithSwitch(
                     )
                 }
             }
+
             Switch(
-                checked = checked,
-                onCheckedChange = { checked = it }
+                checked = enabled,
+                onCheckedChange = {
+                    onClick(it)
+                }
             )
         }
     }
