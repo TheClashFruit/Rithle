@@ -33,6 +33,19 @@ An app for browsing Modrinth on your Android phone.
 If you'd like to help improve Rithle, please take a look at our [CONTRIBUTING.md](CONTRIBUTING.md)
 for some guidelines. A huge thank you for your support.
 
+### Translations
+
+Contributions to translations for both the app interface and store metadata are highly welcome.
+
+* **Metadata**: Located in `metadata/{languageCode}` (e.g., `metadata/en-US`).
+* **App Strings**: Located in `app/src/main/res/values/strings.xml`. To add a new language, create a new directory like `values-{languageCode}`.
+
+## Backend Services (Mainly OAuth)
+
+Since I don't want to leak the client secret in releases I host a simple service for Rithle to
+handle OAuth, the source code for that is available over at
+[TheClashFruit/RithleApi](https://github.com/TheClashFruit/RithleApi).
+
 ## License
 
 ```
