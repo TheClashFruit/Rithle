@@ -1,5 +1,6 @@
 package me.theclashfruit.rithle.ui.pages
 
+import android.os.Environment
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,8 +21,11 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AppBarRow
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.HorizontalDivider
@@ -37,6 +41,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
@@ -93,6 +98,11 @@ import me.theclashfruit.rithle.modrinth.serializables.Gallery
 import me.theclashfruit.rithle.modrinth.serializables.Project
 import me.theclashfruit.rithle.modrinth.serializables.ProjectMember
 import me.theclashfruit.rithle.modrinth.serializables.Version
+import me.theclashfruit.rithle.services.DownloadSate
+import me.theclashfruit.rithle.services.DownloadService
+import me.theclashfruit.rithle.services.serializables.DownloadMeta
+import me.theclashfruit.rithle.services.serializables.DownloadReason
+import me.theclashfruit.rithle.ui.composables.DownloadSelectionDialog
 import me.theclashfruit.rithle.util.formatCount
 import me.theclashfruit.rithle.util.launchCustomTabs
 import me.theclashfruit.rithle.util.timeAgo
@@ -103,9 +113,16 @@ fun ProjectScreen(
     navController: NavHostController,
     project: String
 ) {
-    val modrinth = Modrinth.getInstance()
+    val modrinth = remember { Modrinth.getInstance() }
+    val downloadService = remember { DownloadService() }
+
     var data by remember { mutableStateOf<Project?>(null) }
     var versionData by remember { mutableStateOf<List<Version>?>(null) }
+
+    val downloadDialogOpen = remember { mutableStateOf(false) }
+    val progressDialogOpen = remember { mutableStateOf(false) }
+
+    var downloadState by remember { mutableStateOf(DownloadSate()) }
 
     LaunchedEffect(project) {
         data = modrinth.project(project)
@@ -165,7 +182,9 @@ fun ProjectScreen(
                             clickableItem(
                                 label = downloadLabel,
                                 icon = { Icon(Lucide.Download, contentDescription = downloadLabel) },
-                                onClick = { /* Handle Download */ }
+                                onClick = {
+                                    downloadDialogOpen.value = true
+                                }
                             )
 
                             clickableItem(
@@ -292,6 +311,68 @@ fun ProjectScreen(
                         }
                 }
             }
+
+        when { downloadDialogOpen.value ->
+            DownloadSelectionDialog(
+                versions = versionData!!,
+                onCancel = {
+                    downloadDialogOpen.value = false
+                },
+                onDownload = { finalLoader, finalGameVersion ->
+                    downloadDialogOpen.value = false
+                    progressDialogOpen.value = true
+
+                    val folder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).absolutePath
+
+                    coroutineScope.launch {
+                        val version = versionData!!.first {
+                            it.gameVersions.contains(finalGameVersion) && it.loaders.contains(finalLoader)
+                        }
+
+                        downloadService
+                            .download(version, false, folder)
+                            .collect { stateUpdate ->
+                                downloadState = stateUpdate
+                            }
+                    }
+
+                    // Pass these selections to your ViewModel/DownloadService!
+                    // e.g., viewModel.startDownload(version, loader = finalLoader, gameVersion = finalGameVersion)
+                }
+            )
+        }
+
+        when { progressDialogOpen.value ->
+            AlertDialog(
+                title = { Text("Progress") },
+                text = {
+                    Column {
+                        Text(downloadState.isDownloading.toString())
+
+                        Text(downloadState.totalBytes.toString())
+                        Text(downloadState.bytesDownloaded.toString())
+
+                        Text(downloadState.error ?: "")
+
+                        CircularProgressIndicator(
+                            progress = downloadState.percentage
+                        )
+                    }
+                },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+
+                        },
+                    ) {
+                        Text("Ok")
+                    }
+                },
+                onDismissRequest = {
+                    progressDialogOpen.value = false
+                }
+            )
+        }
     }
 }
 
@@ -544,6 +625,12 @@ fun ChangelogPage(
 fun VersionsPage(
     data: List<Version>
 ) {
+    val progressDialogOpen = remember { mutableStateOf(false) }
+    var downloadState by remember { mutableStateOf(DownloadSate()) }
+
+    val downloadService = remember { DownloadService() }
+    val coroutineScope = rememberCoroutineScope()
+
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -575,7 +662,17 @@ fun VersionsPage(
                 },
                 trailingContent = {
                     IconButton(
-                        onClick = {}
+                        onClick = {
+                            progressDialogOpen.value = true
+
+                            coroutineScope.launch {
+                                downloadService
+                                    .download(version, false, Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).absolutePath)
+                                    .collect { stateUpdate ->
+                                        downloadState = stateUpdate
+                                    }
+                            }
+                        }
                     ) {
                         Icon(Lucide.Download, contentDescription = null)
                     }
@@ -584,6 +681,38 @@ fun VersionsPage(
 
             HorizontalDivider()
         }
+    }
+
+    when { progressDialogOpen.value ->
+        AlertDialog(
+            title = { Text("Progress") },
+            text = {
+                Column {
+                    Text(downloadState.isDownloading.toString())
+
+                    Text(downloadState.totalBytes.toString())
+                    Text(downloadState.bytesDownloaded.toString())
+
+                    Text(downloadState.error ?: "")
+
+                    CircularProgressIndicator(
+                        progress = downloadState.percentage
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+
+                    },
+                ) {
+                    Text("Ok")
+                }
+            },
+            onDismissRequest = {
+                progressDialogOpen.value = false
+            }
+        )
     }
 }
 

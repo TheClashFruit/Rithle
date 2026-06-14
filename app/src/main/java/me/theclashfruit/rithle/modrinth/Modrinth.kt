@@ -236,6 +236,14 @@ class Modrinth {
         return response.body<List<Version>>()
     }
 
+    suspend fun version(
+        id: String
+    ): Version {
+        val response: HttpResponse = httpClient.get("$url/v2/version/$id")
+
+        return response.body<Version>()
+    }
+
     suspend fun versions(
         ids: List<String>
     ): List<Version> {
