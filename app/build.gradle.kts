@@ -105,6 +105,7 @@ dependencies {
 
     implementation("androidx.datastore:datastore-preferences:1.2.1")
     implementation("androidx.browser:browser:1.10.0")
+    implementation(libs.androidx.documentfile)
 
     implementation(libs.ktor.client.core)
     implementation(libs.ktor.client.android)

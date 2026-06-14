@@ -117,8 +117,11 @@ fun ProjectScreen(
     navController: NavHostController,
     project: String
 ) {
+    val ctx = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+
     val modrinth = remember { Modrinth.getInstance() }
-    val downloadService = remember { DownloadService() }
+    val downloadService = remember(ctx) { DownloadService(ctx) }
 
     var data by remember { mutableStateOf<Project?>(null) }
     var versionData by remember { mutableStateOf<List<Version>?>(null) }
@@ -132,9 +135,6 @@ fun ProjectScreen(
         data = modrinth.project(project)
         versionData = modrinth.projectVersion(project, true)
     }
-
-    val ctx = LocalContext.current
-    val coroutineScope = rememberCoroutineScope()
 
     val settingsStore = SettingsStore(ctx)
     val settingsState by settingsStore.settingsFlow.collectAsStateWithLifecycle(initialValue = Settings())
@@ -629,13 +629,13 @@ fun ChangelogPage(
 fun VersionsPage(
     data: List<Version>
 ) {
+    val ctx = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+
     val progressDialogOpen = remember { mutableStateOf(false) }
     var downloadState by remember { mutableStateOf(DownloadSate()) }
 
-    val downloadService = remember { DownloadService() }
-    val coroutineScope = rememberCoroutineScope()
-
-    val ctx = LocalContext.current
+    val downloadService = remember(ctx) { DownloadService(ctx) }
 
     val settingsStore = SettingsStore(ctx)
     val settingsState by settingsStore.settingsFlow.collectAsStateWithLifecycle(initialValue = Settings())

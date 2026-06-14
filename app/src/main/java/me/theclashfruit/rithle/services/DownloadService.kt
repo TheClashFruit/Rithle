@@ -1,6 +1,9 @@
 package me.theclashfruit.rithle.services
 
+import android.content.Context
+import android.net.Uri
 import android.util.Log
+import androidx.documentfile.provider.DocumentFile
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.android.Android
 import io.ktor.client.plugins.UserAgent
@@ -10,22 +13,15 @@ import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.plugins.onDownload
-import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.prepareGet
-import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsChannel
 import io.ktor.http.HttpHeaders
-import io.ktor.utils.io.copyTo
-import io.ktor.utils.io.core.isEmpty
-import io.ktor.utils.io.core.readBytes
 import io.ktor.utils.io.jvm.javaio.copyTo
-import io.ktor.utils.io.readRemaining
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
-import kotlinx.io.readByteArray
 import kotlinx.serialization.json.Json
 import me.theclashfruit.rithle.BuildConfig
 import me.theclashfruit.rithle.modrinth.Modrinth
@@ -34,8 +30,10 @@ import me.theclashfruit.rithle.modrinth.serializables.Version
 import me.theclashfruit.rithle.services.serializables.DownloadMeta
 import me.theclashfruit.rithle.services.serializables.DownloadReason
 import java.util.Locale.getDefault
+import androidx.core.net.toUri
+import io.ktor.utils.io.readAvailable
 
-class DownloadService {
+class DownloadService(private val context: Context) {
     private val modrinth = Modrinth.getInstance()
 
     private val httpClient: HttpClient = HttpClient(Android) {
@@ -58,7 +56,8 @@ class DownloadService {
     private fun download(
         url: String,
         meta: DownloadMeta,
-        outputFile: java.io.File
+        folderPath: String,
+        fileName: String
     ): Flow<DownloadSate> = channelFlow {
         send(DownloadSate(
             isDownloading = true
@@ -85,17 +84,34 @@ class DownloadService {
                     }
                 }
             }.execute { response ->
-                // TODO: Save file
-                outputFile.parentFile?.mkdirs()
-
-                Log.d("Download", outputFile.absolutePath)
-
                 val channel = response.bodyAsChannel()
-                val stream = outputFile.outputStream()
-                stream.use { fileOutputStream ->
-                    channel.copyTo(fileOutputStream)
+
+                val outputStream = if (folderPath.startsWith("content://")) {
+                    val directoryUri = folderPath.toUri()
+                    val directory = DocumentFile.fromTreeUri(context, directoryUri)
+                    val file = directory!!.findFile(fileName) ?: directory.createFile("application/octet-stream", fileName)
+
+                    context.contentResolver.openOutputStream(file!!.uri)
+                } else {
+                    val folder = java.io.File(folderPath)
+                    if (!folder.exists()) folder.mkdirs()
+
+                    val outputFile = java.io.File(folder, fileName)
+                    outputFile.outputStream()
                 }
-                stream.close()
+
+                outputStream.use { fileOutputStream ->
+                    val buffer = ByteArray(8192)
+                    while (!channel.isClosedForRead) {
+                        val bytesRead = channel.readAvailable(buffer, 0, buffer.size)
+                        if (bytesRead == -1) break // EOF reached
+                        if (bytesRead > 0) {
+                            fileOutputStream!!.write(buffer, 0, bytesRead)
+                        }
+                    }
+                }
+
+                outputStream!!.close()
 
                 send(
                     DownloadSate(
@@ -106,8 +122,6 @@ class DownloadService {
                     )
                 )
             }
-
-            
         } catch (e: Exception) {
             Log.e("DownloadError", "3:", e)
 
@@ -139,7 +153,8 @@ class DownloadService {
                         gameVersion = version.gameVersions[0],
                         loader = version.loaders[0],
                     ),
-                    outputFile = java.io.File("$path/${primaryFile.filename}")
+                    folderPath = path,
+                    fileName = primaryFile.filename
                 )
             )
         } else {
@@ -184,7 +199,8 @@ class DownloadService {
                 val fileProgressFlow = download(
                     url = file.url,
                     meta = meta,
-                    outputFile = java.io.File("$path/${file.filename}")
+                    folderPath = path,
+                    fileName = file.filename
                 )
 
                 fileProgressFlow.collect { subState ->
