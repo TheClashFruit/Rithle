@@ -81,4 +81,7 @@
     <string name="cancel">Cancel</string>
     <string name="theme_light">Light</string>
     <string name="theme_dark">Dark</string>
+    <string name="download_dependencies">Download Dependencies</string>
+    <string name="download_dependencies_subtitle">Download the dependencies of versions</string>
+    <string name="download_location">Download Location</string>
 </resources>

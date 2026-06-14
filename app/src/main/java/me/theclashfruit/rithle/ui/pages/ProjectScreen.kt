@@ -76,6 +76,7 @@ import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import androidx.navigation.NavHostController
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import me.theclashfruit.rithle.R
 import coil3.compose.AsyncImage
 import com.composables.icons.lucide.ArrowLeft
@@ -104,6 +105,8 @@ import me.theclashfruit.rithle.services.DownloadService
 import me.theclashfruit.rithle.services.serializables.DownloadMeta
 import me.theclashfruit.rithle.services.serializables.DownloadReason
 import me.theclashfruit.rithle.ui.composables.DownloadSelectionDialog
+import me.theclashfruit.rithle.util.Settings
+import me.theclashfruit.rithle.util.SettingsStore
 import me.theclashfruit.rithle.util.formatCount
 import me.theclashfruit.rithle.util.launchCustomTabs
 import me.theclashfruit.rithle.util.timeAgo
@@ -132,6 +135,9 @@ fun ProjectScreen(
 
     val ctx = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
+
+    val settingsStore = SettingsStore(ctx)
+    val settingsState by settingsStore.settingsFlow.collectAsStateWithLifecycle(initialValue = Settings())
 
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
 
@@ -329,7 +335,7 @@ fun ProjectScreen(
                     downloadDialogOpen.value = false
                     progressDialogOpen.value = true
 
-                    val folder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).absolutePath
+                    val folder = settingsState.modpackLocation ?: Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).absolutePath
 
                     coroutineScope.launch {
                         val version = versionData!!.first {
@@ -337,14 +343,11 @@ fun ProjectScreen(
                         }
 
                         downloadService
-                            .download(version, false, folder)
+                            .download(version, settingsState.extractModpacks, folder)
                             .collect { stateUpdate ->
                                 downloadState = stateUpdate
                             }
                     }
-
-                    // Pass these selections to your ViewModel/DownloadService!
-                    // e.g., viewModel.startDownload(version, loader = finalLoader, gameVersion = finalGameVersion)
                 }
             )
         }
@@ -632,6 +635,11 @@ fun VersionsPage(
     val downloadService = remember { DownloadService() }
     val coroutineScope = rememberCoroutineScope()
 
+    val ctx = LocalContext.current
+
+    val settingsStore = SettingsStore(ctx)
+    val settingsState by settingsStore.settingsFlow.collectAsStateWithLifecycle(initialValue = Settings())
+
     LaunchedEffect(downloadState) {
         if (downloadState.percentage >= 1.0f) {
             progressDialogOpen.value = false
@@ -673,8 +681,10 @@ fun VersionsPage(
                             progressDialogOpen.value = true
 
                             coroutineScope.launch {
+                                val folder = settingsState.modpackLocation ?: Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).absolutePath
+
                                 downloadService
-                                    .download(version, false, Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).absolutePath)
+                                    .download(version, settingsState.extractModpacks, folder)
                                     .collect { stateUpdate ->
                                         downloadState = stateUpdate
                                     }

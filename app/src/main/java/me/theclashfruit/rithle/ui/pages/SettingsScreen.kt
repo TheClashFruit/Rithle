@@ -3,6 +3,7 @@ package me.theclashfruit.rithle.ui.pages
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
+import android.os.Environment
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
@@ -308,11 +309,11 @@ fun SettingsScreen(
                 )
             }
 
-            SettingsSection(label = stringResource(R.string.modpacks)) {
+            SettingsSection(label = stringResource(R.string.downloads)) {
                 SettingsCardWithSwitch(
                     icon = Lucide.Cuboid,
-                    title = stringResource(R.string.extract_modpacks),
-                    subtitle = stringResource(R.string.extract_modpacks_subtitle),
+                    title = stringResource(R.string.download_dependencies),
+                    subtitle = stringResource(R.string.download_dependencies_subtitle),
                     enabled = settingsState.extractModpacks,
                     onClick = { checked ->
                         coroutineScope.launch {
@@ -325,8 +326,9 @@ fun SettingsScreen(
 
                 SettingsCard(
                     icon = Lucide.Download,
-                    title = stringResource(R.string.modpack_location),
-                    subtitle = friendlyLocation ?: stringResource(R.string.default_modpack_location),
+                    title = stringResource(R.string.download_location),
+                    subtitle = friendlyLocation ?: Environment.getExternalStoragePublicDirectory(
+                        Environment.DIRECTORY_DOWNLOADS).absolutePath ?: stringResource(R.string.default_modpack_location),
                     onClick = {
                         folderPickerLauncher.launch(null)
                     }
