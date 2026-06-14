@@ -32,6 +32,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeFlexibleTopAppBar
+import androidx.compose.material3.LinearWavyProgressIndicator
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
@@ -147,6 +148,12 @@ fun ProjectScreen(
     val pagerState = rememberPagerState(pageCount = { tabs.size })
     LaunchedEffect(pagerState.currentPage) {
         selectedTabIndex = pagerState.currentPage
+    }
+
+    LaunchedEffect(downloadState) {
+        if (downloadState.percentage >= 1.0f) {
+            progressDialogOpen.value = false
+        }
     }
 
     val tabRowBgColor = lerp(
@@ -344,25 +351,19 @@ fun ProjectScreen(
 
         when { progressDialogOpen.value ->
             AlertDialog(
-                title = { Text("Progress") },
+                title = { Text((downloadState.percentage * 100).toString() + "%") },
                 text = {
-                    Column {
-                        Text(downloadState.isDownloading.toString())
-
-                        Text(downloadState.totalBytes.toString())
-                        Text(downloadState.bytesDownloaded.toString())
-
-                        Text(downloadState.error ?: "")
-
-                        CircularProgressIndicator(
-                            progress = downloadState.percentage
+                    if (downloadState.isDownloading && downloadState.percentage > 0.0001f)
+                        LinearWavyProgressIndicator(
+                            progress = { downloadState.percentage }
                         )
-                    }
+                    else
+                        LinearWavyProgressIndicator()
                 },
                 confirmButton = {
                     TextButton(
                         onClick = {
-
+                            progressDialogOpen.value = false
                         },
                     ) {
                         Text("Ok")
@@ -631,6 +632,12 @@ fun VersionsPage(
     val downloadService = remember { DownloadService() }
     val coroutineScope = rememberCoroutineScope()
 
+    LaunchedEffect(downloadState) {
+        if (downloadState.percentage >= 1.0f) {
+            progressDialogOpen.value = false
+        }
+    }
+
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -685,25 +692,19 @@ fun VersionsPage(
 
     when { progressDialogOpen.value ->
         AlertDialog(
-            title = { Text("Progress") },
+            title = { Text((downloadState.percentage * 100).toString() + "%") },
             text = {
-                Column {
-                    Text(downloadState.isDownloading.toString())
-
-                    Text(downloadState.totalBytes.toString())
-                    Text(downloadState.bytesDownloaded.toString())
-
-                    Text(downloadState.error ?: "")
-
-                    CircularProgressIndicator(
-                        progress = downloadState.percentage
+                if (downloadState.isDownloading && downloadState.percentage > 0.0001f)
+                    LinearWavyProgressIndicator(
+                        progress = { downloadState.percentage }
                     )
-                }
+                else
+                    LinearWavyProgressIndicator()
             },
             confirmButton = {
                 TextButton(
                     onClick = {
-
+                        progressDialogOpen.value = false
                     },
                 ) {
                     Text("Ok")
