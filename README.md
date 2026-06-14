@@ -1,90 +1,67 @@
-> [!IMPORTANT]
-> Please check out issue [#9](https://github.com/TheClashFruit/Rithle/issues/9) of you are wondering why there hasn't been an update since Febuary of 2023!
-
-![ritle_banner](https://user-images.githubusercontent.com/55049569/218251089-1782245b-d742-4ecd-b743-77c18811dba6.svg)
-
-<h1 align="center">
-  Rithle
-</h1>
-
-<p align="center">
-  <img alt="GitHub Workflow Status" src="https://github.com/TheClashFruit/Rithle/actions/workflows/android.yml/badge.svg">
-  <img alt="GitHub issues" src="https://img.shields.io/github/issues-raw/TheClashFruit/Rithle?label=issues">
-  <img alt="GitHub pull requests" src="https://img.shields.io/github/issues-pr-raw/TheClashFruit/Rithle?label=pull+requests">
-  <img alt="GitHub all releases" src="https://img.shields.io/github/downloads/TheClashFruit/Rithle/total">
-  
-  <img alt="GitHub" src="https://img.shields.io/github/license/TheClashFruit/Rithle">
-  <img alt="GitHub commit activity" src="https://img.shields.io/github/commit-activity/w/TheClashFruit/Rithle">
-</p>
-
-<p align="center">
-  Android app for Modrinth written in Kotlin.
-</p>
-
-<h2>
-  Screenshots
-</h2>
-
-![screenshots_of_rithle](https://user-images.githubusercontent.com/55049569/222969306-a26a90d4-769a-4564-bd85-a4fa90638997.png)
-
-<h2>
-  Building
-</h2>
-
-<!--
-<p>
-  Currently you can find prebuilt APKs in my F-Droid repo. <br />
-  Repo Url: https://fdroid.theclashfruit.me/repo/.
-</p>
--->
+# Rithle
 
 <p>
-  <ol>
-    <li>Clone the repo with <code>git clone https://github.com/TheClashFruit/Rithle.git</code></li>
-    <li>Go into the folder with <code>cd Rithle</code></li>
-    <li>Add your github oauth secret and client id to <code>local.properties</code> as <code>ghclient</code> and <code>ghsecret</code></li>
-    <li>Build the app with <code>./gradlew build</code></li>
-  </ol>
+  <!--
+  <a href="">
+    <img alt="google-play" height="56" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy-minimal/available/google-play_vector.svg">
+  </a>
+  <a href="">
+    <img alt="f-droid" height="56" src="https://cdn.theclashfruit.me/devins-badges/assets/cozy-minimal/f-droid_vector.svg">
+  </a>
+  -->
+  <a href="https://github.com/TheClashFruit/Rithle/releases">
+    <img alt="github" height="56" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy-minimal/available/github_vector.svg" />
+  </a>
+  <a href="https://discord.gg/CWEApqJ6rc">
+    <img alt="Discord" height="56" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy-minimal/social/discord-singular_vector.svg">
+  </a>
 </p>
 
-<h2>
-  Contributing
-</h2>
+An app for browsing Modrinth on your Android phone.
 
-<p>
-  Can be found in <a href="CONTRIBUTING.md">CONTRIBUTING.md</a>.
-</p>
+## Screenshots
 
-<h2>
-  Thanks To
-</h2>
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://cdn.theclashfruit.me/apps/me.theclashfruit.rithle/screenshots-dark.png">
+  <source media="(prefers-color-scheme: light)" srcset="https://cdn.theclashfruit.me/apps/me.theclashfruit.rithle/screenshots-light.png">
 
-<p>
-  <ul>
-    <li><a href="https://modrinth.com">Modrinth</a> - An awesome platform for sharing minecraft mods, plugins and more.</li>
-    <li><a href="https://github.com/google/volley">Volley</a> - Network requests.</li>
-    <li><a href="https://github.com/noties/Markwon">Markwon</a> - Markdown rendering for the project descriptions.</li>
-  </ul>
-</p>
+  <img alt="Screenshots" src="https://cdn.theclashfruit.me/apps/me.theclashfruit.rithle/screenshots-light.png">
+</picture>
 
-<h2>
-  License
-</h2>
+## Contributing
 
-<pre>
-  Rithle, Android app for Modrinth written in Kotlin.
-  Copyright (C) 2022-2023 TheClashFruit
+If you'd like to help improve Rithle, please take a look at our [CONTRIBUTING.md](CONTRIBUTING.md)
+for some guidelines. A huge thank you for your support.
 
-  This program is free software: you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation, either version 3 of the License, or
-  (at your option) any later version.
+### Translations
 
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
+Contributions to translations for both the app interface and store metadata are highly welcome.
 
-  You should have received a copy of the GNU General Public License
-  along with this program.  If not, see &lt;https://www.gnu.org/licenses/&gt;.
-</pre>
+* **Metadata**: Located in `metadata/{languageCode}` (e.g., `metadata/en-US`).
+* **App Strings**: Located in `app/src/main/res/values/strings.xml`. To add a new language, create a new directory like `values-{languageCode}`.
+
+## Backend Services (Mainly OAuth)
+
+Since I don't want to leak the client secret in releases I host a simple service for Rithle to
+handle OAuth, the source code for that is available over at
+[TheClashFruit/RithleApi](https://github.com/TheClashFruit/RithleApi).
+
+## License
+
+```
+Rithle, Android app for Modrinth written in Kotlin.
+Copyright (C) 2022 - 2026 TheClashFruit
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+```

@@ -1,0 +1,8 @@
+An app for browsing Modrinth on your Android phone.
+
+<b>Features</b>
+
+- <b>Discover</b>: Browse through every project on Modrinth with ease.
+- <b>Search</b>: Search with ease with the filtering options.
+- <b>Download</b>: Download projects from mods to modpacks.
+- <b>Dependency Resolution</b>: Download dependencies for project or even entire modpacks.
