@@ -49,6 +49,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -162,17 +163,17 @@ fun ProjectScreen(
         }
     }
 
-    val tabRowBgColor = lerp(
-        start = TopAppBarDefaults.topAppBarColors().containerColor,
-        stop = TopAppBarDefaults.topAppBarColors().scrolledContainerColor,
-        fraction = scrollBehavior.state.collapsedFraction
-    )
-
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
             .nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
+            val tabRowBgColor = lerp(
+                start = TopAppBarDefaults.topAppBarColors().containerColor,
+                stop = TopAppBarDefaults.topAppBarColors().scrolledContainerColor,
+                fraction = scrollBehavior.state.collapsedFraction
+            )
+
             Column {
                 LargeFlexibleTopAppBar(
                     title = { Text(stringResource(R.string.project)) },
@@ -284,7 +285,9 @@ fun ProjectScreen(
                             val uri = url.toUri()
 
                             if (uri.host == "modrinth.com")
-                                if (uri.pathSegments.first().contains(Regex("""/(mod|modpack|resourcepack|datapack|shader|plugin|project)/.*""")))
+                                if (uri.pathSegments.first()
+                                        .contains(Regex("""/(mod|modpack|resourcepack|datapack|shader|plugin|project)/.*"""))
+                                )
                                     navController.navigate("/project/${uri.pathSegments.last()}")
 
                             ctx.launchCustomTabs(url)
@@ -421,7 +424,12 @@ fun DescriptionPage(
             content = data.body,
             imageTransformer = Coil3ImageTransformerImpl,
             success = { state, components, modifier ->
-                LazyMarkdownSuccess(state, components, modifier, contentPadding = PaddingValues(16.dp))
+                LazyMarkdownSuccess(
+                    state,
+                    components,
+                    modifier,
+                    contentPadding = PaddingValues(16.dp)
+                )
             },
             typography = markdownTypography(
                 h1 = MaterialTheme.typography.headlineLarge.copy(
@@ -556,12 +564,15 @@ fun ChangelogPage(
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary
                 )
+
                 Text(
                     text = stringResource(R.string.version_prefix, version.versionNumber),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.secondary
                 )
+
                 Spacer(modifier = Modifier.height(8.dp))
+
                 Markdown(
                     content = version.changelog ?: stringResource(R.string.no_changelog_provided),
                     imageTransformer = Coil3ImageTransformerImpl,
@@ -618,7 +629,9 @@ fun ChangelogPage(
                         )
                     )
                 )
+
                 Spacer(modifier = Modifier.height(16.dp))
+
                 HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
             }
         }
