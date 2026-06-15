@@ -264,10 +264,14 @@ class Modrinth {
         return response.body<List<ProjectMember>>()
     }
 
-    suspend fun user(): User {
-        val response: HttpResponse = httpClient.get("${url}/v3/user")
+    suspend fun user(): User? {
+        try {
+            val response: HttpResponse = httpClient.get("${url}/v3/user")
 
-        return response.body<User>()
+            return response.body<User>()
+        } catch (_: Exception) {
+            return null
+        }
     }
 
     suspend fun user(

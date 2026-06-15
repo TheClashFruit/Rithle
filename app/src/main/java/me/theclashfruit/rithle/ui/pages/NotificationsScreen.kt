@@ -112,39 +112,49 @@ fun NotificationsScreen(
             )
         }
     ) { innerPadding ->
-        if (notifications != null) {
-            if (notifications!!.isNotEmpty())
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding)
-                ) {
-                    items(notifications!!, key = { it.id }) { notification ->
-                        ListItem(
-                            onClick = { navController.navigate(notification.link.replace(Regex("""/version/.*"""), "")) },
-                            supportingContent = { Text(notification.text)  }
-                        ) {
-                            Text(notification.title)
+        if (user != null)
+            if (notifications != null) {
+                if (notifications!!.isNotEmpty())
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(innerPadding)
+                    ) {
+                        items(notifications!!, key = { it.id }) { notification ->
+                            ListItem(
+                                onClick = { navController.navigate(notification.link.replace(Regex("""/version/.*"""), "")) },
+                                supportingContent = { Text(notification.text)  }
+                            ) {
+                                Text(notification.title)
+                            }
                         }
                     }
-                }
-            else
+                else
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(innerPadding),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(text = stringResource(R.string.no_notifications_yet))
+                    }
+            } else
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(innerPadding),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(text = stringResource(R.string.no_notifications_yet))
+                    LoadingIndicator()
                 }
-        } else
+        else
             Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(innerPadding),
                 contentAlignment = Alignment.Center
             ) {
-                LoadingIndicator()
+                Text(text = stringResource(R.string.no_notifications_yet))
             }
     }
 }
