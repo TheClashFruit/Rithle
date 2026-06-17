@@ -1,5 +1,6 @@
 package me.theclashfruit.rithle.ui.pages
 
+import android.content.ClipData
 import android.os.Environment
 import android.util.Log
 import android.widget.Toast
@@ -64,6 +65,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.ClipEntry
+import androidx.compose.ui.platform.LocalClipboard
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.UriHandler
@@ -125,6 +129,7 @@ fun ProjectScreen(
 ) {
     val ctx = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
+    val clipboardManager = LocalClipboard.current
 
     val modrinth = remember { Modrinth.getInstance() }
     val downloadService = remember(ctx) { DownloadService(ctx) }
@@ -262,13 +267,31 @@ fun ProjectScreen(
                             clickableItem(
                                 label = copyIdLabel,
                                 icon = { Icon(Lucide.Clipboard, contentDescription = copyIdLabel) },
-                                onClick = { /* Handle Copy ID */ }
+                                onClick = {
+                                    if (data != null) {
+                                        val clipData = ClipData.newPlainText("Project ID", data!!.id)
+                                        val clipEntry = ClipEntry(clipData)
+
+                                        coroutineScope.launch {
+                                            clipboardManager.setClipEntry(clipEntry)
+                                        }
+                                    }
+                                }
                             )
 
                             clickableItem(
                                 label = copyPermanentLinkLabel,
                                 icon = { Icon(Lucide.Clipboard, contentDescription = copyPermanentLinkLabel) },
-                                onClick = { /* Handle Copy Link */ }
+                                onClick = {
+                                    if (data != null) {
+                                        val clipData = ClipData.newPlainText("Project Link", "https://modrinth.com/project/${data!!.id}")
+                                        val clipEntry = ClipEntry(clipData)
+
+                                        coroutineScope.launch {
+                                            clipboardManager.setClipEntry(clipEntry)
+                                        }
+                                    }
+                                }
                             )
                         }
                     },
