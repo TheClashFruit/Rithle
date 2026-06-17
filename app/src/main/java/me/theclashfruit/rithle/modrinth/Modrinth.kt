@@ -14,6 +14,7 @@ import io.ktor.client.plugins.logging.CommonLogBodyFilter
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
+import io.ktor.client.request.delete
 import io.ktor.client.request.forms.FormDataContent
 import io.ktor.client.request.get
 import io.ktor.client.request.header
@@ -280,6 +281,26 @@ class Modrinth {
         val response: HttpResponse = httpClient.get("${url}/v3/user/$id")
 
         return response.body<User>()
+    }
+
+    suspend fun follows(
+        id: String
+    ): List<Project> {
+        val response: HttpResponse = httpClient.get("${url}/v2/user/$id/follows")
+
+        return response.body<List<Project>>()
+    }
+
+    suspend fun followProject(
+        id: String
+    ) {
+        httpClient.post("${url}/v2/project/$id/follow")
+    }
+
+    suspend fun unfollowProject(
+        id: String
+    ) {
+        httpClient.delete("${url}/v2/project/$id/follow")
     }
 
     suspend fun rithleUser(

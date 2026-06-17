@@ -1,6 +1,8 @@
 package me.theclashfruit.rithle.ui.pages
 
 import android.os.Environment
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -88,6 +90,8 @@ import com.composables.icons.lucide.ExternalLink
 import com.composables.icons.lucide.Flag
 import com.composables.icons.lucide.Github
 import com.composables.icons.lucide.Heart
+import com.composables.icons.lucide.HeartMinus
+import com.composables.icons.lucide.HeartPlus
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Ribbon
 import com.composables.icons.lucide.User
@@ -100,6 +104,7 @@ import me.theclashfruit.rithle.modrinth.Modrinth
 import me.theclashfruit.rithle.modrinth.serializables.Gallery
 import me.theclashfruit.rithle.modrinth.serializables.Project
 import me.theclashfruit.rithle.modrinth.serializables.ProjectMember
+import me.theclashfruit.rithle.modrinth.serializables.User
 import me.theclashfruit.rithle.modrinth.serializables.Version
 import me.theclashfruit.rithle.services.DownloadSate
 import me.theclashfruit.rithle.services.DownloadService
@@ -124,8 +129,12 @@ fun ProjectScreen(
     val modrinth = remember { Modrinth.getInstance() }
     val downloadService = remember(ctx) { DownloadService(ctx) }
 
+    var user by remember { mutableStateOf<User?>(null) }
+
     var data by remember { mutableStateOf<Project?>(null) }
     var versionData by remember { mutableStateOf<List<Version>?>(null) }
+
+    var followedProjects by remember { mutableStateOf<List<Project>>(listOf()) }
 
     val downloadDialogOpen = remember { mutableStateOf(false) }
     val progressDialogOpen = remember { mutableStateOf(false) }
@@ -135,6 +144,11 @@ fun ProjectScreen(
     LaunchedEffect(project) {
         data = modrinth.project(project)
         versionData = modrinth.projectVersion(project, true)
+
+        if (modrinth.authenticated) {
+            user = modrinth.user()
+            followedProjects = modrinth.follows(user!!.id)
+        }
     }
 
     val settingsStore = SettingsStore(ctx)
@@ -192,7 +206,7 @@ fun ProjectScreen(
                         val copyIdLabel = stringResource(R.string.copy_id)
                         val copyPermanentLinkLabel = stringResource(R.string.copy_permanent_link)
 
-                        AppBarRow(maxItemCount = 3) {
+                        AppBarRow(maxItemCount = if (modrinth.authenticated) 3 else 2) {
                             clickableItem(
                                 label = downloadLabel,
                                 icon = { Icon(Lucide.Download, contentDescription = downloadLabel) },
@@ -201,11 +215,35 @@ fun ProjectScreen(
                                 }
                             )
 
-                            clickableItem(
-                                label = followLabel,
-                                icon = { Icon(Lucide.Heart, contentDescription = followLabel) },
-                                onClick = { /* Handle Follow */ }
-                            )
+                            if (modrinth.authenticated)
+                                clickableItem(
+                                    label = followLabel,
+                                    icon = { Icon(if (followedProjects.contains(data)) Lucide.HeartMinus else Lucide.HeartPlus, contentDescription = followLabel) },
+                                    onClick = {
+                                        coroutineScope.launch {
+                                            try {
+                                                if (data == null || user == null) return@launch
+
+                                                if (followedProjects.contains(data))
+                                                    modrinth.unfollowProject(data!!.id)
+                                                else
+                                                    modrinth.followProject(data!!.id)
+
+                                                followedProjects = modrinth.follows(user!!.id)
+                                            } catch (e: Exception) {
+                                                Log.e("FollowProject", "Failed to follow/unfollow project.", e)
+
+                                                Toast
+                                                    .makeText(
+                                                        ctx,
+                                                        "Failed to follow/unfollow project.",
+                                                        Toast.LENGTH_SHORT
+                                                    )
+                                                    .show()
+                                            }
+                                        }
+                                    }
+                                )
 
                             /*
                             clickableItem(
