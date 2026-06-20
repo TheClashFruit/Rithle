@@ -19,7 +19,8 @@ data class Settings(
     val theme: Int = 0,
     val lang: String = "default",
     val extractModpacks: Boolean = false,
-    val modpackLocation: String? = null
+    val modpackLocation: String? = null,
+    val updateChecker: Boolean = true
 )
 
 class SettingsStore(private val context: Context) {
@@ -30,6 +31,8 @@ class SettingsStore(private val context: Context) {
 
         val extractModpacks = booleanPreferencesKey("extract_modpacks")
         val modpackLocation = stringPreferencesKey("modpack_location")
+
+        val updateChecker = booleanPreferencesKey("update_checker")
     }
 
     val key = PreferencesKeys
@@ -39,7 +42,8 @@ class SettingsStore(private val context: Context) {
             theme = preferences[key.theme] ?: 0,
             lang = preferences[key.lang] ?: "default",
             extractModpacks = preferences[key.extractModpacks] ?: false,
-            modpackLocation = preferences[key.modpackLocation]
+            modpackLocation = preferences[key.modpackLocation],
+            updateChecker = preferences[key.updateChecker] ?: true,
         )
     }
 
@@ -53,7 +57,8 @@ class SettingsStore(private val context: Context) {
                 theme = preferences[key.theme] ?: 0,
                 lang = preferences[key.lang] ?: "default",
                 extractModpacks = preferences[key.extractModpacks] ?: false,
-                modpackLocation = preferences[key.modpackLocation]
+                modpackLocation = preferences[key.modpackLocation],
+                updateChecker = preferences[key.updateChecker] ?: true
             )
 
             val builder = SettingsBuilder(current).apply(action)
@@ -61,6 +66,7 @@ class SettingsStore(private val context: Context) {
             preferences[key.theme] = builder.theme
             preferences[key.lang] = builder.lang
             preferences[key.extractModpacks] = builder.extractModpacks
+            preferences[key.updateChecker] = builder.updateChecker
 
             val location = builder.modpackLocation
             if (location != null) {
@@ -76,5 +82,6 @@ class SettingsStore(private val context: Context) {
         var lang: String = initial.lang
         var extractModpacks: Boolean = initial.extractModpacks
         var modpackLocation: String? = initial.modpackLocation
+        var updateChecker: Boolean = initial.updateChecker
     }
 }

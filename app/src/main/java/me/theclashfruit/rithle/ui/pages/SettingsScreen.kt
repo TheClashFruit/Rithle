@@ -52,6 +52,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import coil3.compose.AsyncImage
 import com.composables.icons.lucide.ArrowLeft
+import com.composables.icons.lucide.ArrowUpToLine
 import com.composables.icons.lucide.Book
 import com.composables.icons.lucide.Bug
 import com.composables.icons.lucide.ChevronRight
@@ -331,6 +332,22 @@ fun SettingsScreen(
                         Environment.DIRECTORY_DOWNLOADS).absolutePath ?: stringResource(R.string.default_modpack_location),
                     onClick = {
                         folderPickerLauncher.launch(null)
+                    }
+                )
+            }
+
+            SettingsSection(label = stringResource(R.string.updates)) {
+                SettingsCardWithSwitch(
+                    icon = Lucide.ArrowUpToLine,
+                    title = stringResource(R.string.update_checker),
+                    subtitle = stringResource(R.string.update_checker_subtitle),
+                    enabled = settingsState.updateChecker,
+                    onClick = { checked ->
+                        coroutineScope.launch {
+                            settingsStore.update {
+                                updateChecker = checked
+                            }
+                        }
                     }
                 )
             }

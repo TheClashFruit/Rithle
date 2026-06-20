@@ -36,7 +36,7 @@ android {
         minSdk = 28
         targetSdk = 37
         versionCode = 1
-        versionName = "1.0.0-beta.2"
+        versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -62,7 +62,7 @@ android {
         }
 
         debug {
-            versionNameSuffix = "-dev+${gitHash()}"
+            versionNameSuffix = "+${gitHash()}"
         }
     }
 

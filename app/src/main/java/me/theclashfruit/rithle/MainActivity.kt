@@ -7,8 +7,18 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -16,6 +26,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
+import com.mikepenz.markdown.m3.Markdown
 import kotlinx.coroutines.delay
 import me.theclashfruit.rithle.modrinth.Modrinth
 import me.theclashfruit.rithle.ui.pages.HomeScreen
@@ -28,6 +39,9 @@ import me.theclashfruit.rithle.ui.theme.RithleTheme
 import me.theclashfruit.rithle.util.Settings
 import me.theclashfruit.rithle.util.SettingsStore
 import me.theclashfruit.rithle.util.TokenRepository
+import me.theclashfruit.rithle.util.UpdateChecker
+import me.theclashfruit.rithle.util.launchCustomTabs
+import me.theclashfruit.rithle.util.serializables.GitHubRelease
 import me.theclashfruit.rithle.util.settingsStore
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -70,6 +84,22 @@ class MainActivity : ComponentActivity() {
                 1 -> false
                 2 -> true
                 else -> isSystemInDarkTheme()
+            }
+
+            val check = settingsState.updateChecker
+
+            var update by remember { mutableStateOf<GitHubRelease?>(null) }
+            val showDialog = remember { mutableStateOf(false) }
+
+            LaunchedEffect(check) {
+                if (check) {
+                    val d = UpdateChecker.checkUpdate()
+
+                    if (d.hasUpdate) {
+                        update = d.data
+                        showDialog.value = true
+                    }
+                }
             }
 
             RithleTheme(darkTheme) {
@@ -166,6 +196,42 @@ class MainActivity : ComponentActivity() {
                                 }
                             }
                         }
+                    }
+                }
+
+                when { showDialog.value ->
+                    if (update != null) {
+                        AlertDialog(
+                            title = { Text(stringResource(R.string.update)) },
+                            text = {
+                                Text(
+                                    text = update!!.body,
+                                )
+                            },
+                            onDismissRequest = {
+                                showDialog.value = false
+                            },
+                            dismissButton = {
+                                TextButton(
+                                    onClick = {
+                                        showDialog.value = false
+                                    }
+                                ) {
+                                    Text("Not Now")
+                                }
+                            },
+                            confirmButton = {
+                                TextButton(
+                                    onClick = {
+                                        showDialog.value = false
+
+                                        this.launchCustomTabs(update!!.assets.first { it.contentType == "application/vnd.android.package-archive" || it.name.endsWith(".apk") }.browserDownloadUrl)
+                                    }
+                                ) {
+                                    Text("Update")
+                                }
+                            }
+                        )
                     }
                 }
             }

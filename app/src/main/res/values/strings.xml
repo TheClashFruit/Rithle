@@ -84,4 +84,8 @@
     <string name="download_dependencies">Download Dependencies</string>
     <string name="download_dependencies_subtitle">Download the dependencies of versions</string>
     <string name="download_location">Download Location</string>
+    <string name="updates">Updates</string>
+    <string name="update_checker">Check for Updates</string>
+    <string name="update_checker_subtitle">Check for updates on launch.</string>
+    <string name="update">Update Available</string>
 </resources>
