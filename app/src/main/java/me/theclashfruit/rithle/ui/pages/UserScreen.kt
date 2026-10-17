@@ -158,20 +158,20 @@ fun UserScreen(
                                         positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
                                         tooltip = {
                                             PlainTooltip {
-                                                Text(stringResource(R.string.rithle_user_since, timeAgo(rthlUser!!.created)))
+                                                Text(stringResource(R.string.rithle_user_since, timeAgo(rthlUser!!.createdAt)))
                                             }
                                         },
                                         state = rememberTooltipState()
                                     ) {
                                         Icon(
                                             imageVector = Lucide.Wrench,
-                                            contentDescription = stringResource(R.string.rithle_user_since, timeAgo(rthlUser!!.created)),
+                                            contentDescription = stringResource(R.string.rithle_user_since, timeAgo(rthlUser!!.createdAt)),
                                             modifier = Modifier.padding(start = 8.dp).size(20.dp),
                                             tint = MaterialTheme.colorScheme.primary
                                         )
                                     }
 
-                                    if (rthlUser!!.donated)
+                                    if (rthlUser!!.supporter)
                                         TooltipBox(
                                             positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
                                             tooltip = {

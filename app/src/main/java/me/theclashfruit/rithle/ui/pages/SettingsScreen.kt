@@ -222,8 +222,8 @@ fun SettingsScreen(
                     title = stringResource(R.string.not_logged_in),
                     subtitle = stringResource(R.string.login_with_modrinth),
                     onClick = {
-                        val url = oauth.authorizationUrl(if (BuildConfig.API_MODRINTH_LOCAL_OAUTH) "rithle://oauth/callback" else "${BuildConfig.API_RITHLE}/oauth/callback", Scope.entries, "app:/settings")
-                        ctx.launchCustomTabs(url)
+                        //val url = oauth.authorizationUrl(if (BuildConfig.API_MODRINTH_LOCAL_OAUTH) "rithle://oauth/callback" else "${BuildConfig.API_RITHLE}/oauth/callback", Scope.entries, "app:/settings")
+                        ctx.launchCustomTabs("${BuildConfig.API_RITHLE}/oauth?action=app:/settings")
                     }
                 )
 

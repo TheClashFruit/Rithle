@@ -232,8 +232,8 @@ fun HomeScreen(
                                         onClick = {
                                             isAccountMenuExpanded = false
 
-                                            val url = oauth.authorizationUrl(if (BuildConfig.API_MODRINTH_LOCAL_OAUTH) "rithle://oauth/callback" else "${BuildConfig.API_RITHLE}/oauth/callback", Scope.entries, "app:/")
-                                            ctx.launchCustomTabs(url)
+                                            //val url = oauth.authorizationUrl(if (BuildConfig.API_MODRINTH_LOCAL_OAUTH) "rithle://oauth/callback" else "${BuildConfig.API_RITHLE}/oauth/callback", Scope.entries, "app:/")
+                                            ctx.launchCustomTabs("${BuildConfig.API_RITHLE}/oauth?action=app:/")
                                         }
                                     )
 

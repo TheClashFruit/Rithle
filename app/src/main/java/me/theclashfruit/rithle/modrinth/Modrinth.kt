@@ -306,7 +306,7 @@ class Modrinth {
     suspend fun rithleUser(
         id: String
     ): RithleUser? {
-        val response: HttpResponse = httpClient.get("${BuildConfig.API_RITHLE}/user/$id")
+        val response: HttpResponse = httpClient.get("${BuildConfig.API_RITHLE}/api/v1/user/$id")
 
         if (response.status != HttpStatusCode.OK)
             return null

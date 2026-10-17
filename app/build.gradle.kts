@@ -1,5 +1,3 @@
-import com.android.build.gradle.options.parseBoolean
-import java.lang.Boolean.parseBoolean
 import java.util.Properties
 
 plugins {
@@ -35,8 +33,8 @@ android {
         applicationId = "me.theclashfruit.rithle"
         minSdk = 28
         targetSdk = 37
-        versionCode = 3
-        versionName = "1.0.0"
+        versionCode = 4
+        versionName = "1.1.0-dev.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 

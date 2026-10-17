@@ -42,11 +42,14 @@ import me.theclashfruit.rithle.util.TokenRepository
 import me.theclashfruit.rithle.util.UpdateChecker
 import me.theclashfruit.rithle.util.launchCustomTabs
 import me.theclashfruit.rithle.util.serializables.GitHubRelease
+import me.theclashfruit.rithle.util.serializables.RithleVersionsVersion
 import me.theclashfruit.rithle.util.settingsStore
 import kotlin.time.Duration.Companion.milliseconds
 
 class MainActivity : ComponentActivity() {
     private lateinit var navController: NavHostController
+
+    private val updateChecker = UpdateChecker(this)
 
     @OptIn(ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -88,12 +91,12 @@ class MainActivity : ComponentActivity() {
 
             val check = settingsState.updateChecker
 
-            var update by remember { mutableStateOf<GitHubRelease?>(null) }
+            var update by remember { mutableStateOf<RithleVersionsVersion?>(null) }
             val showDialog = remember { mutableStateOf(false) }
 
             LaunchedEffect(check) {
                 if (check) {
-                    val d = UpdateChecker.checkUpdate()
+                    val d = updateChecker.checkUpdate()
 
                     if (d.hasUpdate) {
                         update = d.data
@@ -205,7 +208,7 @@ class MainActivity : ComponentActivity() {
                             title = { Text(stringResource(R.string.update)) },
                             text = {
                                 Text(
-                                    text = update!!.body,
+                                    text = update!!.changelog,
                                 )
                             },
                             onDismissRequest = {
@@ -225,7 +228,7 @@ class MainActivity : ComponentActivity() {
                                     onClick = {
                                         showDialog.value = false
 
-                                        this.launchCustomTabs(update!!.assets.first { it.contentType == "application/vnd.android.package-archive" || it.name.endsWith(".apk") }.browserDownloadUrl)
+                                        this.launchCustomTabs(update!!.download.github)
                                     }
                                 ) {
                                     Text("Update")
